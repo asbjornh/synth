@@ -1,6 +1,6 @@
 import { map } from "./util";
 
-type Shape =
+export type FilterShape =
   | "low-pass"
   | "band-pass"
   | "high-pass"
@@ -13,7 +13,7 @@ type Shape =
 
 // https://www.cytomic.com/files/dsp/SvfLinearTrapOptimised2.pdf
 export const filter = (
-  shape: Shape,
+  shape: FilterShape,
   cutoff: number,
   Q: number,
   bellGainDB: number,

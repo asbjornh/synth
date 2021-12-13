@@ -12,21 +12,13 @@ module.exports = function (_, { mode }) {
   return {
     mode,
     devtool: isProduction ? "source-map" : "cheap-module-source-map",
-    entry: "./src/index.tsx",
+    entry: "./client/index.tsx",
     stats: "minimal",
     output: {
       path: path.resolve(__dirname, "./dist"),
       filename: "static/js/[name].[contenthash:8].js",
       publicPath,
       globalObject: "this",
-    },
-    devServer: {
-      historyApiFallback: {
-        disableDotRule: true,
-        index: "/",
-      },
-      hot: false,
-      port: 3000,
     },
     optimization: {
       minimize: isProduction,
@@ -39,10 +31,6 @@ module.exports = function (_, { mode }) {
     },
     resolve: {
       extensions: [".js", ".ts", ".tsx"],
-      fallback: {
-        os: require.resolve("os-browserify/browser"),
-        stream: require.resolve("stream-browserify"),
-      },
     },
     module: {
       rules: [
@@ -82,11 +70,8 @@ module.exports = function (_, { mode }) {
       ],
     },
     plugins: [
-      new webpack.ProvidePlugin({
-        Buffer: path.resolve(__dirname, "buffer.js"),
-      }),
       new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, "src/index.html"),
+        template: path.resolve(__dirname, "client/index.html"),
       }),
       new MiniCssExtractPlugin({
         filename: "static/css/[name].[contenthash:8].css",
