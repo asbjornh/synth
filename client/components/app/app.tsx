@@ -3,7 +3,11 @@ import { State } from "../../../interface/osc";
 import { defaultOsc, OscSelect } from "../osc-select/osc-select";
 
 export const App: React.FC = () => {
-  const [state, setState] = useState<State>({ oscillators: [], filters: [] });
+  const [state, setState] = useState<State>({
+    filters: [],
+    notes: [],
+    oscillators: [],
+  });
   useEffect(() => {
     fetch("/state")
       .then((res) => res.json())
@@ -20,9 +24,7 @@ export const App: React.FC = () => {
     fetch("/set-state", {
       body: JSON.stringify(state),
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
     });
   }, [state]);
 

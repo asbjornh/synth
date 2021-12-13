@@ -4,8 +4,9 @@ import path from "path";
 import { State } from "../interface/osc";
 
 let state: State = {
-  oscillators: [],
   filters: [],
+  notes: [],
+  oscillators: [],
 };
 
 const app = express();
