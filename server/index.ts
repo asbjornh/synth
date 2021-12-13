@@ -2,6 +2,8 @@ import { Readable } from "stream";
 import Speaker from "speaker";
 
 import * as osc from "./osc";
+import { filter } from "./filter";
+import { clamp, map } from "./util";
 
 // the frequency to play
 const freq = parseFloat(process.argv[2]) || 440.0; // Concert A, default tone
@@ -25,16 +27,25 @@ const opts: Options = {
 
 const word = osc.fromWord("boxershorts");
 
+const filters = map(Array.from({ length: opts.channels }), (_) =>
+  filter("high-shelf", 2000, 6, 10, opts.sampleRate)
+);
+
 const gen = (numSamples: number, samplesGenerated: number) => {
-  const out = [new Array(numSamples), new Array(numSamples)];
+  const out: number[][] = map(
+    Array.from({ length: opts.channels }),
+    (_) => new Array(numSamples)
+  );
 
   for (let i = 0; i < numSamples; i++) {
     for (let channel = 0; channel < opts.channels; channel++) {
       const t = (samplesGenerated + i) / opts.sampleRate;
-      // out[channel][i] = osc.nesTriangle(t, freq);
-      // out[channel][i] = osc.triangle(t, freq);
-      // out[channel][i] = word(t, freq);
-      out[channel][i] = osc.pulse(0.1)(t, freq);
+      // const signal = osc.nesTriangle(t, freq);
+      const signal = osc.saw(t, freq);
+      // const signal = osc.saw(t, freq);
+      // const signal = word(t, freq);
+      // const signal = osc.pulse(0.1)(t, freq);
+      out[channel][i] = filters[channel](signal);
     }
   }
 
@@ -46,6 +57,7 @@ const gen = (numSamples: number, samplesGenerated: number) => {
 const amplitude = Math.pow(2, opts.bitDepth) / 2 - 1;
 
 let samplesGenerated = 0;
+let peakNotified = false;
 
 new Readable({
   read: function (chunkSize) {
@@ -57,8 +69,12 @@ new Readable({
     const out = gen(numSamples, samplesGenerated);
 
     for (let i = 0; i < numSamples; i++) {
+      if ((out[0][i] < -1 || out[0][i] > 1) && !peakNotified) {
+        console.log("peak");
+        peakNotified = true;
+      }
       for (let channel = 0; channel < opts.channels; channel++) {
-        const val = amplitude * out[channel][i];
+        const val = amplitude * clamp(out[channel][i], -1, 1);
         const offset = i * sampleSize * opts.channels + channel * sampleSize;
         if (opts.bitDepth === 8) buf.writeInt8(val, offset);
         if (opts.bitDepth === 16) buf.writeInt16LE(val, offset);
