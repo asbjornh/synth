@@ -20,13 +20,17 @@ export type Note = {
   oct: Octave;
 };
 
+export type OscOptions = {
+  detune: number;
+};
+
 export type Osc =
-  | { type: "saw" }
-  | { type: "square" }
-  | { type: "sine" }
-  | { type: "triangle" }
-  | { type: "nesTriangle"; options: { samples: number } }
-  | { type: "pulse"; options: { width: number } };
+  | { type: "saw"; options: OscOptions }
+  | { type: "square"; options: OscOptions }
+  | { type: "sine"; options: OscOptions }
+  | { type: "triangle"; options: OscOptions }
+  | { type: "nesTriangle"; options: OscOptions & { samples: number } }
+  | { type: "pulse"; options: OscOptions & { width: number } };
 
 export type Filter = {
   shape: FilterShape;
