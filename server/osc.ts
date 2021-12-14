@@ -1,12 +1,13 @@
+import { Osc } from "../interface/state";
 import { mapRange } from "./util";
 
-type Osc = (t: number, freq: number) => number;
+type OscFn = (t: number, freq: number) => number;
 
-export const sine: Osc = (t, freq) => Math.sin(Math.PI * 2 * freq * t);
-export const saw: Osc = (t, freq) => 2 * ((t * freq) % 1) - 1;
-export const triangle: Osc = (t, freq) => 2 * (Math.abs(saw(t, freq)) - 0.5);
-export const noise: Osc = () => Math.random() * 2 - 1;
-export const pulse = (width: number) => (t: number, freq: number) =>
+const sine: OscFn = (t, freq) => Math.sin(Math.PI * 2 * freq * t);
+const saw: OscFn = (t, freq) => 2 * ((t * freq) % 1) - 1;
+const triangle: OscFn = (t, freq) => 2 * (Math.abs(saw(t, freq)) - 0.5);
+const noise: OscFn = () => Math.random() * 2 - 1;
+const pulse = (width: number) => (t: number, freq: number) =>
   (t * freq) % 1 < width ? -1 : 1;
 
 const sampleFrom = (samples: number[]) => (t: number, freq: number) => {
@@ -14,7 +15,7 @@ const sampleFrom = (samples: number[]) => (t: number, freq: number) => {
   return samples[i];
 };
 
-export const fromWord = (word: string) =>
+const fromWord = (word: string) =>
   sampleFrom(
     word
       .split("")
@@ -31,5 +32,15 @@ const triSteps = (n: number) => {
   return up.concat(down);
 };
 
-export const nesTriangle = sampleFrom(triSteps(8));
-export const nesSaw = sampleFrom(sawSteps(6));
+const nesTriangle = sampleFrom(triSteps(8));
+const nesSaw = sampleFrom(sawSteps(6));
+
+export const oscillator = (options: Osc): OscFn => {
+  if (options.type === "saw") return saw;
+  if (options.type === "nesTriangle") return nesTriangle;
+  if (options.type === "pulse") return pulse(0.5);
+  if (options.type === "sine") return sine;
+  if (options.type === "square") return pulse(0.5);
+  if (options.type === "triangle") return triangle;
+  return options;
+};

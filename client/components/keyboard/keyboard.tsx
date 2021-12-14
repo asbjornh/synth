@@ -1,6 +1,6 @@
 import cn from "classnames";
 import React from "react";
-import { Note } from "../../../interface/osc";
+import { Note } from "../../../interface/state";
 import { useKeys } from "./use-keys";
 
 import "./keyboard.scss";

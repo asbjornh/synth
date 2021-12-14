@@ -1,4 +1,4 @@
-import { Note, NoteName, Octave } from "../interface/osc";
+import { Note, NoteName, Octave } from "../interface/state";
 
 const frequencies: Record<NoteName, Record<Octave, number>> = {
   C: {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Note, Osc, State } from "../../../interface/osc";
+import { Note, Osc, State } from "../../../interface/state";
 import { get, post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { Keyboard } from "../keyboard/keyboard";

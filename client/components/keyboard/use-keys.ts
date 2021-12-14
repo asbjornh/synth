@@ -1,5 +1,5 @@
 import { useCallback, useRef } from "react";
-import { Note } from "../../../interface/osc";
+import { Note } from "../../../interface/state";
 import { useKeydown } from "../../hooks/use-keydown";
 import { useKeyup } from "../../hooks/use-keyup";
 

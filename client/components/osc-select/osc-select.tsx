@@ -1,5 +1,5 @@
 import React from "react";
-import { Osc } from "../../../interface/osc";
+import { Osc } from "../../../interface/state";
 
 export const defaultOsc: Osc = {
   type: "saw",
