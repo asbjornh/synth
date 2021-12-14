@@ -5,6 +5,8 @@ import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { Keyboard } from "../keyboard/keyboard";
 import { defaultOsc, OscSelect } from "../osc-select/osc-select";
 
+import "./app.scss";
+
 export const App: React.FC = () => {
   const [state, setState] = useState<State>({
     filters: [],

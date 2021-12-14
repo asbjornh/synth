@@ -6,7 +6,7 @@ const { ESBuildMinifyPlugin } = require("esbuild-loader");
 
 const publicPath = "/";
 
-module.exports = function (_, { mode }) {
+module.exports = function (opts, { mode }) {
   const isProduction = mode === "production";
 
   return {
@@ -59,7 +59,7 @@ module.exports = function (_, { mode }) {
             { loader: MiniCssExtractPlugin.loader },
             {
               loader: require.resolve("css-loader"),
-              options: { importLoaders: 3, sourceMap: true },
+              options: { importLoaders: 1, sourceMap: true },
             },
             {
               loader: require.resolve("sass-loader"),
