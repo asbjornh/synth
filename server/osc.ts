@@ -35,12 +35,17 @@ const triSteps = (n: number) => {
 const nesTriangle = sampleFrom(triSteps(8));
 const nesSaw = sampleFrom(sawSteps(6));
 
-export const oscillator = (options: Osc): OscFn => {
-  if (options.type === "saw") return saw;
-  if (options.type === "nesTriangle") return nesTriangle;
-  if (options.type === "pulse") return pulse(0.5);
-  if (options.type === "sine") return sine;
-  if (options.type === "square") return pulse(0.5);
-  if (options.type === "triangle") return triangle;
-  return options;
+const getGenerator = (osc: Osc): OscFn => {
+  if (osc.type === "saw") return saw;
+  if (osc.type === "nesTriangle") return nesTriangle;
+  if (osc.type === "pulse") return pulse(0.5);
+  if (osc.type === "sine") return sine;
+  if (osc.type === "square") return pulse(0.5);
+  if (osc.type === "triangle") return triangle;
+  return osc;
+};
+
+export const oscillator = (osc: Osc): OscFn => {
+  const generator = getGenerator(osc);
+  return (t: number, freq: number) => osc.options.gain * generator(t, freq);
 };

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Note, Osc, State } from "../../../interface/state";
+import { State } from "../../../interface/state";
 import { get, post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { Keyboard } from "../keyboard/keyboard";
-import { defaultOsc, OscSelect } from "../osc-select/osc-select";
+import { Oscillators } from "../oscillators/oscillators";
 
 import "./app.scss";
 
@@ -23,28 +23,12 @@ export const App: React.FC = () => {
       ...next,
     }));
 
-  const addOsc = () =>
-    patchState({ oscillators: state.oscillators.concat(defaultOsc) });
-
-  const setOsc = (index: number) => (osc: Osc) =>
-    patchState({
-      oscillators: state.oscillators.map((o, i) => (i === index ? osc : o)),
-    });
-
-  const rmOsc = (index: number) =>
-    patchState({
-      oscillators: state.oscillators.filter((_, i) => i !== index),
-    });
-
   return (
     <div>
-      {state.oscillators.map((osc, index) => (
-        <div key={JSON.stringify(osc)}>
-          <OscSelect osc={osc} onChange={setOsc(index)} />
-          <button onClick={() => rmOsc(index)}>Remove</button>
-        </div>
-      ))}
-      <button onClick={addOsc}>Add oscillator</button>
+      <Oscillators
+        oscillators={state.oscillators}
+        onChange={(oscillators) => patchState({ oscillators })}
+      />
 
       <div>
         <Keyboard

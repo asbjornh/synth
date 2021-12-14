@@ -1,0 +1,20 @@
+.oscillators {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 10px;
+  border-radius: 10px;
+  border: 1px solid whitesmoke;
+
+  > * {
+    padding: 0 10px 10px;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid whitesmoke;
+    }
+  }
+
+  h2 {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+}

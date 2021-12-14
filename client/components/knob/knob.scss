@@ -1,0 +1,67 @@
+.knob {
+  $size: 60px;
+  $padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: $size;
+
+  &__label {
+    margin-bottom: 5px;
+  }
+
+  input {
+    width: 50%;
+    border: none;
+    background-color: whitesmoke;
+    border-radius: 3px;
+    padding: 3px 6px;
+  }
+
+  &__wrapper {
+    flex-shrink: 0;
+    height: $size;
+    width: $size;
+    position: relative;
+  }
+
+  &__meter {
+    display: block;
+    height: $size;
+    width: $size;
+    transform: rotate(140deg);
+  }
+
+  &__wheel-wrapper {
+    position: absolute;
+    top: $padding;
+    left: $padding;
+    right: $padding;
+    bottom: $padding;
+    box-shadow: 1px 4px 6px rgba(black, 0.2);
+    border-radius: 50%;
+    transform: translateY(-3%);
+  }
+
+  &__wheel {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: whitesmoke;
+    border-radius: 50%;
+  }
+
+  &__dot {
+    position: absolute;
+    height: 5px;
+    width: 5px;
+    background-color: gray;
+    border-radius: 5px;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

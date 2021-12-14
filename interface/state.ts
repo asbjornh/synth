@@ -22,15 +22,18 @@ export type Note = {
 
 export type OscOptions = {
   detune: number;
+  gain: number;
 };
 
+type Oscillator<Type extends string> = { type: Type; options: OscOptions };
+
 export type Osc =
-  | { type: "saw"; options: OscOptions }
-  | { type: "square"; options: OscOptions }
-  | { type: "sine"; options: OscOptions }
-  | { type: "triangle"; options: OscOptions }
-  | { type: "nesTriangle"; options: OscOptions & { samples: number } }
-  | { type: "pulse"; options: OscOptions & { width: number } };
+  | Oscillator<"saw">
+  | Oscillator<"square">
+  | Oscillator<"sine">
+  | Oscillator<"triangle">
+  | (Oscillator<"nesTriangle"> & { nesTriangle: { samples: number } })
+  | (Oscillator<"pulse"> & { pulse: { width: number } });
 
 export type Filter = {
   shape: FilterShape;

@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "serve": "ts-node-dev server",
+    "serve:mock": "ts-node-dev server/serve-mock",
     "build": "webpack --mode=development --watch"
   },
   "author": "Asbjørn Hegdahl",
   "license": "MIT",
   "dependencies": {
     "classnames": "^2.3.1",
+    "color-interpolate": "^1.0.5",
     "express": "^4.17.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

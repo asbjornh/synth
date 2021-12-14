@@ -40,6 +40,7 @@ export const Keyboard: React.FC<{
 
   return (
     <div className="keyboard">
+      <h2>Keyboard</h2>
       <ul className="keyboard__keys">
         {keys.map((key) => (
           <Key
