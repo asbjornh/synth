@@ -1,9 +1,13 @@
 .oscillator {
-  display: grid;
-  grid-template-columns: auto auto 1fr auto;
-  column-gap: 20px;
+  position: relative;
 
   &__label {
     margin-bottom: 5px;
+  }
+
+  &__remove {
+    position: absolute;
+    top: 0;
+    right: 0;
   }
 }

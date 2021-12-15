@@ -1,0 +1,8 @@
+$shadow-outer: rgb(135 5 13);
+$shadow-inner: rgb(10 5 135);
+
+$shadow-small: 0px 6px 6px rgba($shadow-outer, 0.03),
+  -1px 2px 4px rgba($shadow-inner, 0.05);
+$shadow-small-dark: 0px 6px 6px rgba($shadow-outer, 0.1),
+  -1px 2px 4px rgba($shadow-inner, 0.1);
+$shadow-inner: inset 0 2px 3px rgba(black, 0.1);

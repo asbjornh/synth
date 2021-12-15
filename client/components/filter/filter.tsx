@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Filter as FilterType } from "../../../interface/state";
+import { entries } from "../../util";
+import { Control, ControlStrip } from "../control-strip/control-strip";
 import { Knob } from "../knob/knob";
+import { Select } from "../select/select";
 import "./filter.scss";
 
 export const defaultFilter: FilterType = {
   shape: "low-pass",
-  cutoff: 1000,
+  cutoff: 5000,
   Q: 0.5,
   bellGain: 1,
 };
@@ -22,6 +25,8 @@ const types: Record<FilterType["shape"], string> = {
   "high-shelf": "High shelf",
 };
 
+const typeOptions = entries(types).map(([value, label]) => ({ value, label }));
+
 export const Filter: React.FC<{
   filter: FilterType;
   onChange: (filter: FilterType) => void;
@@ -29,30 +34,36 @@ export const Filter: React.FC<{
   const [cutoff, setCutoff] = useState(filter.cutoff);
   const [Q, setQ] = useState(filter.Q);
 
-  const changeType = (shape: any) => onChange({ ...filter, shape });
+  const changeType = (shape: FilterType["shape"]) =>
+    onChange({ ...filter, shape });
 
   useEffect(() => onChange({ ...filter, cutoff, Q }), [cutoff, Q]);
 
   return (
     <div className="filter">
-      <select value={filter.shape} onChange={(e) => changeType(e.target.value)}>
-        {Object.entries(types).map(([shape, label]) => (
-          <option key={shape} value={shape}>
-            {label}
-          </option>
-        ))}
-      </select>
+      <ControlStrip>
+        <Control label="Type">
+          <Select
+            value={filter.shape}
+            options={typeOptions}
+            onChange={changeType}
+          />
+        </Control>
 
-      <Knob
-        label="Cutoff"
-        min={0}
-        max={10_000}
-        value={cutoff}
-        step={1}
-        onChange={setCutoff}
-      />
+        <Control label="Cutoff">
+          <Knob
+            min={0}
+            max={10_000}
+            value={cutoff}
+            step={1}
+            onChange={setCutoff}
+          />
+        </Control>
 
-      <Knob label="Q" min={0.1} max={10} value={Q} step={0.1} onChange={setQ} />
+        <Control label="Q">
+          <Knob min={0.1} max={10} value={Q} step={0.1} onChange={setQ} />
+        </Control>
+      </ControlStrip>
     </div>
   );
 };

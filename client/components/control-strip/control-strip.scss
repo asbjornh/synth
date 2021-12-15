@@ -1,0 +1,35 @@
+@use "../../vars.scss";
+
+.control-strip {
+  display: flex;
+  column-gap: 3px;
+
+  &__control {
+    border: 1px solid #eeedf1;
+    border-radius: 5px;
+    box-shadow: vars.$shadow-small;
+    background-color: white;
+  }
+
+  &__control-label {
+    padding: 5px 10px;
+    background-color: #f2f2fa;
+    text-align: center;
+    border-radius: 5px;
+    border: 2px solid white;
+  }
+
+  &__control-content {
+    padding: 10px;
+  }
+
+  &__control-stack {
+    display: flex;
+    flex-direction: column;
+    row-gap: 3px;
+
+    .control-strip__control {
+      flex-grow: 1;
+    }
+  }
+}

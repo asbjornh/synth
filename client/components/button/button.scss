@@ -1,0 +1,27 @@
+.button {
+  appearance: none;
+  border: none;
+  background-color: #ededed;
+  border-radius: 5px;
+  padding: 5px;
+
+  &:hover {
+    background-color: #4c4a5d;
+    color: white;
+  }
+
+  &--dark {
+    background-color: #4c4a5d;
+    color: white;
+
+    &:hover {
+      background-color: #898899;
+    }
+  }
+
+  svg {
+    display: block;
+    height: 16px;
+    width: auto;
+  }
+}

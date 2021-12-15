@@ -1,0 +1,35 @@
+.panel {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  row-gap: 10px;
+  border-radius: 10px;
+  border: 1px solid whitesmoke;
+  overflow: hidden;
+  width: 100%;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: #e9e9f4;
+    padding: 20px 10px;
+  }
+
+  h2 {
+    color: #4c4a5d;
+    margin: 0;
+    padding: 0;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    margin-top: auto;
+  }
+
+  &__actions {
+    margin-bottom: 20px;
+  }
+
+  &__content {
+    padding: 20px;
+    background-color: #f8f8fc;
+  }
+}

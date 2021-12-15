@@ -32,13 +32,16 @@ type Oscillator<Type extends string> = {
   options: OscOptions;
 };
 
-export type Osc =
-  | Oscillator<"saw">
-  | Oscillator<"square">
-  | Oscillator<"sine">
-  | Oscillator<"triangle">
-  | (Oscillator<"nesTriangle"> & { nesTriangle: { samples: number } })
-  | (Oscillator<"pulse"> & { pulse: { width: number } });
+export type Saw = Oscillator<"saw">;
+export type Square = Oscillator<"square">;
+export type Sine = Oscillator<"sine">;
+export type Triangle = Oscillator<"triangle">;
+export type NesTriangle = Oscillator<"nesTriangle"> & {
+  nesTriangle: { samples: number };
+};
+export type Pulse = Oscillator<"pulse"> & { pulse: { width: number } };
+
+export type Osc = Saw | Square | Sine | Triangle | NesTriangle | Pulse;
 
 export type Filter = {
   shape: FilterShape;

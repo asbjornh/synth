@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Osc } from "../../../interface/state";
+import { Trash2 } from "react-feather";
+import { Osc, Pulse } from "../../../interface/state";
+import { entries, fromEntries } from "../../util";
+import { Button } from "../button/button";
+import {
+  Control,
+  ControlStack,
+  ControlStrip,
+} from "../control-strip/control-strip";
 import { Knob } from "../knob/knob";
-import { Label } from "../label/label";
+import { Select } from "../select/select";
 
 import "./oscillator.scss";
 
@@ -24,6 +32,11 @@ const types: Record<Osc["type"], string> = {
   pulse: "Pulse",
 };
 
+const typeOptions = entries(types).map(([value, label]) => ({
+  value,
+  label,
+}));
+
 export const Oscillator: React.FC<{
   onChange: (osc: Osc) => void;
   onRemove: () => void;
@@ -32,53 +45,73 @@ export const Oscillator: React.FC<{
   const [gain, setGain] = useState(osc.options.gain);
   const [detune, setDetune] = useState(osc.options.detune);
   const [octave, setOctave] = useState(osc.options.octave);
-  const changeType = (type: any) => onChange({ ...osc, type });
+  const [pw, setPw] = useState((osc as Pulse).pulse?.width ?? 0.5);
+
+  const changeType = (type: Osc["type"]) => {
+    const common = { id: osc.id, options: osc.options };
+    if (type === "pulse")
+      return onChange({ ...common, type, pulse: { width: 0.5 } });
+    if (type === "nesTriangle")
+      return onChange({ ...common, type, nesTriangle: { samples: 16 } });
+    return onChange({ ...common, type });
+  };
 
   useEffect(() => {
-    onChange({ ...osc, options: { ...osc.options, gain, detune, octave } });
-  }, [gain, detune, octave]);
+    const options = { gain, detune, octave };
+    if (osc.type === "pulse")
+      return onChange({ ...osc, options, pulse: { width: pw } });
+    onChange({ ...osc, options });
+  }, [gain, detune, octave, pw]);
 
   return (
     <div className="oscillator">
-      <label>
-        <Label className="oscillator__label">Wave</Label>
-        <select value={osc.type} onChange={(e) => changeType(e.target.value)}>
-          {Object.entries(types).map(([type, label]) => (
-            <option key={type} value={type}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </label>
+      <ControlStrip>
+        <ControlStack>
+          <Control label="Wave">
+            <Select
+              value={osc.type}
+              options={typeOptions}
+              onChange={changeType}
+            />
+          </Control>
 
-      <Knob
-        label="Gain"
-        min={0}
-        max={1}
-        step={0.01}
-        value={gain}
-        onChange={setGain}
-      />
+          <Control>
+            <Button onClick={onRemove}>
+              <Trash2 />
+            </Button>
+          </Control>
+        </ControlStack>
 
-      <Knob
-        label="Detune"
-        min={-24}
-        max={24}
-        value={detune}
-        step={1}
-        onChange={setDetune}
-      />
+        <Control label="Gain">
+          <Knob min={0} max={1} step={0.01} value={gain} onChange={setGain} />
+        </Control>
 
-      <Knob
-        label="Octave"
-        min={-4}
-        max={4}
-        value={octave}
-        step={1}
-        onChange={setOctave}
-      />
+        <Control label="Detune">
+          <Knob
+            min={-24}
+            max={24}
+            value={detune}
+            step={1}
+            onChange={setDetune}
+          />
+        </Control>
 
-      <button onClick={onRemove}>Remove</button>
+        <Control label="Octave">
+          <Knob min={-4} max={4} value={octave} step={1} onChange={setOctave} />
+        </Control>
+
+        {osc.type === "pulse" && (
+          <Control label="Pulse W." title="Pulse width">
+            <Knob
+              min={0.001}
+              max={0.999}
+              value={pw}
+              step={0.001}
+              onChange={setPw}
+            />
+          </Control>
+        )}
+      </ControlStrip>
     </div>
   );
 };

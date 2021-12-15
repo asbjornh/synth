@@ -25,18 +25,22 @@ export const App: React.FC = () => {
     }));
 
   return (
-    <div>
-      <Oscillators
-        oscillators={state.oscillators}
-        onChange={(oscillators) => patchState({ oscillators })}
-      />
+    <div className="app">
+      <div className="app__osc">
+        <Oscillators
+          oscillators={state.oscillators}
+          onChange={(oscillators) => patchState({ oscillators })}
+        />
+      </div>
 
-      <Filters
-        filters={state.filters}
-        onChange={(filters) => patchState({ filters })}
-      />
+      <div className="app__filter">
+        <Filters
+          filters={state.filters}
+          onChange={(filters) => patchState({ filters })}
+        />
+      </div>
 
-      <div>
+      <div className="app_keyboard">
         <Keyboard
           notes={state.notes}
           onChange={(notes) => patchState({ notes })}

@@ -4,6 +4,7 @@ import { Note } from "../../../interface/state";
 import { useKeys } from "./use-keys";
 
 import "./keyboard.scss";
+import { Panel } from "../panel/panel";
 
 type Key = {
   black?: boolean;
@@ -40,17 +41,18 @@ export const Keyboard: React.FC<{
 
   return (
     <div className="keyboard">
-      <h2>Keyboard</h2>
-      <ul className="keyboard__keys">
-        {keys.map((key) => (
-          <Key
-            key={key.code}
-            notes={props.notes}
-            onChange={props.onChange}
-            {...key}
-          />
-        ))}
-      </ul>
+      <Panel title="Keyboard">
+        <ul className="keyboard__keys">
+          {keys.map((key) => (
+            <Key
+              key={key.code}
+              notes={props.notes}
+              onChange={props.onChange}
+              {...key}
+            />
+          ))}
+        </ul>
+      </Panel>
     </div>
   );
 };

@@ -1,6 +1,9 @@
 import React from "react";
+import { PlusSquare } from "react-feather";
 import { Filter as FilterType } from "../../../interface/state";
+import { Button } from "../button/button";
 import { defaultFilter, Filter } from "../filter/filter";
+import { Panel } from "../panel/panel";
 import "./filters";
 
 export const Filters: React.FC<{
@@ -13,14 +16,19 @@ export const Filters: React.FC<{
     onChange(filters.map((f, i) => (i === index ? filter : f)));
 
   return (
-    <div>
-      <h2>Filters</h2>
+    <Panel
+      title="Filters"
+      actions={
+        <Button onClick={addFilter} color="dark">
+          <PlusSquare />
+        </Button>
+      }
+    >
       {filters.map((filter, index) => (
         <div key={filter.shape + index}>
           <Filter filter={filter} onChange={setFilter(index)} />
         </div>
       ))}
-      <button onClick={addFilter}>Add filter</button>
-    </div>
+    </Panel>
   );
 };

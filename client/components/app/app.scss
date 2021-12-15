@@ -3,3 +3,23 @@ html {
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   user-select: none;
 }
+
+.app {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "osc filter" "keyboard keyboard";
+
+  &__osc {
+    grid-area: osc;
+  }
+
+  &__filter {
+    display: flex;
+    grid-area: filter;
+  }
+
+  &__keyboard {
+    grid-area: keyboard;
+  }
+}

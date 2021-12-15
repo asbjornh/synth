@@ -16,13 +16,12 @@ import "./knob.scss";
 import { Label } from "../label/label";
 
 export const Knob: React.FC<{
-  label: string;
   min: number;
   max: number;
   value: number;
   step: number;
   onChange: (next: number) => void;
-}> = ({ label, min, max, value, onChange, step }) => {
+}> = ({ min, max, value, onChange, step }) => {
   const [knobValue, setKnobValue] = useState(value);
   const [input, setInput] = useState("");
   const [el, setEl] = useState<HTMLDivElement | null>(null);
@@ -65,7 +64,6 @@ export const Knob: React.FC<{
 
   return (
     <div className="knob">
-      <Label className="knob__label">{label}</Label>
       <div className="knob__wrapper">
         <svg className="knob__meter">
           <circle
@@ -91,7 +89,13 @@ export const Knob: React.FC<{
         </div>
       </div>
 
-      <input value={input} onChange={(e) => onInput(e.target.value)} />
+      <input
+        value={input}
+        onChange={(e) => onInput(e.target.value)}
+        style={{
+          backgroundColor: color.replace(")", ",0.2)").replace("rgb", "rgba"),
+        }}
+      />
     </div>
   );
 };

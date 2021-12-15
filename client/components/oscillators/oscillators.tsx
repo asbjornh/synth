@@ -1,6 +1,9 @@
 import React from "react";
+import { PlusSquare } from "react-feather";
 import { Osc } from "../../../interface/state";
+import { Button } from "../button/button";
 import { defaultOsc, Oscillator } from "../oscillator/oscillator";
+import { Panel } from "../panel/panel";
 
 import "./oscillators.scss";
 
@@ -17,20 +20,25 @@ export const Oscillators: React.FC<{
     onChange(oscillators.filter((_, i) => i !== index));
 
   return (
-    <div className="oscillators">
-      <h2>Oscillators</h2>
-      {oscillators.map((osc, index) => (
-        <div key={osc.id}>
-          <Oscillator
-            osc={osc}
-            onChange={setOsc(index)}
-            onRemove={() => rmOsc(index)}
-          />
-        </div>
-      ))}
-      <div>
-        <button onClick={addOsc}>Add oscillator</button>
+    <Panel
+      title="Oscillators"
+      actions={
+        <Button onClick={addOsc} color="dark">
+          <PlusSquare />
+        </Button>
+      }
+    >
+      <div className="oscillators">
+        {oscillators.map((osc, index) => (
+          <div key={osc.id}>
+            <Oscillator
+              osc={osc}
+              onChange={setOsc(index)}
+              onRemove={() => rmOsc(index)}
+            />
+          </div>
+        ))}
       </div>
-    </div>
+    </Panel>
   );
 };

@@ -14,3 +14,9 @@ export const mapRange = (
 
 export const clamp = (v: number, min: number, max: number) =>
   Math.max(min, Math.min(max, v));
+
+export const entries = <T extends Record<string, any>>(obj: T) =>
+  Object.entries<T>(obj) as [keyof T, T[keyof T]][];
+
+export const fromEntries = <T extends [string, any][]>(entries: T) =>
+  Object.fromEntries<T>(entries) as Record<T[number][0], T[number][1]>;
