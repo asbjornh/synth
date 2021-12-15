@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { State } from "../../../interface/state";
 import { get, post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
+import { Filters } from "../filters/filters";
 import { Keyboard } from "../keyboard/keyboard";
 import { Oscillators } from "../oscillators/oscillators";
 
@@ -28,6 +29,11 @@ export const App: React.FC = () => {
       <Oscillators
         oscillators={state.oscillators}
         onChange={(oscillators) => patchState({ oscillators })}
+      />
+
+      <Filters
+        filters={state.filters}
+        onChange={(filters) => patchState({ filters })}
       />
 
       <div>
