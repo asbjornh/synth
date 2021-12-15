@@ -3,7 +3,7 @@ import Speaker from "speaker";
 
 import { filter } from "./filter";
 import { clamp, map } from "./util";
-import { State } from "../interface/state";
+import { Note, State } from "../interface/state";
 import { frequency } from "./frequencies";
 import { oscillator } from "./osc";
 
@@ -14,8 +14,8 @@ type Options = {
 };
 
 type PlayerState = {
-  oscillators: ((t: number, freq: number) => number)[];
-  freqs: number[];
+  oscillators: ((t: number, note: Note) => number)[];
+  notes: Note[];
   /** Each element holds an array of filter functions per channel */
   filters: ((sample: number) => number)[][];
 };
@@ -36,8 +36,8 @@ const gen = (
       const t = (samplesGenerated + i) / opts.sampleRate;
       out[channel][i] = 0;
       map(state.oscillators, (oscillator) => {
-        map(state.freqs, (freq) => {
-          out[channel][i] += oscillator(t, freq);
+        map(state.notes, (note) => {
+          out[channel][i] += oscillator(t, note);
         });
       });
       map(state.filters, (filters) => {
@@ -52,19 +52,18 @@ const gen = (
 
 const toPlayerState = (next: State, opts: Options): PlayerState => {
   const oscillators = next.oscillators.map(oscillator);
-  const freqs = next.notes.map(frequency);
   const filters = map(next.filters, (f) =>
     map(Array.from({ length: opts.channels }), (_) =>
       filter(f.shape, f.cutoff, f.Q, f.bellGain, opts.sampleRate)
     )
   );
-  return { oscillators, freqs, filters };
+  return { oscillators, notes: next.notes, filters };
 };
 
 export const Player = (opts: Options) => {
   let state: PlayerState = {
     oscillators: [],
-    freqs: [],
+    notes: [],
     filters: [],
   };
 
@@ -81,7 +80,7 @@ export const Player = (opts: Options) => {
       const numSamples = (chunkSize / blockAlign) | 0;
       const buf = Buffer.alloc(numSamples * blockAlign);
 
-      if (state.oscillators.length === 0 || state.freqs.length === 0) {
+      if (state.oscillators.length === 0 || state.notes.length === 0) {
         this.push(buf);
         return;
       }

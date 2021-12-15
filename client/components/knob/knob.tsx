@@ -23,6 +23,7 @@ export const Knob: React.FC<{
   step: number;
   onChange: (next: number) => void;
 }> = ({ label, min, max, value, onChange, step }) => {
+  const [knobValue, setKnobValue] = useState(value);
   const [input, setInput] = useState("");
   const [el, setEl] = useState<HTMLDivElement | null>(null);
 
@@ -32,18 +33,20 @@ export const Knob: React.FC<{
   const onDrag = useCallback(
     (delta: { x: number; y: number }) => {
       const { x, y } = delta;
-      const v = mapRange(value, [min, max], [-100, 100]);
+      const v = mapRange(knobValue, [min, max], [-100, 100]);
       const mapped = mapRange(v + x - y, [-100, 100], [min, max]);
       const clamped = clamp(mapped, min, max);
-      onChange(clamped);
+      setKnobValue(clamped);
+      onChange(quantize(clamped));
     },
-    [value]
+    [knobValue]
   );
 
   const onInput = (input: string) => {
-    if (input) {
-      const value = parseFloat(input);
+    const value = parseFloat(input);
+    if (!isNaN(value)) {
       const clamped = clamp(value, min, max);
+      setKnobValue(quantize(clamped));
       onChange(quantize(clamped));
     }
     setInput(input);
@@ -57,8 +60,8 @@ export const Knob: React.FC<{
 
   useDrag(el, onDrag);
 
-  const rotation = mapRange(value, [min, max], [-130, 130]);
-  const color = getColor(mapRange(value, [min, max], [0, 1]));
+  const rotation = mapRange(knobValue, [min, max], [-130, 130]);
+  const color = getColor(mapRange(knobValue, [min, max], [0, 1]));
 
   return (
     <div className="knob">
@@ -74,7 +77,7 @@ export const Knob: React.FC<{
             strokeLinecap="round"
             fill="none"
             strokeDasharray="314% 1000%"
-            strokeDashoffset={`${mapRange(value, [min, max], [320, 110])}%`}
+            strokeDashoffset={`${mapRange(knobValue, [min, max], [320, 110])}%`}
           />
         </svg>
         <div className="knob__wheel-wrapper">

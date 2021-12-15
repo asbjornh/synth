@@ -22,10 +22,15 @@ export type Note = {
 
 export type OscOptions = {
   detune: number;
+  octave: number;
   gain: number;
 };
 
-type Oscillator<Type extends string> = { type: Type; options: OscOptions };
+type Oscillator<Type extends string> = {
+  id: string;
+  type: Type;
+  options: OscOptions;
+};
 
 export type Osc =
   | Oscillator<"saw">

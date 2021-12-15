@@ -8,7 +8,7 @@ export const Oscillators: React.FC<{
   oscillators: Osc[];
   onChange: (oscillators: Osc[]) => void;
 }> = ({ oscillators, onChange }) => {
-  const addOsc = () => onChange(oscillators.concat(defaultOsc));
+  const addOsc = () => onChange(oscillators.concat(defaultOsc()));
 
   const setOsc = (index: number) => (osc: Osc) =>
     onChange(oscillators.map((o, i) => (i === index ? osc : o)));
@@ -20,7 +20,7 @@ export const Oscillators: React.FC<{
     <div className="oscillators">
       <h2>Oscillators</h2>
       {oscillators.map((osc, index) => (
-        <div key={osc.type + index}>
+        <div key={osc.id}>
           <Oscillator
             osc={osc}
             onChange={setOsc(index)}

@@ -1,7 +1,10 @@
-import { Osc } from "../interface/state";
-import { mapRange } from "./util";
+import { Note, Octave, Osc } from "../interface/state";
+import { frequency } from "./frequencies";
+import { clamp, mapRange } from "./util";
 
 type OscFn = (t: number, freq: number) => number;
+
+const toOct = (num: number) => clamp(Math.round(num), 0, 8) as Octave;
 
 const sine: OscFn = (t, freq) => Math.sin(Math.PI * 2 * freq * t);
 const saw: OscFn = (t, freq) => 2 * ((t * freq) % 1) - 1;
@@ -35,6 +38,8 @@ const triSteps = (n: number) => {
 const nesTriangle = sampleFrom(triSteps(8));
 const nesSaw = sampleFrom(sawSteps(6));
 
+const applyDetune = (freq: number, cents: number) =>
+  freq * Math.pow(2, cents / 1200);
 const getGenerator = (osc: Osc): OscFn => {
   if (osc.type === "saw") return saw;
   if (osc.type === "nesTriangle") return nesTriangle;
@@ -45,7 +50,15 @@ const getGenerator = (osc: Osc): OscFn => {
   return osc;
 };
 
-export const oscillator = (osc: Osc): OscFn => {
+export const oscillator = (osc: Osc) => {
+  const { detune, octave } = osc.options;
+
   const generator = getGenerator(osc);
-  return (t: number, freq: number) => osc.options.gain * generator(t, freq);
+  return (t: number, note: Note) => {
+    const adjustedNote =
+      octave === 0 ? note : { ...note, oct: toOct(note.oct + octave) };
+    const freq = frequency(adjustedNote);
+    const adjustedFreq = detune === 0 ? freq : applyDetune(freq, detune);
+    return osc.options.gain * generator(t, adjustedFreq);
+  };
 };

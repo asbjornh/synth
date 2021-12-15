@@ -5,13 +5,15 @@ import { Label } from "../label/label";
 
 import "./oscillator.scss";
 
-export const defaultOsc: Osc = {
+export const defaultOsc = (): Osc => ({
+  id: String(Date.now()),
   type: "saw",
   options: {
     gain: 1,
     detune: 0,
+    octave: 0,
   },
-};
+});
 
 const types: Record<Osc["type"], string> = {
   saw: "Saw",
@@ -29,11 +31,12 @@ export const Oscillator: React.FC<{
 }> = ({ onChange, onRemove, osc }) => {
   const [gain, setGain] = useState(osc.options.gain);
   const [detune, setDetune] = useState(osc.options.detune);
+  const [octave, setOctave] = useState(osc.options.octave);
   const changeType = (type: any) => onChange({ ...osc, type });
 
   useEffect(() => {
-    onChange({ ...osc, options: { ...osc.options, gain } });
-  }, [gain]);
+    onChange({ ...osc, options: { ...osc.options, gain, detune, octave } });
+  }, [gain, detune, octave]);
 
   return (
     <div className="oscillator">
@@ -48,27 +51,32 @@ export const Oscillator: React.FC<{
         </select>
       </label>
 
-      <div>
-        <Knob
-          label="Gain"
-          min={0}
-          max={1}
-          step={0.01}
-          value={gain}
-          onChange={setGain}
-        />
-      </div>
+      <Knob
+        label="Gain"
+        min={0}
+        max={1}
+        step={0.01}
+        value={gain}
+        onChange={setGain}
+      />
 
-      <div>
-        <Knob
-          label="Detune"
-          min={-24}
-          max={24}
-          value={detune}
-          step={1}
-          onChange={setDetune}
-        />
-      </div>
+      <Knob
+        label="Detune"
+        min={-24}
+        max={24}
+        value={detune}
+        step={1}
+        onChange={setDetune}
+      />
+
+      <Knob
+        label="Octave"
+        min={-4}
+        max={4}
+        value={octave}
+        step={1}
+        onChange={setOctave}
+      />
 
       <button onClick={onRemove}>Remove</button>
     </div>
