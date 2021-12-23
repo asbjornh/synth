@@ -1,10 +1,9 @@
 import { Readable } from "stream";
-import Speaker from "speaker";
+import { AudioIO } from "naudiodon";
 
 import { filter } from "./filter";
 import { clamp, map } from "./util";
 import { Note, State } from "../interface/state";
-import { frequency } from "./frequencies";
 import { oscillator } from "./osc";
 
 type Options = {
@@ -102,7 +101,16 @@ export const Player = (opts: Options) => {
       samplesGenerated += numSamples;
     },
   });
-  stream.pipe(new Speaker(opts));
+  const io = AudioIO({
+    outOptions: {
+      channelCount: opts.channels,
+      sampleFormat: opts.bitDepth,
+      sampleRate: opts.sampleRate,
+      framesPerBuffer: 512, // Magic number. Crashes if too low
+    },
+  });
+  stream.pipe(io);
+  io.start();
 
   return {
     setState: (next: State) => {
@@ -110,6 +118,7 @@ export const Player = (opts: Options) => {
     },
     kill: () => {
       stream.destroy();
+      io.quit();
     },
   };
 };

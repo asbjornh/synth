@@ -5,6 +5,8 @@ import util from "util";
 import { State } from "../interface/state";
 import { Player } from "./player";
 
+const debug = process.argv.includes("--debug");
+
 let state: State = {
   filters: [],
   notes: [],
@@ -17,8 +19,12 @@ const player = Player({
   sampleRate: 44100,
 });
 
+const app = express();
+const server = http.createServer(app);
+
 const onExit = () => {
   player.kill();
+  server.close();
   process.exit();
 };
 
@@ -26,9 +32,6 @@ process.on("exit", onExit);
 process.on("SIGINT", onExit);
 process.on("SIGUSR1", onExit);
 process.on("SIGUSR2", onExit);
-
-const app = express();
-const server = http.createServer(app);
 
 app.use(express.json());
 
@@ -43,8 +46,10 @@ app.post("/set-state", (req, res) => {
   if (Array.isArray(body?.oscillators) && Array.isArray(body?.filters)) {
     state = body;
     player.setState(state);
-    console.clear();
-    console.log(util.inspect(state, false, null, true));
+    if (debug) {
+      console.clear();
+      console.log(util.inspect(state, false, null, true));
+    }
     res.send(state);
   } else {
     res.status(400).send("Invalid payload");
