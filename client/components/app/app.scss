@@ -8,7 +8,7 @@ html {
   display: grid;
   gap: 20px;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas: "osc filter" "keyboard keyboard";
+  grid-template-areas: "osc filter" "env _" "keyboard keyboard";
 
   &__osc {
     grid-area: osc;
@@ -17,6 +17,10 @@ html {
   &__filter {
     display: flex;
     grid-area: filter;
+  }
+
+  &__amp-envelope {
+    grid-area: env;
   }
 
   &__keyboard {

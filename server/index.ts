@@ -8,6 +8,7 @@ import { Player } from "./player";
 const debug = process.argv.includes("--debug");
 
 let state: State = {
+  ampEnv: undefined,
   filters: [],
   notes: [],
   oscillators: [],

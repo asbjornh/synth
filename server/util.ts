@@ -20,5 +20,16 @@ export const map = <T, U>(arr: T[], fn: (el: T, index: number) => U): U[] => {
   return next;
 };
 
+export const mapO = <O extends Record<string, any>, U>(
+  obj: O,
+  fn: (value: NonNullable<O[keyof O]>, key: keyof O) => U
+): Record<keyof O, U> => {
+  const next = {} as Record<keyof O, U>;
+  for (let key in obj) {
+    next[key] = fn(obj[key], key);
+  }
+  return next;
+};
+
 export const clamp = (v: number, min: number, max: number) =>
   Math.max(min, Math.min(max, v));

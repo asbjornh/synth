@@ -1,6 +1,6 @@
-import { Note, Octave, Osc } from "../interface/state";
-import { frequency } from "./frequencies";
-import { clamp, mapRange } from "./util";
+import { Note, Osc } from "../interface/state";
+import { frequencies } from "./frequencies";
+import { mapRange } from "./util";
 
 type OscFn = (t: number, freq: number) => number;
 
@@ -57,7 +57,7 @@ export const oscillator = (osc: Osc) => {
   const generator = getGenerator(osc);
 
   return (t: number, note: Note) => {
-    const freq = frequency(note) * octaveMultiplier * detuneMultiplier;
+    const freq = frequencies[note] * octaveMultiplier * detuneMultiplier;
     return osc.options.gain * generator(t, freq);
   };
 };

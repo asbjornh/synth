@@ -1,9 +1,6 @@
-import { useCallback, useRef } from "react";
-import { Note } from "../../../interface/state";
+import { useRef } from "react";
 import { useKeydown } from "../../hooks/use-keydown";
 import { useKeyup } from "../../hooks/use-keyup";
-
-const id = (note: Note): string => note.name + note.oct;
 
 export const useKeys = (onChange: (codes: string[]) => void) => {
   const pressed = useRef<Record<string, boolean>>({});

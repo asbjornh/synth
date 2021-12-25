@@ -1,6 +1,6 @@
 import { FilterShape } from "../server/filter";
 
-export type NoteName =
+export type PitchClass =
   | "C"
   | "C#"
   | "D"
@@ -15,10 +15,7 @@ export type NoteName =
   | "B";
 export type Octave = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-export type Note = {
-  name: NoteName;
-  oct: Octave;
-};
+export type Note = `${PitchClass}${Octave}`;
 
 export type OscOptions = {
   detune: number;
@@ -50,7 +47,19 @@ export type Filter = {
   bellGain: number;
 };
 
+export type Envelope = {
+  /** Attack duration */
+  A: number;
+  /** Decay duration */
+  D: number;
+  /** Sustain level */
+  S: number;
+  /** Release duration */
+  R: number;
+};
+
 export type State = {
+  ampEnv: Envelope | undefined;
   filters: Filter[];
   notes: Note[];
   oscillators: Osc[];
