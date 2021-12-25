@@ -39,10 +39,9 @@ const gen = (
       out[channel][i] = 0;
       map(state.oscillators, (oscillator) => {
         mapO(state.notes, ({ start, end }, note) => {
-          // TODO: Use t instead of time stamp
           const { value: amplitude, done } = state.ampEnv
-            ? evalEnvelope(start, end, state.ampEnv)
-            : { value: 1, done: end && Date.now() >= end };
+            ? evalEnvelope(t, start, end, state.ampEnv)
+            : { value: 1, done: end && t >= end };
 
           if (done) onSilent(note);
           out[channel][i] += amplitude * oscillator(t, note);
@@ -61,7 +60,8 @@ const gen = (
 const toPlayerState = (
   cur: PlayerState,
   next: State,
-  opts: Options
+  opts: Options,
+  t: number
 ): PlayerState => {
   const oscillators = next.oscillators.map(oscillator);
   const filters = map(next.filters, (f) =>
@@ -72,12 +72,12 @@ const toPlayerState = (
   const nextNotes = { ...cur.notes };
   map(next.notes, (note) => {
     if (!nextNotes[note] || nextNotes[note]?.end) {
-      nextNotes[note] = { start: Date.now() };
+      nextNotes[note] = { start: t };
     }
   });
   mapO(nextNotes, (state, note) => {
     if (!state.end && !next.notes.includes(note)) {
-      nextNotes[note] = { ...state, end: Date.now() };
+      nextNotes[note] = { ...state, end: t };
     }
   });
   return { ampEnv: next.ampEnv, oscillators, notes: nextNotes, filters };
@@ -146,7 +146,12 @@ export const Player = (opts: Options) => {
 
   return {
     setState: (next: State) => {
-      state = toPlayerState(state, next, opts);
+      state = toPlayerState(
+        state,
+        next,
+        opts,
+        samplesGenerated / opts.sampleRate
+      );
     },
     kill: () => {
       stream.destroy();

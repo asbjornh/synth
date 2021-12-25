@@ -5,9 +5,9 @@ import { Knob } from "../knob/knob";
 
 export const defaultEnvelope: EnvType = {
   A: 0,
-  D: 100,
+  D: 0.1,
   S: 0.5,
-  R: 200,
+  R: 0.2,
 };
 
 export const Envelope: React.FC<{
@@ -24,9 +24,9 @@ export const Envelope: React.FC<{
       <Control label="Attack">
         <Knob
           min={0}
-          max={5000}
+          max={5}
           value={props.envelope.A}
-          step={1}
+          step={0.001}
           onChange={patch("A")}
         />
       </Control>
@@ -34,9 +34,9 @@ export const Envelope: React.FC<{
       <Control label="Decay">
         <Knob
           min={0}
-          max={5000}
+          max={5}
           value={props.envelope.D}
-          step={1}
+          step={0.001}
           onChange={patch("D")}
         />
       </Control>
@@ -54,9 +54,9 @@ export const Envelope: React.FC<{
       <Control label="Release">
         <Knob
           min={0}
-          max={5000}
+          max={5}
           value={props.envelope.R}
-          step={1}
+          step={0.001}
           onChange={patch("R")}
         />
       </Control>
