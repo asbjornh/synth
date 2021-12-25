@@ -1,7 +1,7 @@
 @use "../../vars.scss";
 
 .knob {
-  $size: 60px;
+  $size: 50px;
   $padding: 10px;
 
   display: flex;
@@ -14,7 +14,7 @@
   }
 
   input {
-    width: 60%;
+    width: 70%;
     border: none;
     border-radius: 3px;
     padding: 3px 6px;
@@ -33,18 +33,18 @@
     display: block;
     height: $size;
     width: $size;
-    transform: rotate(140deg);
+    transform: rotate(135deg);
   }
 
   &__wheel-wrapper {
     position: absolute;
-    top: $padding;
-    left: $padding;
-    right: $padding;
-    bottom: $padding;
+    height: $size * 0.6;
+    width: $size * 0.6;
+    top: 50%;
+    left: 50%;
     box-shadow: vars.$shadow-small-dark;
     border-radius: 50%;
-    transform: translateY(-3%);
+    transform: translate(-50%, -52%);
   }
 
   &__wheel {
@@ -56,6 +56,7 @@
     background-color: white;
     border: 1px solid #eeedf1;
     border-radius: 50%;
+    box-sizing: border-box;
   }
 
   &__dot {

@@ -71,11 +71,22 @@ export const Knob: React.FC<{
             cy="50%"
             r="45%"
             strokeWidth={4}
+            stroke="#f2f2fa"
+            strokeLinecap="round"
+            fill="none"
+            strokeDasharray="314% 1000%"
+            strokeDashoffset="104%"
+          />
+          <circle
+            cx="50%"
+            cy="50%"
+            r="45%"
+            strokeWidth={4}
             stroke={color}
             strokeLinecap="round"
             fill="none"
             strokeDasharray="314% 1000%"
-            strokeDashoffset={`${mapRange(knobValue, [min, max], [320, 110])}%`}
+            strokeDashoffset={`${mapRange(knobValue, [min, max], [314, 104])}%`}
           />
         </svg>
         <div className="knob__wheel-wrapper">

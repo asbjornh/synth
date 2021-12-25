@@ -56,7 +56,7 @@ export const App: React.FC = () => {
               {state.ampEnv ? <MinusSquare /> : <PlusSquare />}
             </Button>
           }
-          title="Amp. env."
+          title="Amp env"
         >
           {state.ampEnv && (
             <Envelope

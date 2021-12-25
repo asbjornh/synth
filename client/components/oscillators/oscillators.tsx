@@ -21,7 +21,7 @@ export const Oscillators: React.FC<{
 
   return (
     <Panel
-      title="Oscillators"
+      title="Osc"
       actions={
         <Button onClick={addOsc} color="dark">
           <PlusSquare />

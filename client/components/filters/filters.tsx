@@ -17,7 +17,7 @@ export const Filters: React.FC<{
 
   return (
     <Panel
-      title="Filters"
+      title="Filter"
       actions={
         <Button onClick={addFilter} color="dark">
           <PlusSquare />
