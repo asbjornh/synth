@@ -60,7 +60,7 @@ export type Envelope = {
 
 export type State = {
   ampEnv: Envelope | undefined;
-  filters: Filter[];
+  filter: Filter | undefined;
   notes: Note[];
   oscillators: Osc[];
 };

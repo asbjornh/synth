@@ -9,7 +9,7 @@ const debug = process.argv.includes("--debug");
 
 let state: State = {
   ampEnv: undefined,
-  filters: [],
+  filter: undefined,
   notes: [],
   oscillators: [],
 };

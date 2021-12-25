@@ -5,7 +5,7 @@ import { get, post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { Button } from "../button/button";
 import { defaultEnvelope, Envelope } from "../envelope/envelope";
-import { Filters } from "../filters/filters";
+import { defaultFilter, Filter } from "../filter/filter";
 import { Keyboard } from "../keyboard/keyboard";
 import { Oscillators } from "../oscillators/oscillators";
 import { Panel } from "../panel/panel";
@@ -15,7 +15,7 @@ import "./app.scss";
 export const App: React.FC = () => {
   const [state, setState] = useState<State>({
     ampEnv: undefined,
-    filters: [],
+    filter: undefined,
     notes: [],
     oscillators: [],
   });
@@ -29,9 +29,11 @@ export const App: React.FC = () => {
       ...next,
     }));
 
-  const toggleAmpenv = () => {
+  const toggleAmpenv = () =>
     patchState({ ampEnv: state.ampEnv ? undefined : defaultEnvelope });
-  };
+
+  const toggleFilter = () =>
+    patchState({ filter: state.filter ? undefined : defaultFilter });
 
   return (
     <div className="app">
@@ -43,10 +45,21 @@ export const App: React.FC = () => {
       </div>
 
       <div className="app__filter">
-        <Filters
-          filters={state.filters}
-          onChange={(filters) => patchState({ filters })}
-        />
+        <Panel
+          title="Filter"
+          actions={
+            <Button onClick={toggleFilter} color="dark">
+              {state.filter ? <MinusSquare /> : <PlusSquare />}
+            </Button>
+          }
+        >
+          {state.filter && (
+            <Filter
+              filter={state.filter}
+              onChange={(filter) => patchState({ filter })}
+            />
+          )}
+        </Panel>
       </div>
 
       <div className="app__amp-envelope">

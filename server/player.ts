@@ -1,7 +1,7 @@
 import { Readable } from "stream";
 import { AudioIO } from "naudiodon";
 
-import { filter } from "./filter";
+import { filter, FilterInstance } from "./filter";
 import { clamp, map, mapO } from "./util";
 import { Envelope, Note, State } from "../interface/state";
 import { oscillator } from "./osc";
@@ -17,8 +17,8 @@ type PlayerState = {
   ampEnv: Envelope | undefined;
   oscillators: ((t: number, note: Note) => number)[];
   notes: Partial<Record<Note, { start: number; end?: number }>>;
-  /** Each element holds an array of filter functions per channel */
-  filters: ((sample: number) => number)[][];
+  /** One filter instance per channel */
+  filter: FilterInstance[];
 };
 
 const gen = (
@@ -37,8 +37,8 @@ const gen = (
     for (let channel = 0; channel < opts.channels; channel++) {
       const t = (samplesGenerated + i) / opts.sampleRate;
       out[channel][i] = 0;
-      map(state.oscillators, (oscillator) => {
-        mapO(state.notes, ({ start, end }, note) => {
+      mapO(state.notes, ({ start, end }, note) => {
+        map(state.oscillators, (oscillator) => {
           const { value: amplitude, done } = state.ampEnv
             ? evalEnvelope(t, start, end, state.ampEnv)
             : { value: 1, done: end && t >= end };
@@ -47,10 +47,9 @@ const gen = (
           out[channel][i] += amplitude * oscillator(t, note);
         });
       });
-      map(state.filters, (filters) => {
-        if (filters[channel])
-          out[channel][i] = filters[channel](out[channel][i]);
-      });
+
+      if (state.filter[channel])
+        out[channel][i] = state.filter[channel](out[channel][i]);
     }
   }
 
@@ -64,23 +63,34 @@ const toPlayerState = (
   t: number
 ): PlayerState => {
   const oscillators = next.oscillators.map(oscillator);
-  const filters = map(next.filters, (f) =>
-    map(Array.from({ length: opts.channels }), (_) =>
-      filter(f.shape, f.cutoff, f.Q, f.bellGain, opts.sampleRate)
-    )
-  );
-  const nextNotes = { ...cur.notes };
+  const f = next.filter;
+  const nextFilter =
+    f && cur.filter.length > 0
+      ? map(cur.filter, (instance) =>
+          filter(opts.sampleRate, f, instance.getState())
+        )
+      : f
+      ? map(Array.from({ length: opts.channels }), (_) =>
+          filter(opts.sampleRate, f)
+        )
+      : [];
+  const notes = { ...cur.notes };
   map(next.notes, (note) => {
-    if (!nextNotes[note] || nextNotes[note]?.end) {
-      nextNotes[note] = { start: t };
+    if (!notes[note] || notes[note]?.end) {
+      notes[note] = { start: t };
     }
   });
-  mapO(nextNotes, (state, note) => {
+  mapO(notes, (state, note) => {
     if (!state.end && !next.notes.includes(note)) {
-      nextNotes[note] = { ...state, end: t };
+      notes[note] = { ...state, end: t };
     }
   });
-  return { ampEnv: next.ampEnv, oscillators, notes: nextNotes, filters };
+  return {
+    ampEnv: next.ampEnv,
+    oscillators,
+    notes: notes,
+    filter: nextFilter,
+  };
 };
 
 export const Player = (opts: Options) => {
@@ -88,7 +98,7 @@ export const Player = (opts: Options) => {
     ampEnv: undefined,
     oscillators: [],
     notes: {},
-    filters: [],
+    filter: [],
   };
 
   const onSilent = (note: Note) => {

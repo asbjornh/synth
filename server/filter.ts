@@ -1,4 +1,4 @@
-import { map } from "./util";
+import { Filter } from "../interface/state";
 
 export type FilterShape =
   | "low-pass"
@@ -11,16 +11,18 @@ export type FilterShape =
   | "low-shelf"
   | "high-shelf";
 
+export type FilterInstance = ReturnType<typeof filter>;
+
 // https://www.cytomic.com/files/dsp/SvfLinearTrapOptimised2.pdf
 export const filter = (
-  shape: FilterShape,
-  cutoff: number,
-  Q: number,
-  bellGainDB: number,
-  sampleRate: number
+  sampleRate: number,
+  options: Filter,
+  state = { ic1eq: 0, ic2eq: 0 }
 ) => {
-  let ic1eq = 0;
-  let ic2eq = 0;
+  const { bellGain: bellGainDB, cutoff, shape, Q } = options;
+
+  let ic1eq = state.ic1eq;
+  let ic2eq = state.ic2eq;
 
   const A = Math.pow(10, bellGainDB / 40);
   let g = Math.tan((Math.PI * cutoff) / sampleRate);
@@ -74,7 +76,7 @@ export const filter = (
   const a2 = g * a1;
   const a3 = g * a2;
 
-  return (v0: number) => {
+  const filterFn = (v0: number) => {
     const v3 = v0 - ic2eq;
     const v1 = a1 * ic1eq + a2 * v3;
     const v2 = ic2eq + a2 * ic1eq + a3 * v3;
@@ -84,4 +86,8 @@ export const filter = (
 
     return m0 * v0 + m1 * v1 + m2 * v2;
   };
+
+  filterFn.getState = () => ({ ic1eq, ic2eq });
+
+  return filterFn;
 };
