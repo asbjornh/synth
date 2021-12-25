@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Envelope as EnvType } from "../../../interface/state";
 import { Control, ControlStrip } from "../control-strip/control-strip";
 import { Knob } from "../knob/knob";
@@ -13,55 +13,35 @@ export const defaultEnvelope: EnvType = {
 export const Envelope: React.FC<{
   envelope: EnvType;
   onChange: (env: EnvType) => void;
-}> = (props) => {
-  const patch =
-    <K extends keyof EnvType>(param: K) =>
-    (value: number) =>
-      props.onChange({ ...props.envelope, [param]: value });
+}> = ({ children, envelope, onChange }) => {
+  const [A, setA] = useState(envelope.A);
+  const [D, setD] = useState(envelope.D);
+  const [S, setS] = useState(envelope.S);
+  const [R, setR] = useState(envelope.R);
+
+  useEffect(() => {
+    onChange({ A, D, S, R });
+  }, [A, D, S, R]);
 
   return (
     <ControlStrip>
       <Control label="Attack">
-        <Knob
-          min={0}
-          max={5}
-          value={props.envelope.A}
-          step={0.001}
-          onChange={patch("A")}
-        />
+        <Knob min={0} max={5} step={0.001} value={envelope.A} onChange={setA} />
       </Control>
 
       <Control label="Decay">
-        <Knob
-          min={0}
-          max={5}
-          value={props.envelope.D}
-          step={0.001}
-          onChange={patch("D")}
-        />
+        <Knob min={0} max={5} step={0.001} value={envelope.D} onChange={setD} />
       </Control>
 
       <Control label="Sustain">
-        <Knob
-          min={0}
-          max={1}
-          value={props.envelope.S}
-          step={0.01}
-          onChange={patch("S")}
-        />
+        <Knob min={0} max={1} step={0.01} value={envelope.S} onChange={setS} />
       </Control>
 
       <Control label="Release">
-        <Knob
-          min={0}
-          max={5}
-          value={props.envelope.R}
-          step={0.001}
-          onChange={patch("R")}
-        />
+        <Knob min={0} max={5} step={0.001} value={envelope.R} onChange={setR} />
       </Control>
 
-      {props.children}
+      {children}
     </ControlStrip>
   );
 };
