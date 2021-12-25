@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { MinusSquare, PlusSquare } from "react-feather";
-import { State } from "../../../interface/state";
+import { initialState, State } from "../../../interface/state";
 import { get, post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { Button } from "../button/button";
+import { Control } from "../control-strip/control-strip";
 import { defaultEnvelope, Envelope } from "../envelope/envelope";
 import { defaultFilter, Filter } from "../filter/filter";
 import { Keyboard } from "../keyboard/keyboard";
+import { Knob } from "../knob/knob";
 import { Oscillators } from "../oscillators/oscillators";
 import { Panel } from "../panel/panel";
 
 import "./app.scss";
 
 export const App: React.FC = () => {
-  const [state, setState] = useState<State>({
-    ampEnv: undefined,
-    filter: undefined,
-    notes: [],
-    oscillators: [],
-  });
+  const [state, setState] = useState<State>(initialState);
 
   useEffect(() => get("/state").then(setState), []);
   useAfterMountEffect(() => post("/set-state", state), [state]);
@@ -34,6 +31,9 @@ export const App: React.FC = () => {
 
   const toggleFilter = () =>
     patchState({ filter: state.filter ? undefined : defaultFilter });
+
+  const toggleFilterEnv = () =>
+    patchState({ filterEnv: state.filterEnv ? undefined : defaultEnvelope });
 
   return (
     <div className="app">
@@ -76,6 +76,34 @@ export const App: React.FC = () => {
               envelope={state.ampEnv}
               onChange={(env) => patchState({ ampEnv: env })}
             />
+          )}
+        </Panel>
+      </div>
+
+      <div className="app_filter-envelope">
+        <Panel
+          actions={
+            <Button onClick={toggleFilterEnv} color="dark">
+              {state.filterEnv ? <MinusSquare /> : <PlusSquare />}
+            </Button>
+          }
+          title="Filter env"
+        >
+          {state.filterEnv && (
+            <Envelope
+              envelope={state.filterEnv}
+              onChange={(env) => patchState({ filterEnv: env })}
+            >
+              <Control label="Amount">
+                <Knob
+                  min={-1}
+                  max={1}
+                  value={state.filterEnvAmt}
+                  step={0.001}
+                  onChange={(filterEnvAmt) => patchState({ filterEnvAmt })}
+                />
+              </Control>
+            </Envelope>
           )}
         </Panel>
       </div>

@@ -13,6 +13,19 @@ export type FilterShape =
 
 export type FilterInstance = ReturnType<typeof filter>;
 
+const getG = (
+  shape: FilterShape,
+  A: number,
+  cutoff: number,
+  sampleRate: number
+) => {
+  if (shape === "low-shelf")
+    return Math.tan((Math.PI * cutoff) / sampleRate) / Math.sqrt(A);
+  if (shape === "high-shelf")
+    return Math.tan((Math.PI * cutoff) / sampleRate) * Math.sqrt(A);
+  return Math.tan((Math.PI * cutoff) / sampleRate);
+};
+
 // https://www.cytomic.com/files/dsp/SvfLinearTrapOptimised2.pdf
 export const filter = (
   sampleRate: number,
@@ -25,8 +38,13 @@ export const filter = (
   let ic2eq = state.ic2eq;
 
   const A = Math.pow(10, bellGainDB / 40);
-  let g = Math.tan((Math.PI * cutoff) / sampleRate);
   let k = 1 / Q;
+
+  let g = getG(shape, A, cutoff, sampleRate);
+  let a1 = 1 / (1 + g * (g + k));
+  let a2 = g * a1;
+  let a3 = g * a2;
+
   let m0: number;
   let m1: number;
   let m2: number;
@@ -61,20 +79,14 @@ export const filter = (
     m1 = k * (A * A - 1);
     m2 = 0;
   } else if (shape === "low-shelf") {
-    g = Math.tan((Math.PI * cutoff) / sampleRate) / Math.sqrt(A);
     m0 = 1;
     m1 = k * (A - 1);
     m2 = A * A - 1;
   } else if (shape === "high-shelf") {
-    g = Math.tan((Math.PI * cutoff) / sampleRate) * Math.sqrt(A);
     m0 = A * A;
     m1 = k * (1 - A) * A;
     m2 = 1 - A * A;
   }
-
-  const a1 = 1 / (1 + g * (g + k));
-  const a2 = g * a1;
-  const a3 = g * a2;
 
   const filterFn = (v0: number) => {
     const v3 = v0 - ic2eq;
@@ -88,6 +100,13 @@ export const filter = (
   };
 
   filterFn.getState = () => ({ ic1eq, ic2eq });
+  filterFn.setCutoff = (cutoff: number) => {
+    g = getG(shape, A, cutoff, sampleRate);
+    a1 = 1 / (1 + g * (g + k));
+    a2 = g * a1;
+    a3 = g * a2;
+  };
+  filterFn.getOptions = () => options;
 
   return filterFn;
 };

@@ -60,6 +60,8 @@ export const Envelope: React.FC<{
           onChange={patch("R")}
         />
       </Control>
+
+      {props.children}
     </ControlStrip>
   );
 };

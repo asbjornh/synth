@@ -61,6 +61,17 @@ export type Envelope = {
 export type State = {
   ampEnv: Envelope | undefined;
   filter: Filter | undefined;
+  filterEnv: Envelope | undefined;
+  filterEnvAmt: number;
   notes: Note[];
   oscillators: Osc[];
+};
+
+export const initialState: State = {
+  ampEnv: undefined,
+  filter: undefined,
+  filterEnv: undefined,
+  filterEnvAmt: 0,
+  notes: [],
+  oscillators: [],
 };

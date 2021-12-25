@@ -3,9 +3,10 @@ import { AudioIO } from "naudiodon";
 
 import { filter, FilterInstance } from "./filter";
 import { clamp, map, mapO } from "./util";
-import { Envelope, Note, State } from "../interface/state";
+import { Envelope, Filter, Note, State } from "../interface/state";
 import { oscillator } from "./osc";
 import { evalEnvelope } from "./envelope";
+import { mapRange } from "../client/util";
 
 type Options = {
   bitDepth: 8 | 16 | 32;
@@ -13,12 +14,21 @@ type Options = {
   sampleRate: number;
 };
 
-type PlayerState = {
-  ampEnv: Envelope | undefined;
-  oscillators: ((t: number, note: Note) => number)[];
-  notes: Partial<Record<Note, { start: number; end?: number }>>;
+type NoteState = {
+  /** Start time */
+  start: number;
+  /** End time */
+  end?: number;
   /** One filter instance per channel */
   filter: FilterInstance[];
+};
+
+type PlayerState = {
+  ampEnv: Envelope | undefined;
+  filterEnv: Envelope | undefined;
+  filterEnvAmt: number;
+  notes: Partial<Record<Note, NoteState>>;
+  oscillators: ((t: number, note: Note) => number)[];
 };
 
 const gen = (
@@ -37,7 +47,7 @@ const gen = (
     for (let channel = 0; channel < opts.channels; channel++) {
       const t = (samplesGenerated + i) / opts.sampleRate;
       out[channel][i] = 0;
-      mapO(state.notes, ({ start, end }, note) => {
+      mapO(state.notes, ({ start, end, filter }, note) => {
         map(state.oscillators, (oscillator) => {
           const { value: amplitude, done } = state.ampEnv
             ? evalEnvelope(t, start, end, state.ampEnv)
@@ -46,15 +56,33 @@ const gen = (
           if (done) onSilent(note);
           out[channel][i] += amplitude * oscillator(t, note);
         });
-      });
 
-      if (state.filter[channel])
-        out[channel][i] = state.filter[channel](out[channel][i]);
+        if (filter[channel]) {
+          if (state.filterEnv && state.filterEnvAmt !== 0) {
+            const opts = filter[channel].getOptions();
+            const { value } = evalEnvelope(t, start, end, state.filterEnv);
+            const delta =
+              state.filterEnvAmt > 0
+                ? mapRange(value, [0, 1], [-10_000, 10_000])
+                : mapRange(value, [1, 0], [-10_000, 10_000]);
+            const cutoff = opts.cutoff + Math.abs(state.filterEnvAmt) * delta;
+            filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
+          }
+          out[channel][i] = filter[channel](out[channel][i]);
+        }
+      });
     }
   }
 
   return out;
 };
+
+const filterInit = (opts: Options, filterOpts: Filter | undefined) =>
+  filterOpts
+    ? map(Array.from({ length: opts.channels }), (_) =>
+        filter(opts.sampleRate, filterOpts)
+      )
+    : [];
 
 const toPlayerState = (
   cur: PlayerState,
@@ -64,41 +92,40 @@ const toPlayerState = (
 ): PlayerState => {
   const oscillators = next.oscillators.map(oscillator);
   const f = next.filter;
-  const nextFilter =
-    f && cur.filter.length > 0
-      ? map(cur.filter, (instance) =>
-          filter(opts.sampleRate, f, instance.getState())
-        )
-      : f
-      ? map(Array.from({ length: opts.channels }), (_) =>
-          filter(opts.sampleRate, f)
-        )
-      : [];
   const notes = { ...cur.notes };
   map(next.notes, (note) => {
     if (!notes[note] || notes[note]?.end) {
-      notes[note] = { start: t };
+      notes[note] = { start: t, filter: [] };
     }
   });
   mapO(notes, (state, note) => {
-    if (!state.end && !next.notes.includes(note)) {
-      notes[note] = { ...state, end: t };
-    }
+    const end = !state.end && !next.notes.includes(note) ? t : undefined;
+
+    const nextFilter =
+      f && state.filter.length > 0
+        ? map(state.filter, (instance) =>
+            filter(opts.sampleRate, f, instance.getState())
+          )
+        : filterInit(opts, f);
+
+    notes[note] = { ...state, end, filter: nextFilter };
   });
   return {
     ampEnv: next.ampEnv,
-    oscillators,
+    filterEnv: next.filterEnv,
+    filterEnvAmt: next.filterEnvAmt,
     notes: notes,
-    filter: nextFilter,
+    oscillators,
   };
 };
 
 export const Player = (opts: Options) => {
   let state: PlayerState = {
     ampEnv: undefined,
-    oscillators: [],
+    filterEnv: undefined,
+    filterEnvAmt: 0,
     notes: {},
-    filter: [],
+    oscillators: [],
   };
 
   const onSilent = (note: Note) => {

@@ -2,17 +2,12 @@ import express from "express";
 import http from "http";
 import path from "path";
 import util from "util";
-import { State } from "../interface/state";
+import { initialState } from "../interface/state";
 import { Player } from "./player";
 
 const debug = process.argv.includes("--debug");
 
-let state: State = {
-  ampEnv: undefined,
-  filter: undefined,
-  notes: [],
-  oscillators: [],
-};
+let state = initialState;
 
 const player = Player({
   bitDepth: 16,
@@ -44,7 +39,7 @@ app.get("/state", (req, res) => res.send(state));
 
 app.post("/set-state", (req, res) => {
   const { body } = req;
-  if (Array.isArray(body?.oscillators) && Array.isArray(body?.filters)) {
+  if (Array.isArray(body?.oscillators)) {
     state = body;
     player.setState(state);
     if (debug) {
