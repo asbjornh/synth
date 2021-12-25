@@ -99,7 +99,7 @@ const toPlayerState = (
     }
   });
   mapO(notes, (state, note) => {
-    const end = !state.end && !next.notes.includes(note) ? t : undefined;
+    const end = state.end || (next.notes.includes(note) ? undefined : t);
 
     const nextFilter =
       f && state.filter.length > 0
