@@ -4,7 +4,7 @@ import { AudioIO } from "naudiodon";
 import { filter, FilterInstance } from "./filter";
 import { clamp, map, mapO } from "./util";
 import { Envelope, Filter, Note, State } from "../interface/state";
-import { oscillator } from "./osc";
+import { oscillator, OscillatorInstance } from "./osc";
 import { evalEnvelope } from "./envelope";
 import { mapRange } from "../client/util";
 
@@ -28,7 +28,7 @@ type PlayerState = {
   filterEnv: Envelope | undefined;
   filterEnvAmt: number;
   notes: Partial<Record<Note, NoteState>>;
-  oscillators: ((t: number, note: Note) => number)[];
+  oscillators: OscillatorInstance[];
 };
 
 const generateSample = (
@@ -41,12 +41,21 @@ const generateSample = (
 
   mapO(state.notes, ({ start, end, filter }, note) => {
     map(state.oscillators, (oscillator) => {
+      const opts = oscillator.getOptions();
+
+      const balanceMultiplier =
+        channel === 0
+          ? 1 - Math.max(0, opts.balance)
+          : channel === 1
+          ? 1 + Math.min(0, opts.balance)
+          : 1;
+
       const { value: amplitude, done } = state.ampEnv
         ? evalEnvelope(t, start, end, state.ampEnv)
         : { value: 1, done: end && t >= end };
 
       if (done) onSilent(note);
-      sample += amplitude * oscillator(t, note);
+      sample += amplitude * balanceMultiplier * oscillator(t, note);
     });
 
     if (filter[channel]) {
@@ -85,7 +94,7 @@ const toPlayerState = (
   const notes = { ...cur.notes };
   map(next.notes, (note) => {
     if (!notes[note] || notes[note]?.end) {
-      notes[note] = { start: t, filter: [] };
+      notes[note] = { start: t, filter: [], end: undefined };
     }
   });
   mapO(notes, (state, note) => {

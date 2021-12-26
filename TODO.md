@@ -8,8 +8,8 @@
 - Spectrogram
 - Waveform visualiser?
 - Delay
-- Oscillator balance
 - Presets
 - Distortion
 - Sequencer
 - Arpeggiator
+- Fix filter env weirdness when playing trill

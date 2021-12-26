@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Trash2 } from "react-feather";
 import { Osc, Pulse } from "../../../interface/state";
-import { entries, fromEntries } from "../../util";
+import { entries } from "../../util";
 import { Button } from "../button/button";
 import {
   Control,
@@ -17,6 +17,7 @@ export const defaultOsc = (): Osc => ({
   id: String(Date.now()),
   type: "saw",
   options: {
+    balance: 0,
     gain: 1,
     detune: 0,
     octave: 0,
@@ -42,6 +43,7 @@ export const Oscillator: React.FC<{
   onRemove: () => void;
   osc: Osc;
 }> = ({ onChange, onRemove, osc }) => {
+  const [balance, setBalance] = useState(osc.options.balance);
   const [gain, setGain] = useState(osc.options.gain);
   const [detune, setDetune] = useState(osc.options.detune);
   const [octave, setOctave] = useState(osc.options.octave);
@@ -57,11 +59,11 @@ export const Oscillator: React.FC<{
   };
 
   useEffect(() => {
-    const options = { gain, detune, octave };
+    const options = { balance, gain, detune, octave };
     if (osc.type === "pulse")
       return onChange({ ...osc, options, pulse: { width: pw } });
     onChange({ ...osc, options });
-  }, [gain, detune, octave, pw]);
+  }, [balance, gain, detune, octave, pw]);
 
   return (
     <div className="oscillator">
@@ -98,6 +100,16 @@ export const Oscillator: React.FC<{
 
         <Control label="Octave">
           <Knob min={-4} max={4} value={octave} step={1} onChange={setOctave} />
+        </Control>
+
+        <Control label="Balance">
+          <Knob
+            min={-1}
+            max={1}
+            value={balance}
+            step={0.01}
+            onChange={setBalance}
+          />
         </Control>
 
         {osc.type === "pulse" && (

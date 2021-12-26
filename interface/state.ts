@@ -18,9 +18,10 @@ export type Octave = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export type Note = `${PitchClass}${Octave}`;
 
 export type OscOptions = {
+  balance: number;
   detune: number;
-  octave: number;
   gain: number;
+  octave: number;
 };
 
 type Oscillator<Type extends string> = {
