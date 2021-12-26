@@ -107,8 +107,8 @@ export const App: React.FC = () => {
             >
               <Control label="Amount">
                 <Knob
-                  min={-1}
-                  max={1}
+                  min={-4}
+                  max={4}
                   value={state.filterEnvAmt}
                   step={0.001}
                   onChange={(filterEnvAmt) => patchState({ filterEnvAmt })}

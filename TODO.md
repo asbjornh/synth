@@ -3,7 +3,7 @@
 - Duplicate OSC
 - Start env release from current value instead of from Sustain value
 - LFOs
-- Non-linear scaling for filter envelope
+- Non-linear scaling for cutoff knob
 - Pitch envelope
 - Draw a waveform
 - Spectrogram

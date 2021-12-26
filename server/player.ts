@@ -62,11 +62,11 @@ const generateSample = (
       if (state.filterEnv && state.filterEnvAmt !== 0) {
         const opts = filter[channel].getOptions();
         const { value } = evalEnvelope(t, start, end, state.filterEnv);
-        const delta =
-          state.filterEnvAmt > 0
-            ? mapRange(value, [0, 1], [-10_000, 10_000])
-            : mapRange(value, [1, 0], [-10_000, 10_000]);
-        const cutoff = opts.cutoff + Math.abs(state.filterEnvAmt) * delta;
+        // NOTE: Using 2^x as cutoff curve
+        const cutoff = Math.pow(
+          2,
+          Math.log(opts.cutoff) / Math.log(2) + state.filterEnvAmt * value
+        );
         filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
       }
       sample = filter[channel](sample);
