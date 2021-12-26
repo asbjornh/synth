@@ -13,13 +13,22 @@
     margin-bottom: 5px;
   }
 
+  &__input {
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
   input {
-    width: 70%;
+    display: block;
+    color: inherit;
+    width: 100%;
+    box-sizing: border-box;
     border: none;
     border-radius: 3px;
     padding: 3px 6px;
     text-align: center;
     box-shadow: vars.$shadow-inner;
+    background-color: var(--knob-input-bg);
   }
 
   &__wrapper {
@@ -36,13 +45,17 @@
     transform: rotate(135deg);
   }
 
+  &__meter-background {
+    stroke: var(--knob-meter-bg);
+  }
+
   &__wheel-wrapper {
     position: absolute;
     height: $size * 0.6;
     width: $size * 0.6;
     top: 50%;
     left: 50%;
-    box-shadow: vars.$shadow-small-dark;
+    box-shadow: var(--shadow-small-dark);
     border-radius: 50%;
     transform: translate(-50%, -52%);
   }
@@ -53,8 +66,8 @@
     width: 100%;
     top: 0;
     left: 0;
-    background-color: white;
-    border: 1px solid #eeedf1;
+    background-color: var(--knob-wheel);
+    border: 1px solid var(--knob-wheel-border);
     border-radius: 50%;
     box-sizing: border-box;
   }
@@ -63,7 +76,7 @@
     position: absolute;
     height: 5px;
     width: 5px;
-    background-color: gray;
+    background-color: var(--knob-wheel-dot);
     border-radius: 5px;
     top: 5px;
     left: 50%;

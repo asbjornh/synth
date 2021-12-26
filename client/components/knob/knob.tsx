@@ -67,11 +67,11 @@ export const Knob: React.FC<{
       <div className="knob__wrapper">
         <svg className="knob__meter">
           <circle
+            className="knob__meter-background"
             cx="50%"
             cy="50%"
             r="45%"
             strokeWidth={4}
-            stroke="#f2f2fa"
             strokeLinecap="round"
             fill="none"
             strokeDasharray="314% 1000%"
@@ -100,13 +100,9 @@ export const Knob: React.FC<{
         </div>
       </div>
 
-      <input
-        value={input}
-        onChange={(e) => onInput(e.target.value)}
-        style={{
-          backgroundColor: color.replace(")", ",0.2)").replace("rgb", "rgba"),
-        }}
-      />
+      <div className="knob__input" style={{ backgroundColor: color }}>
+        <input value={input} onChange={(e) => onInput(e.target.value)} />
+      </div>
     </div>
   );
 };

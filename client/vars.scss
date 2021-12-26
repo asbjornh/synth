@@ -1,8 +1,87 @@
-$shadow-outer: rgb(135 5 13);
-$shadow-inner: rgb(10 5 135);
+$c-shadow-outer: rgb(135 5 13);
+$c-shadow-inner: rgb(10 5 135);
 
-$shadow-small: 0px 6px 6px rgba($shadow-outer, 0.03),
-  -1px 2px 4px rgba($shadow-inner, 0.05);
-$shadow-small-dark: 0px 6px 6px rgba($shadow-outer, 0.1),
-  -1px 2px 4px rgba($shadow-inner, 0.1);
+$shadow-small: 0px 6px 6px rgba($c-shadow-outer, 0.03),
+  -1px 2px 4px rgba($c-shadow-inner, 0.05);
+$shadow-small-dark: 0px 6px 6px rgba($c-shadow-outer, 0.1),
+  -1px 2px 4px rgba($c-shadow-inner, 0.1);
 $shadow-inner: inset 0 2px 3px rgba(black, 0.1);
+
+html {
+  --shadow-small: 0px 6px 6px #{rgba($c-shadow-outer, 0.03)},
+    -1px 2px 4px #{rgba($c-shadow-inner, 0.05)};
+  --shadow-small-dark: 0px 6px 6px #{rgba($c-shadow-outer, 0.1)},
+    -1px 2px 4px #{rgba($c-shadow-inner, 0.1)};
+
+  --page-bg: white;
+  --page-color: black;
+
+  --button: #ededed;
+  --button-text: inherit;
+  --button-hover: #4c4a5d;
+  --button-hover-text: white;
+  --button-dark: #4c4a5d;
+  --button-dark-text: white;
+  --button-dark-hover: #898899;
+
+  --control-bg: white;
+  --control-label-bg: #f2f2fa;
+  --control-border: #eeedf1;
+
+  --label: rgb(82, 82, 82);
+
+  --panel-content: #f8f8fc;
+  --panel-header: #e9e9f4;
+  --panel-title: #4c4a5d;
+
+  --select-bg: #eaf3ff;
+
+  --knob-wheel: white;
+  --knob-wheel-border: #eeedf1;
+  --knob-wheel-dot: gray;
+  --knob-meter-bg: #f2f2fa;
+  --knob-input-bg: #{rgba(white, 0.8)};
+
+  --key-bg: white;
+  --key-border: #eeedf1;
+
+  @media (prefers-color-scheme: dark) {
+    --shadow-small: 0px 2px 4px #{rgba(black, 0.4)};
+    --shadow-small-dark: 0px 2px 4px #{rgba(black, 0.4)};
+
+    --page-bg: #302f38;
+    --page-color: white;
+
+    --button: #302f38;
+    --button-text: inherit;
+    --button-hover: black;
+    --button-hover-text: white;
+    --button-dark: #ededed;
+    --button-dark-text: #4c4a5d;
+    --button-dark-hover: #8886a1;
+
+    --button-text: inherit;
+    --button-hover-text: white;
+
+    --control-bg: #4c4a5d;
+    --control-label-bg: #302f38;
+    --control-border: #27272c;
+
+    --label: white;
+
+    --panel-content: #302f38;
+    --panel-header: #4c4a5d;
+    --panel-title: white;
+
+    --select-bg: #6c7f99;
+
+    --knob-wheel: #706d88;
+    --knob-wheel-border: #302f38;
+    --knob-wheel-dot: white;
+    --knob-meter-bg: #302f38;
+    --knob-input-bg: #{rgba(#4c4a5d, 0.6)};
+
+    --key-bg: #8986a1;
+    --key-border: #27272c;
+  }
+}

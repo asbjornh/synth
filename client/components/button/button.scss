@@ -1,21 +1,22 @@
 .button {
   appearance: none;
   border: none;
-  background-color: #ededed;
+  background-color: var(--button);
+  color: var(--button-text);
   border-radius: 5px;
   padding: 5px;
 
   &:hover {
-    background-color: #4c4a5d;
-    color: white;
+    background-color: var(--button-hover);
+    color: var(--button-hover-text);
   }
 
   &--dark {
-    background-color: #4c4a5d;
-    color: white;
+    background-color: var(--button-dark);
+    color: var(--button-dark-text);
 
     &:hover {
-      background-color: #898899;
+      background-color: var(--button-dark-hover);
     }
   }
 
