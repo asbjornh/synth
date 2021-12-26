@@ -8,7 +8,11 @@ html {
   display: grid;
   gap: 10px;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas: "osc filters_envs" "keyboard keyboard";
+  grid-template-areas: "presets presets" "osc filters_envs" "keyboard keyboard";
+
+  &__presets {
+    grid-area: presets;
+  }
 
   &__osc {
     display: flex;

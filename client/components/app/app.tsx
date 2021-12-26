@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MinusSquare, PlusSquare } from "react-feather";
-import { initialState, State } from "../../../interface/state";
+import { initialState, Preset, State } from "../../../interface/state";
 import { get, post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { Button } from "../button/button";
@@ -11,13 +11,13 @@ import { Keyboard } from "../keyboard/keyboard";
 import { Knob } from "../knob/knob";
 import { Oscillators } from "../oscillators/oscillators";
 import { Panel } from "../panel/panel";
+import { Presets } from "../presets/presets";
 
 import "./app.scss";
 
 export const App: React.FC = () => {
   const [state, setState] = useState<State>(initialState);
 
-  useEffect(() => get("/state").then(setState), []);
   useAfterMountEffect(() => post("/set-state", state), [state]);
 
   const patchState = (next: Partial<State>) =>
@@ -35,8 +35,20 @@ export const App: React.FC = () => {
   const toggleFilterEnv = () =>
     patchState({ filterEnv: state.filterEnv ? undefined : defaultEnvelope });
 
+  const setFromPreset = (preset: Preset) => {
+    const { displayName, ...state } = preset;
+    patchState(state);
+  };
+
   return (
     <div className="app">
+      <div className="app__presets">
+        <Panel
+          actions={<Presets onSelect={setFromPreset} state={state} />}
+          title="Presets"
+        />
+      </div>
+
       <div className="app__osc">
         <Oscillators
           oscillators={state.oscillators}

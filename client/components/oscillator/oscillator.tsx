@@ -31,6 +31,7 @@ const types: Record<Osc["type"], string> = {
   triangle: "Triangle",
   nesTriangle: "NES Triangle",
   pulse: "Pulse",
+  noise: "White noise",
 };
 
 const typeOptions = entries(types).map(([value, label]) => ({

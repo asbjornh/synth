@@ -6,16 +6,20 @@
   border-radius: 5px;
   padding: 5px;
 
-  &:hover {
+  &:not(:disabled):hover {
     background-color: var(--button-hover);
     color: var(--button-hover-text);
+  }
+
+  &:disabled {
+    opacity: 0.5;
   }
 
   &--dark {
     background-color: var(--button-dark);
     color: var(--button-dark-text);
 
-    &:hover {
+    &:not(:disabled):hover {
       background-color: var(--button-dark-hover);
     }
   }

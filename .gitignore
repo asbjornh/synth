@@ -1,3 +1,4 @@
 node_modules
 dist
 crash.log
+user-presets.json

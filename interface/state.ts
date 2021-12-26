@@ -38,8 +38,9 @@ export type NesTriangle = Oscillator<"nesTriangle"> & {
   nesTriangle: { samples: number };
 };
 export type Pulse = Oscillator<"pulse"> & { pulse: { width: number } };
+export type Noise = Oscillator<"noise">;
 
-export type Osc = Saw | Square | Sine | Triangle | NesTriangle | Pulse;
+export type Osc = Saw | Square | Sine | Triangle | NesTriangle | Pulse | Noise;
 
 export type Filter = {
   shape: FilterShape;
@@ -67,6 +68,11 @@ export type State = {
   notes: Note[];
   oscillators: Osc[];
 };
+
+export type Preset = Pick<
+  State,
+  "ampEnv" | "filter" | "filterEnv" | "filterEnvAmt" | "oscillators"
+> & { displayName: string };
 
 export const initialState: State = {
   ampEnv: undefined,

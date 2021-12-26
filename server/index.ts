@@ -4,6 +4,7 @@ import path from "path";
 import util from "util";
 import { initialState } from "../interface/state";
 import { Player } from "./player";
+import { deletePreset, getPresets, savePreset } from "./presets";
 
 const debug = process.argv.includes("--debug");
 
@@ -49,6 +50,32 @@ app.post("/set-state", (req, res) => {
     res.send(state);
   } else {
     res.status(400).send("Invalid payload");
+  }
+});
+
+app.post("/presets", (req, res) => {
+  const { body } = req;
+  try {
+    res.send(savePreset(body));
+  } catch (e: any) {
+    res.status(500).send(e.message || "Unknown error");
+  }
+});
+
+app.get("/presets", (req, res) => {
+  try {
+    res.send(getPresets());
+  } catch (e: any) {
+    res.status(500).send(e.message || "Unknown error");
+  }
+});
+
+app.delete("/presets", (req, res) => {
+  const { body } = req;
+  try {
+    res.send(deletePreset(body));
+  } catch (e: any) {
+    res.status(500).send(e.message || "Unknown error");
   }
 });
 

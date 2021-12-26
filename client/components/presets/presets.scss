@@ -1,0 +1,15 @@
+@use "../../vars";
+
+.presets {
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+
+  input {
+    display: block;
+    border: none;
+    border-radius: 3px;
+    padding: 3px 6px;
+    box-shadow: vars.$shadow-inner;
+  }
+}

@@ -13,6 +13,7 @@ export const useKeys = (onChange: (codes: string[]) => void) => {
     );
 
   useKeydown((e) => {
+    if (document.activeElement?.nodeName === "INPUT") return;
     if (pressed.current[e.code]) return;
     pressed.current[e.code] = true;
     update();

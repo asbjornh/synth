@@ -43,6 +43,7 @@ const getGenerator = (osc: Osc): OscFn => {
   if (osc.type === "sine") return sine;
   if (osc.type === "square") return pulse(0.5);
   if (osc.type === "triangle") return triangle;
+  if (osc.type === "noise") return noise;
   return osc;
 };
 

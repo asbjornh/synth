@@ -4,7 +4,7 @@ import "./select.scss";
 export const Select = <T extends string>(props: {
   value: T;
   onChange: (value: T) => void;
-  options: { value: T; label: string }[];
+  options: { disabled?: boolean; value: T; label: string }[];
 }) => {
   const { value, options, onChange } = props;
 
@@ -14,8 +14,8 @@ export const Select = <T extends string>(props: {
       onChange={(e) => onChange(e.target.value as T)}
       value={value}
     >
-      {options.map(({ value, label }) => (
-        <option key={value} value={value}>
+      {options.map(({ disabled, value, label }) => (
+        <option disabled={disabled} key={value + label} value={value}>
           {label}
         </option>
       ))}
