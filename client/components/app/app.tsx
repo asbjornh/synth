@@ -44,9 +44,27 @@ export const App: React.FC = () => {
         />
       </div>
 
-      <div className="app__filter">
+      <div className="app__filters-envs">
+        <Panel
+          actions={
+            <Button color="dark" onClick={toggleAmpenv}>
+              {state.ampEnv ? <MinusSquare /> : <PlusSquare />}
+            </Button>
+          }
+          verticalHeader={!!state.ampEnv}
+          title="Amp env"
+        >
+          {state.ampEnv && (
+            <Envelope
+              envelope={state.ampEnv}
+              onChange={(env) => patchState({ ampEnv: env })}
+            />
+          )}
+        </Panel>
+
         <Panel
           title="Filter"
+          verticalHeader={!!state.filter}
           actions={
             <Button onClick={toggleFilter} color="dark">
               {state.filter ? <MinusSquare /> : <PlusSquare />}
@@ -60,33 +78,14 @@ export const App: React.FC = () => {
             />
           )}
         </Panel>
-      </div>
 
-      <div className="app__amp-envelope">
-        <Panel
-          actions={
-            <Button color="dark" onClick={toggleAmpenv}>
-              {state.ampEnv ? <MinusSquare /> : <PlusSquare />}
-            </Button>
-          }
-          title="Amp env"
-        >
-          {state.ampEnv && (
-            <Envelope
-              envelope={state.ampEnv}
-              onChange={(env) => patchState({ ampEnv: env })}
-            />
-          )}
-        </Panel>
-      </div>
-
-      <div className="app_filter-envelope">
         <Panel
           actions={
             <Button onClick={toggleFilterEnv} color="dark">
               {state.filterEnv ? <MinusSquare /> : <PlusSquare />}
             </Button>
           }
+          verticalHeader={!!state.filterEnv}
           title="Filter env"
         >
           {state.filterEnv && (

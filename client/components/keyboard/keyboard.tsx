@@ -41,7 +41,7 @@ export const Keyboard: React.FC<{
 
   return (
     <div className="keyboard">
-      <Panel title="Keyboard">
+      <Panel verticalHeader title="Keyboard">
         <ul className="keyboard__keys">
           {keys.map((key) => (
             <Key

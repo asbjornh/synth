@@ -6,21 +6,21 @@ html {
 
 .app {
   display: grid;
-  gap: 20px;
+  gap: 10px;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas: "osc filter" "env _" "keyboard keyboard";
+  grid-template-areas: "osc filters_envs" "keyboard keyboard";
 
   &__osc {
+    display: flex;
     grid-area: osc;
   }
 
-  &__filter {
-    display: flex;
-    grid-area: filter;
-  }
-
-  &__amp-envelope {
-    grid-area: env;
+  &__filters-envs {
+    align-self: flex-start;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 1fr;
+    grid-area: filters_envs;
   }
 
   &__keyboard {

@@ -22,6 +22,7 @@ export const Oscillators: React.FC<{
   return (
     <Panel
       title="Osc"
+      verticalHeader
       actions={
         <Button onClick={addOsc} color="dark">
           <PlusSquare />
