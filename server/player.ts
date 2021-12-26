@@ -31,50 +31,40 @@ type PlayerState = {
   oscillators: ((t: number, note: Note) => number)[];
 };
 
-const gen = (
-  numSamples: number,
-  samplesGenerated: number,
+const generateSample = (
+  t: number,
+  channel: number,
   state: PlayerState,
-  opts: Options,
   onSilent: (note: Note) => void
 ) => {
-  const out: number[][] = map(
-    Array.from({ length: opts.channels }),
-    (_) => new Array(numSamples)
-  );
+  let sample = 0;
 
-  for (let i = 0; i < numSamples; i++) {
-    for (let channel = 0; channel < opts.channels; channel++) {
-      const t = (samplesGenerated + i) / opts.sampleRate;
-      out[channel][i] = 0;
-      mapO(state.notes, ({ start, end, filter }, note) => {
-        map(state.oscillators, (oscillator) => {
-          const { value: amplitude, done } = state.ampEnv
-            ? evalEnvelope(t, start, end, state.ampEnv)
-            : { value: 1, done: end && t >= end };
+  mapO(state.notes, ({ start, end, filter }, note) => {
+    map(state.oscillators, (oscillator) => {
+      const { value: amplitude, done } = state.ampEnv
+        ? evalEnvelope(t, start, end, state.ampEnv)
+        : { value: 1, done: end && t >= end };
 
-          if (done) onSilent(note);
-          out[channel][i] += amplitude * oscillator(t, note);
-        });
+      if (done) onSilent(note);
+      sample += amplitude * oscillator(t, note);
+    });
 
-        if (filter[channel]) {
-          if (state.filterEnv && state.filterEnvAmt !== 0) {
-            const opts = filter[channel].getOptions();
-            const { value } = evalEnvelope(t, start, end, state.filterEnv);
-            const delta =
-              state.filterEnvAmt > 0
-                ? mapRange(value, [0, 1], [-10_000, 10_000])
-                : mapRange(value, [1, 0], [-10_000, 10_000]);
-            const cutoff = opts.cutoff + Math.abs(state.filterEnvAmt) * delta;
-            filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
-          }
-          out[channel][i] = filter[channel](out[channel][i]);
-        }
-      });
+    if (filter[channel]) {
+      if (state.filterEnv && state.filterEnvAmt !== 0) {
+        const opts = filter[channel].getOptions();
+        const { value } = evalEnvelope(t, start, end, state.filterEnv);
+        const delta =
+          state.filterEnvAmt > 0
+            ? mapRange(value, [0, 1], [-10_000, 10_000])
+            : mapRange(value, [1, 0], [-10_000, 10_000]);
+        const cutoff = opts.cutoff + Math.abs(state.filterEnvAmt) * delta;
+        filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
+      }
+      sample = filter[channel](sample);
     }
-  }
+  });
 
-  return out;
+  return sample;
 };
 
 const filterInit = (opts: Options, filterOpts: Filter | undefined) =>
@@ -153,11 +143,11 @@ export const Player = (opts: Options) => {
         return;
       }
 
-      const out = gen(numSamples, samplesGenerated, state, opts, onSilent);
-
       for (let i = 0; i < numSamples; i++) {
         for (let channel = 0; channel < opts.channels; channel++) {
-          const val = amplitude * clamp(out[channel][i], -1, 1);
+          const t = (samplesGenerated + i) / opts.sampleRate;
+          const sample = generateSample(t, channel, state, onSilent);
+          const val = amplitude * clamp(sample, -1, 1);
           const offset = i * sampleSize * opts.channels + channel * sampleSize;
           if (opts.bitDepth === 8) buf.writeInt8(val, offset);
           if (opts.bitDepth === 16) buf.writeInt16LE(val, offset);
