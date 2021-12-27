@@ -1,19 +1,34 @@
 # TODO
 
-- Duplicate OSC
-- Start env release from current value instead of from Sustain value
-- Add unison, unison detune and stereo width for osc
-- LFOs
-- Pitch envelope
+## Osc
+
+- Duplicate
+- Add unison, unison detune and stereo width
 - Draw a waveform
-- Spectrogram
-- Waveform visualiser?
+
+## Env
+
+- Start env release from current value instead of from Sustain value
+- Pitch envelope
+- Fix filter env weirdness when playing trill
+
+## FX
+
 - Delay
 - Distortion
-- Sequencer
-- Arpeggiator
-- Fix filter env weirdness when playing trill
-- MIDI?
 - Master gain
 - Limiter
+
+## Playing
+
+- Sequencer
+- Arpeggiator
+- MIDI?
 - Master transpose
+- Portamento
+
+## Other
+
+- Spectrogram
+- Waveform visualiser?
+- LFOs
