@@ -13,15 +13,33 @@ const getColor = interpolate([
 ]);
 
 import "./knob.scss";
-import { Label } from "../label/label";
+
+const resolution = 200;
+
+/** Returns the x coordinate for a y in 2^x */
+const expX = (y: number) => Math.log(y) / Math.log(2);
+
+const interpolateLinear = (
+  value: number,
+  delta: number,
+  min: number,
+  max: number
+) => {
+  const v = mapRange(value, [min, max], [0, 1]);
+  return mapRange(v + delta, [0, 1], [min, max]);
+};
+
+const interpolateExponential = (value: number, delta: number, max: number) =>
+  Math.pow(2, expX(value) + delta);
 
 export const Knob: React.FC<{
+  interpolation?: "linear" | "exponential";
   min: number;
   max: number;
   value: number;
   step: number;
   onChange: (next: number) => void;
-}> = ({ min, max, value, onChange, step }) => {
+}> = ({ interpolation = "linear", min, max, value, onChange, step }) => {
   const [knobValue, setKnobValue] = useState(value);
   const [input, setInput] = useState("");
   const [el, setEl] = useState<HTMLDivElement | null>(null);
@@ -30,11 +48,13 @@ export const Knob: React.FC<{
     Math.round(value * (1 / step)) / (1 / step);
 
   const onDrag = useCallback(
-    (delta: { x: number; y: number }) => {
-      const { x, y } = delta;
-      const v = mapRange(knobValue, [min, max], [-100, 100]);
-      const mapped = mapRange(v + x - y, [-100, 100], [min, max]);
-      const clamped = clamp(mapped, min, max);
+    (mouseDelta: { x: number; y: number }) => {
+      const delta = (mouseDelta.x - mouseDelta.y) / resolution;
+      const next =
+        interpolation === "linear"
+          ? interpolateLinear(knobValue, delta, min, max)
+          : interpolateExponential(knobValue, delta * 8, max);
+      const clamped = clamp(next, min, max);
       setKnobValue(clamped);
       onChange(quantize(clamped));
     },
@@ -59,8 +79,12 @@ export const Knob: React.FC<{
 
   useDrag(el, onDrag);
 
-  const rotation = mapRange(knobValue, [min, max], [-130, 130]);
-  const color = getColor(mapRange(knobValue, [min, max], [0, 1]));
+  const ratio =
+    interpolation === "linear"
+      ? mapRange(knobValue, [min, max], [0, 1])
+      : mapRange(expX(knobValue), [expX(min), expX(max)], [0, 1]);
+  const rotation = mapRange(ratio, [0, 1], [-130, 130]);
+  const color = getColor(ratio);
 
   return (
     <div className="knob">
@@ -86,7 +110,7 @@ export const Knob: React.FC<{
             strokeLinecap="round"
             fill="none"
             strokeDasharray="314% 1000%"
-            strokeDashoffset={`${mapRange(knobValue, [min, max], [314, 104])}%`}
+            strokeDashoffset={`${mapRange(ratio, [0, 1], [314, 104])}%`}
           />
         </svg>
         <div className="knob__wheel-wrapper">

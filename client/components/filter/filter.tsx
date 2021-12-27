@@ -52,7 +52,8 @@ export const Filter: React.FC<{
 
         <Control label="Cutoff">
           <Knob
-            min={0}
+            interpolation="exponential"
+            min={20}
             max={10_000}
             value={cutoff}
             step={1}
