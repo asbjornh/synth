@@ -2,6 +2,7 @@
 
 - Duplicate OSC
 - Start env release from current value instead of from Sustain value
+- Add unison, unison detune and stereo width for osc
 - LFOs
 - Pitch envelope
 - Draw a waveform
