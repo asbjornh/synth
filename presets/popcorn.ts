@@ -1,4 +1,4 @@
-import { Preset } from "../interface/state";
+import { defaultOscOptions, Preset } from "../interface/state";
 
 export const popcorn: Preset = {
   displayName: "Popcorn",
@@ -21,6 +21,7 @@ export const popcorn: Preset = {
       id: "popcorn",
       type: "square",
       options: {
+        ...defaultOscOptions,
         gain: 0.5,
         detune: 0,
         octave: 1,

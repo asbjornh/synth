@@ -4,9 +4,10 @@ import { AudioIO } from "naudiodon";
 import { filter, FilterInstance } from "./filter";
 import { clamp, map, mapO } from "./util";
 import { Envelope, Filter, Note, State } from "../interface/state";
-import { oscillator, OscillatorInstance } from "./osc";
+import { oscillator, OscillatorInstance, transpose } from "./osc";
 import { evalEnvelope } from "./envelope";
 import { mapRange } from "../client/util";
+import { frequencies } from "./frequencies";
 
 type Options = {
   bitDepth: 8 | 16 | 32;
@@ -31,10 +32,19 @@ type PlayerState = {
   oscillators: OscillatorInstance[];
 };
 
+/** Stereo amplitude for the given channel */
+const stereoAmplitude = (balance: number, channel: number) =>
+  channel === 0
+    ? 1 - Math.max(0, balance)
+    : channel === 1
+    ? 1 + Math.min(0, balance)
+    : 1;
+
 const generateSample = (
   t: number,
   channel: number,
   state: PlayerState,
+  options: Options,
   onSilent: (note: Note) => void
 ) => {
   let sample = 0;
@@ -43,19 +53,31 @@ const generateSample = (
     map(state.oscillators, (oscillator) => {
       const opts = oscillator.getOptions();
 
-      const balanceMultiplier =
-        channel === 0
-          ? 1 - Math.max(0, opts.balance)
-          : channel === 1
-          ? 1 + Math.min(0, opts.balance)
-          : 1;
+      const stereoAmp = stereoAmplitude(opts.balance, channel);
 
       const { value: amplitude, done } = state.ampEnv
         ? evalEnvelope(t, start, end, state.ampEnv)
         : { value: 1, done: end && t >= end };
 
       if (done) onSilent(note);
-      sample += amplitude * balanceMultiplier * oscillator(t, note);
+
+      const freq = frequencies[note];
+
+      if (opts.unison === 1) {
+        sample += amplitude * stereoAmp * oscillator(t, freq);
+      } else {
+        map(Array.from({ length: opts.unison }), (_, i) => {
+          const p = (i / opts.unison) * (i % 2 === 0 ? 1 : -1);
+          const period = freq / options.sampleRate;
+          const t2 = t + p * period * opts.unison * opts.phase;
+          // TODO: Figure out how to correctly scale amplitude:
+          const amplitude2 = amplitude / (opts.unison * 0.3);
+          const stereoAmp2 =
+            stereoAmp * stereoAmplitude(opts.widthU * p, channel);
+          const freq2 = freq * transpose(0, opts.detuneU * p);
+          sample += amplitude2 * stereoAmp2 * oscillator(t2, freq2);
+        });
+      }
     });
 
     if (filter[channel]) {
@@ -155,7 +177,7 @@ export const Player = (opts: Options) => {
       for (let i = 0; i < numSamples; i++) {
         for (let channel = 0; channel < opts.channels; channel++) {
           const t = (samplesGenerated + i) / opts.sampleRate;
-          const sample = generateSample(t, channel, state, onSilent);
+          const sample = generateSample(t, channel, state, opts, onSilent);
           const val = amplitude * clamp(sample, -1, 1);
           const offset = i * sampleSize * opts.channels + channel * sampleSize;
           if (opts.bitDepth === 8) buf.writeInt8(val, offset);

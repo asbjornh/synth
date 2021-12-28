@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Trash2 } from "react-feather";
-import { Osc, Pulse } from "../../../interface/state";
+import { defaultOscOptions, Osc, Pulse } from "../../../interface/state";
 import { entries } from "../../util";
 import { Button } from "../button/button";
 import {
@@ -16,12 +16,7 @@ import "./oscillator.scss";
 export const defaultOsc = (): Osc => ({
   id: String(Date.now()),
   type: "saw",
-  options: {
-    balance: 0,
-    gain: 1,
-    detune: 0,
-    octave: 0,
-  },
+  options: defaultOscOptions,
 });
 
 const types: Record<Osc["type"], string> = {
@@ -49,6 +44,10 @@ export const Oscillator: React.FC<{
   const [detune, setDetune] = useState(osc.options.detune);
   const [octave, setOctave] = useState(osc.options.octave);
   const [pw, setPw] = useState((osc as Pulse).pulse?.width ?? 0.5);
+  const [unison, setUnison] = useState(osc.options.unison);
+  const [detuneU, setDetuneU] = useState(osc.options.detuneU);
+  const [widthU, setWidthU] = useState(osc.options.widthU);
+  const [phase, setPhase] = useState(osc.options.phase);
 
   const changeType = (type: Osc["type"]) => {
     const common = { id: osc.id, options: osc.options };
@@ -60,11 +59,20 @@ export const Oscillator: React.FC<{
   };
 
   useEffect(() => {
-    const options = { balance, gain, detune, octave };
+    const options = {
+      balance,
+      gain,
+      detune,
+      octave,
+      unison,
+      detuneU,
+      widthU,
+      phase,
+    };
     if (osc.type === "pulse")
       return onChange({ ...osc, options, pulse: { width: pw } });
     onChange({ ...osc, options });
-  }, [balance, gain, detune, octave, pw]);
+  }, [balance, gain, detune, octave, pw, unison, detuneU, widthU, phase]);
 
   return (
     <div className="oscillator">
@@ -113,6 +121,10 @@ export const Oscillator: React.FC<{
           />
         </Control>
 
+        <Control label="Phase">
+          <Knob min={0} max={1} value={phase} step={0.01} onChange={setPhase} />
+        </Control>
+
         {osc.type === "pulse" && (
           <Control label="Pulse W." title="Pulse width">
             <Knob
@@ -123,6 +135,33 @@ export const Oscillator: React.FC<{
               onChange={setPw}
             />
           </Control>
+        )}
+
+        <Control label="Unison">
+          <Knob min={1} max={16} value={unison} step={1} onChange={setUnison} />
+        </Control>
+
+        {unison > 1 && (
+          <>
+            <Control label="U. det." title="Unison detune">
+              <Knob
+                min={0}
+                max={96}
+                step={1}
+                value={detuneU}
+                onChange={setDetuneU}
+              />
+            </Control>
+            <Control label="Width" title="Unison stereo width">
+              <Knob
+                min={0}
+                max={1}
+                step={0.01}
+                value={widthU}
+                onChange={setWidthU}
+              />
+            </Control>
+          </>
         )}
       </ControlStrip>
     </div>

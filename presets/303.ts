@@ -1,4 +1,4 @@
-import { Preset } from "../interface/state";
+import { defaultOscOptions, Preset } from "../interface/state";
 
 export const three03: Preset = {
   displayName: "303",
@@ -26,6 +26,7 @@ export const three03: Preset = {
       id: "1640533702209",
       type: "saw",
       options: {
+        ...defaultOscOptions,
         balance: 0,
         gain: 0.32,
         detune: 0,

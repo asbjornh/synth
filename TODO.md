@@ -3,7 +3,6 @@
 ## Osc
 
 - Duplicate
-- Add unison, unison detune and stereo width
 - Draw a waveform
 
 ## Env

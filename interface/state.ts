@@ -22,6 +22,24 @@ export type OscOptions = {
   detune: number;
   gain: number;
   octave: number;
+  phase: number;
+  unison: number;
+  /** Unison detune */
+  detuneU: number;
+  /** Stereo width for unison */
+  widthU: number;
+};
+
+// NOTE: Do not change these values. The system presets might depend on them
+export const defaultOscOptions: OscOptions = {
+  balance: 0,
+  gain: 1,
+  detune: 0,
+  octave: 0,
+  phase: 0,
+  unison: 1,
+  detuneU: 0.1,
+  widthU: 0.1,
 };
 
 type Oscillator<Type extends string> = {

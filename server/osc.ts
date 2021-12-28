@@ -49,20 +49,23 @@ const getGenerator = (osc: Osc): OscFn => {
 
 export type OscillatorInstance = ReturnType<typeof oscillator>;
 
+export const transpose = (octaves: number, cents: number) => {
+  const detuneMultiplier = Math.pow(2, cents / 1200);
+  if (octaves === 0) return detuneMultiplier;
+
+  const octMagnitude = Math.pow(2, Math.abs(octaves));
+  const octaveMultiplier = octaves < 0 ? 1 / octMagnitude : octMagnitude;
+  return octaveMultiplier * detuneMultiplier;
+};
+
 export const oscillator = (osc: Osc) => {
   const { detune, octave, gain } = osc.options;
 
-  const octMagnitude = Math.pow(2, Math.abs(octave));
-  const octaveMultiplier =
-    octave === 0 ? 1 : octave < 0 ? 1 / octMagnitude : octMagnitude;
-  const detuneMultiplier = Math.pow(2, detune / 1200);
-
+  const transpositionMultiplier = transpose(octave, detune);
   const generator = getGenerator(osc);
 
-  const oscFn = (t: number, note: Note) => {
-    const freq = frequencies[note] * octaveMultiplier * detuneMultiplier;
-    return gain * generator(t, freq);
-  };
+  const oscFn = (t: number, freq: number) =>
+    gain * generator(t, freq * transpositionMultiplier);
 
   oscFn.getOptions = () => osc.options;
 

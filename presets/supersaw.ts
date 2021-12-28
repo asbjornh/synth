@@ -1,4 +1,4 @@
-import { Preset } from "../interface/state";
+import { defaultOscOptions, Preset } from "../interface/state";
 
 export const supersaw: Preset = {
   displayName: "Supersaw",
@@ -15,6 +15,7 @@ export const supersaw: Preset = {
     {
       id: "1640532681726",
       options: {
+        ...defaultOscOptions,
         balance: 0,
         gain: 0.12,
         detune: 0,
@@ -26,6 +27,7 @@ export const supersaw: Preset = {
       id: "1640532689044",
       type: "saw",
       options: {
+        ...defaultOscOptions,
         balance: -0.75,
         gain: 0.2,
         detune: -20,
@@ -36,6 +38,7 @@ export const supersaw: Preset = {
       id: "1640532698097",
       type: "saw",
       options: {
+        ...defaultOscOptions,
         balance: -0.29,
         gain: 0.2,
         detune: -12,
@@ -46,6 +49,7 @@ export const supersaw: Preset = {
       id: "1640532718943",
       type: "saw",
       options: {
+        ...defaultOscOptions,
         balance: 0.35,
         gain: 0.2,
         detune: 10,
@@ -56,6 +60,7 @@ export const supersaw: Preset = {
       id: "1640532721196",
       type: "saw",
       options: {
+        ...defaultOscOptions,
         balance: 0.74,
         gain: 0.2,
         detune: 18,
