@@ -8,7 +8,7 @@ html {
   display: grid;
   gap: 10px;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas: "presets presets" "osc filters_envs" "keyboard keyboard";
+  grid-template-areas: "presets presets" "osc filters_envs" "keyboard master";
 
   &__presets {
     grid-area: presets;
@@ -29,5 +29,9 @@ html {
 
   &__keyboard {
     grid-area: keyboard;
+  }
+
+  &__master {
+    grid-area: master;
   }
 }

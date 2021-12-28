@@ -83,8 +83,11 @@ export type State = {
   filter: Filter | undefined;
   filterEnv: Envelope | undefined;
   filterEnvAmt: number;
+  gain: number;
   notes: Note[];
   oscillators: Osc[];
+  /** In octaves */
+  transpose: number;
 };
 
 export type Preset = Pick<
@@ -97,6 +100,8 @@ export const initialState: State = {
   filter: undefined,
   filterEnv: undefined,
   filterEnvAmt: 0,
+  gain: 1,
   notes: [],
   oscillators: [],
+  transpose: 0,
 };

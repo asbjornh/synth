@@ -13,7 +13,6 @@
 
 - Delay
 - Distortion
-- Master gain
 - Limiter
 
 ## Playing
@@ -21,7 +20,6 @@
 - Sequencer
 - Arpeggiator
 - MIDI?
-- Master transpose
 - Portamento
 
 ## Other

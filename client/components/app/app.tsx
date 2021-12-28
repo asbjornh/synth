@@ -4,7 +4,7 @@ import { initialState, Preset, State } from "../../../interface/state";
 import { get, post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { Button } from "../button/button";
-import { Control } from "../control-strip/control-strip";
+import { Control, ControlStrip } from "../control-strip/control-strip";
 import { defaultEnvelope, Envelope } from "../envelope/envelope";
 import { defaultFilter, Filter } from "../filter/filter";
 import { Keyboard } from "../keyboard/keyboard";
@@ -124,6 +124,31 @@ export const App: React.FC = () => {
           notes={state.notes}
           onChange={(notes) => patchState({ notes })}
         />
+      </div>
+
+      <div className="app__master">
+        <Panel verticalHeader title="Master">
+          <ControlStrip>
+            <Control label="Gain">
+              <Knob
+                min={0}
+                max={1}
+                step={0.01}
+                value={state.gain}
+                onChange={(gain) => patchState({ gain })}
+              />
+            </Control>
+            <Control label="Transp." title="Transpose (octaves)">
+              <Knob
+                min={-4}
+                max={4}
+                step={1}
+                value={state.transpose}
+                onChange={(transpose) => patchState({ transpose })}
+              />
+            </Control>
+          </ControlStrip>
+        </Panel>
       </div>
     </div>
   );
