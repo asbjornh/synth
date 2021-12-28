@@ -11,7 +11,7 @@ export const Oscillators: React.FC<{
   oscillators: Osc[];
   onChange: (oscillators: Osc[]) => void;
 }> = ({ oscillators, onChange }) => {
-  const addOsc = () => onChange(oscillators.concat(defaultOsc()));
+  const addOsc = (osc: Osc) => onChange(oscillators.concat(osc));
 
   const setOsc = (index: number) => (osc: Osc) =>
     onChange(oscillators.map((o, i) => (i === index ? osc : o)));
@@ -24,7 +24,7 @@ export const Oscillators: React.FC<{
       title="Osc"
       verticalHeader
       actions={
-        <Button onClick={addOsc} color="dark">
+        <Button onClick={() => addOsc(defaultOsc())} color="dark">
           <PlusSquare />
         </Button>
       }
@@ -35,6 +35,7 @@ export const Oscillators: React.FC<{
             <Oscillator
               osc={osc}
               onChange={setOsc(index)}
+              onDuplicate={(osc) => addOsc({ ...osc, id: String(Date.now()) })}
               onRemove={() => rmOsc(index)}
             />
           </div>

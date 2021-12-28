@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Trash2 } from "react-feather";
+import React, { useEffect, useMemo, useState } from "react";
+import { Copy, Trash2 } from "react-feather";
 import { defaultOscOptions, Osc, Pulse } from "../../../interface/state";
 import { entries } from "../../util";
 import { Button } from "../button/button";
@@ -36,24 +36,25 @@ const typeOptions = entries(types).map(([value, label]) => ({
 
 export const Oscillator: React.FC<{
   onChange: (osc: Osc) => void;
+  onDuplicate: (osc: Osc) => void;
   onRemove: () => void;
   osc: Osc;
-}> = ({ onChange, onRemove, osc }) => {
+}> = ({ onChange, onDuplicate, onRemove, osc }) => {
   // NOTE: Backwards compat for user presets
-  const options = { ...defaultOscOptions, ...osc.options };
+  const init = { ...defaultOscOptions, ...osc.options };
 
-  const [balance, setBalance] = useState(options.balance);
-  const [gain, setGain] = useState(options.gain);
-  const [detune, setDetune] = useState(options.detune);
-  const [octave, setOctave] = useState(options.octave);
+  const [balance, setBalance] = useState(init.balance);
+  const [gain, setGain] = useState(init.gain);
+  const [detune, setDetune] = useState(init.detune);
+  const [octave, setOctave] = useState(init.octave);
   const [pw, setPw] = useState((osc as Pulse).pulse?.width ?? 0.5);
-  const [unison, setUnison] = useState(options.unison);
-  const [detuneU, setDetuneU] = useState(options.detuneU);
-  const [widthU, setWidthU] = useState(options.widthU);
-  const [phase, setPhase] = useState(options.phase);
+  const [unison, setUnison] = useState(init.unison);
+  const [detuneU, setDetuneU] = useState(init.detuneU);
+  const [widthU, setWidthU] = useState(init.widthU);
+  const [phase, setPhase] = useState(init.phase);
 
   const changeType = (type: Osc["type"]) => {
-    const common = { id: osc.id, options };
+    const common = { id: osc.id, options: init };
     if (type === "pulse")
       return onChange({ ...common, type, pulse: { width: 0.5 } });
     if (type === "nesTriangle")
@@ -61,8 +62,8 @@ export const Oscillator: React.FC<{
     return onChange({ ...common, type });
   };
 
-  useEffect(() => {
-    const options = {
+  const options: Osc["options"] = useMemo(
+    () => ({
       balance,
       gain,
       detune,
@@ -71,11 +72,16 @@ export const Oscillator: React.FC<{
       detuneU,
       widthU,
       phase,
-    };
-    if (osc.type === "pulse")
-      return onChange({ ...osc, options, pulse: { width: pw } });
-    onChange({ ...osc, options });
-  }, [balance, gain, detune, octave, pw, unison, detuneU, widthU, phase]);
+    }),
+    [balance, gain, detune, octave, unison, detuneU, widthU, phase]
+  );
+
+  const current: Osc = useMemo(() => {
+    if (osc.type === "pulse") return { ...osc, options, pulse: { width: pw } };
+    return { ...osc, options };
+  }, [options, pw]);
+
+  useEffect(() => onChange(current), [current]);
 
   return (
     <div className="oscillator">
@@ -90,9 +96,14 @@ export const Oscillator: React.FC<{
           </Control>
 
           <Control>
-            <Button onClick={onRemove}>
-              <Trash2 />
-            </Button>
+            <div className="oscillator__actions">
+              <Button onClick={onRemove}>
+                <Trash2 />
+              </Button>
+              <Button onClick={() => onDuplicate(current)}>
+                <Copy />
+              </Button>
+            </div>
           </Control>
         </ControlStack>
 

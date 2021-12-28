@@ -2,7 +2,6 @@
 
 ## Osc
 
-- Duplicate
 - Draw a waveform
 
 ## Env

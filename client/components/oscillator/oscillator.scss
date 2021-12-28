@@ -1,13 +1,6 @@
 .oscillator {
-  position: relative;
-
-  &__label {
-    margin-bottom: 5px;
-  }
-
-  &__remove {
-    position: absolute;
-    top: 0;
-    right: 0;
+  &__actions {
+    display: flex;
+    column-gap: 0.3rem;
   }
 }
