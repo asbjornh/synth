@@ -39,18 +39,21 @@ export const Oscillator: React.FC<{
   onRemove: () => void;
   osc: Osc;
 }> = ({ onChange, onRemove, osc }) => {
-  const [balance, setBalance] = useState(osc.options.balance);
-  const [gain, setGain] = useState(osc.options.gain);
-  const [detune, setDetune] = useState(osc.options.detune);
-  const [octave, setOctave] = useState(osc.options.octave);
+  // NOTE: Backwards compat for user presets
+  const options = { ...defaultOscOptions, ...osc.options };
+
+  const [balance, setBalance] = useState(options.balance);
+  const [gain, setGain] = useState(options.gain);
+  const [detune, setDetune] = useState(options.detune);
+  const [octave, setOctave] = useState(options.octave);
   const [pw, setPw] = useState((osc as Pulse).pulse?.width ?? 0.5);
-  const [unison, setUnison] = useState(osc.options.unison);
-  const [detuneU, setDetuneU] = useState(osc.options.detuneU);
-  const [widthU, setWidthU] = useState(osc.options.widthU);
-  const [phase, setPhase] = useState(osc.options.phase);
+  const [unison, setUnison] = useState(options.unison);
+  const [detuneU, setDetuneU] = useState(options.detuneU);
+  const [widthU, setWidthU] = useState(options.widthU);
+  const [phase, setPhase] = useState(options.phase);
 
   const changeType = (type: Osc["type"]) => {
-    const common = { id: osc.id, options: osc.options };
+    const common = { id: osc.id, options };
     if (type === "pulse")
       return onChange({ ...common, type, pulse: { width: 0.5 } });
     if (type === "nesTriangle")
