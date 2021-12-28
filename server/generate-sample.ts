@@ -37,13 +37,14 @@ export const generateSample = (
       if (done) onSilent(note);
 
       const freq = frequencies[note] * transpose(state.transpose, 0);
+      const period = freq / options.sampleRate;
 
       if (opts.unison === 1) {
-        noteSample += amplitude * stereoAmp * oscillator(t, freq);
+        noteSample +=
+          amplitude * stereoAmp * oscillator(t + period * opts.phase, freq);
       } else {
         map(Array.from({ length: opts.unison }), (_, i) => {
           const p = (i / opts.unison) * (i % 2 === 0 ? 1 : -1);
-          const period = freq / options.sampleRate;
           const t2 = t + p * period * opts.unison * opts.phase;
           // TODO: Figure out how to correctly scale amplitude:
           const amplitude2 = amplitude / (opts.unison * 0.3);
