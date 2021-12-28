@@ -9,7 +9,6 @@
 
 - Start env release from current value instead of from Sustain value
 - Pitch envelope
-- Fix filter env weirdness when playing trill
 
 ## FX
 

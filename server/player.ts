@@ -50,9 +50,11 @@ const generateSample = (
   let sample = 0;
 
   mapO(state.notes, ({ start, end, filter }, note) => {
+    // NOTE: Sample contribution for single note
+    let noteSample = 0;
+
     map(state.oscillators, (oscillator) => {
       const opts = oscillator.getOptions();
-
       const stereoAmp = stereoAmplitude(opts.balance, channel);
 
       const { value: amplitude, done } = state.ampEnv
@@ -64,7 +66,7 @@ const generateSample = (
       const freq = frequencies[note];
 
       if (opts.unison === 1) {
-        sample += amplitude * stereoAmp * oscillator(t, freq);
+        noteSample += amplitude * stereoAmp * oscillator(t, freq);
       } else {
         map(Array.from({ length: opts.unison }), (_, i) => {
           const p = (i / opts.unison) * (i % 2 === 0 ? 1 : -1);
@@ -75,7 +77,7 @@ const generateSample = (
           const stereoAmp2 =
             stereoAmp * stereoAmplitude(opts.widthU * p, channel);
           const freq2 = freq * transpose(0, opts.detuneU * p);
-          sample += amplitude2 * stereoAmp2 * oscillator(t2, freq2);
+          noteSample += amplitude2 * stereoAmp2 * oscillator(t2, freq2);
         });
       }
     });
@@ -91,8 +93,10 @@ const generateSample = (
         );
         filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
       }
-      sample = filter[channel](sample);
+      noteSample = filter[channel](noteSample);
     }
+
+    sample += noteSample;
   });
 
   return sample;
