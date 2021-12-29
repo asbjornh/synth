@@ -24,5 +24,4 @@
 ## Other
 
 - Spectrogram
-- Waveform visualiser?
 - LFOs

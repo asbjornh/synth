@@ -2,26 +2,33 @@ import express from "express";
 import http from "http";
 import path from "path";
 import util from "util";
+import { Server } from "socket.io";
 import { initialState } from "../interface/state";
-import { Player } from "./player";
+import { Options, Player } from "./player";
 import { deletePreset, getPresets, savePreset } from "./presets";
+import { frequencies } from "./frequencies";
+import { transpose } from "./osc";
 
 const debug = process.argv.includes("--debug");
 
 let state = initialState;
 
-const player = Player({
+const opts: Options = {
   bitDepth: 16,
   channels: 2,
   sampleRate: 44100,
-});
+};
+
+const player = Player(opts);
 
 const app = express();
 const server = http.createServer(app);
+const io = new Server(server);
 
 const onExit = () => {
   player.kill();
   server.close();
+  io.close();
   process.exit();
 };
 
@@ -29,6 +36,20 @@ process.on("exit", onExit);
 process.on("SIGINT", onExit);
 process.on("SIGUSR1", onExit);
 process.on("SIGUSR2", onExit);
+
+player.onFrame((samples, t) => {
+  if (state.notes.length > 1) {
+    io.emit("frame", { samples: [], freq: 0, sampleRate: opts.sampleRate, t });
+  } else {
+    const [note] = state.notes;
+    io.emit("frame", {
+      samples,
+      freq: frequencies[note] * transpose(state.transpose, 0),
+      sampleRate: opts.sampleRate,
+      t,
+    });
+  }
+});
 
 app.use(express.json());
 

@@ -91,6 +91,8 @@ export const Player = (opts: Options) => {
     transpose: 0,
   };
 
+  let onFrame: (samples: number[], t: number) => void = () => {};
+
   const onSilent = (note: Note) => {
     delete state.notes[note];
   };
@@ -107,20 +109,31 @@ export const Player = (opts: Options) => {
       const blockAlign = sampleSize * opts.channels;
       const numSamples = (chunkSize / blockAlign) | 0;
       const buf = Buffer.alloc(numSamples * blockAlign);
+      const samples = new Array();
 
       if (
         state.oscillators.length === 0 ||
         Object.keys(state.notes).length === 0
       ) {
         this.push(buf);
+        samplesGenerated += numSamples;
         return;
       }
 
       for (let i = 0; i < numSamples; i++) {
         for (let channel = 0; channel < opts.channels; channel++) {
           const t = (samplesGenerated + i) / opts.sampleRate;
-          const sample = generateSample(t, channel, state, opts, onSilent);
-          const val = amplitude * clamp(sample * state.gain, -1, 1);
+          const sample = clamp(
+            state.gain * generateSample(t, channel, state, opts, onSilent),
+            -1,
+            1
+          );
+          if (channel === 0) {
+            samples.push(sample / 2);
+          } else {
+            samples[i] = samples[i] + sample / 2;
+          }
+          const val = amplitude * sample;
           const offset = i * sampleSize * opts.channels + channel * sampleSize;
           if (opts.bitDepth === 8) buf.writeInt8(val, offset);
           if (opts.bitDepth === 16) buf.writeInt16LE(val, offset);
@@ -128,6 +141,7 @@ export const Player = (opts: Options) => {
         }
       }
 
+      onFrame(samples, samplesGenerated / opts.sampleRate);
       this.push(buf);
 
       samplesGenerated += numSamples;
@@ -152,6 +166,9 @@ export const Player = (opts: Options) => {
         opts,
         samplesGenerated / opts.sampleRate
       );
+    },
+    onFrame: (fn: (frames: number[], t: number) => void) => {
+      onFrame = fn;
     },
     kill: () => {
       stream.destroy();

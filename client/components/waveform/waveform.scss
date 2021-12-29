@@ -1,0 +1,12 @@
+@use "../../vars.scss";
+
+.waveform {
+  position: relative;
+
+  canvas {
+    background-color: #6c7f99;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: vars.$shadow-inner;
+  }
+}

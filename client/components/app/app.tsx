@@ -13,6 +13,7 @@ import { Knob } from "../knob/knob";
 import { Oscillators } from "../oscillators/oscillators";
 import { Panel } from "../panel/panel";
 import { Presets } from "../presets/presets";
+import { Waveform } from "../waveform/waveform";
 
 import "./app.scss";
 
@@ -169,6 +170,9 @@ export const App: React.FC = () => {
                 value={state.transpose}
                 onChange={(transpose) => patchState({ transpose })}
               />
+            </Control>
+            <Control label="Wave">
+              <Waveform />
             </Control>
           </ControlStrip>
         </Panel>
