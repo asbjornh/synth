@@ -1,6 +1,8 @@
 import { defaultOscOptions, Preset } from "../interface/state";
+import { defaultParams } from "./default-params";
 
 export const supersaw: Preset = {
+  ...defaultParams,
   displayName: "Supersaw",
   ampEnv: {
     A: 0.025,
@@ -8,8 +10,6 @@ export const supersaw: Preset = {
     S: 1,
     R: 0.325,
   },
-  filter: undefined,
-  filterEnv: undefined,
   filterEnvAmt: 0,
   oscillators: [
     {

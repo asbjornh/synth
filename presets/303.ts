@@ -1,6 +1,8 @@
 import { defaultOscOptions, Preset } from "../interface/state";
+import { defaultParams } from "./default-params";
 
 export const three03: Preset = {
+  ...defaultParams,
   displayName: "303",
   ampEnv: {
     A: 0,

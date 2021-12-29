@@ -1,9 +1,9 @@
 import { Preset } from "../interface/state";
+import { defaultParams } from "./default-params";
 
 export const hypersaw: Preset = {
+  ...defaultParams,
   displayName: "Hypersaw",
-  filter: undefined,
-  filterEnv: undefined,
   ampEnv: {
     A: 0.1,
     D: 0,

@@ -1,6 +1,8 @@
 import { defaultOscOptions, Preset } from "../interface/state";
+import { defaultParams } from "./default-params";
 
 export const popcorn: Preset = {
+  ...defaultParams,
   displayName: "Popcorn",
   ampEnv: {
     A: 0.01,
@@ -14,7 +16,6 @@ export const popcorn: Preset = {
     Q: 2,
     bellGain: 1,
   },
-  filterEnv: undefined,
   filterEnvAmt: 0,
   oscillators: [
     {

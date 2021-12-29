@@ -5,6 +5,7 @@ import { get, post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { Button } from "../button/button";
 import { Control, ControlStrip } from "../control-strip/control-strip";
+import { defaultDistortion, Distortion } from "../distortion/distortion";
 import { defaultEnvelope, Envelope } from "../envelope/envelope";
 import { defaultFilter, Filter } from "../filter/filter";
 import { Keyboard } from "../keyboard/keyboard";
@@ -35,6 +36,11 @@ export const App: React.FC = () => {
   const toggleFilterEnv = () =>
     patchState({ filterEnv: state.filterEnv ? undefined : defaultEnvelope });
 
+  const toggleDistortion = () =>
+    patchState({
+      distortion: state.distortion ? undefined : defaultDistortion,
+    });
+
   const setFromPreset = (preset: Preset) => {
     const { displayName, ...state } = preset;
     patchState(state);
@@ -56,7 +62,7 @@ export const App: React.FC = () => {
         />
       </div>
 
-      <div className="app__filters-envs">
+      <div className="app__fx">
         <Panel
           actions={
             <Button color="dark" onClick={toggleAmpenv}>
@@ -115,6 +121,23 @@ export const App: React.FC = () => {
                 />
               </Control>
             </Envelope>
+          )}
+        </Panel>
+
+        <Panel
+          actions={
+            <Button onClick={toggleDistortion} color="dark">
+              {state.distortion ? <MinusSquare /> : <PlusSquare />}
+            </Button>
+          }
+          verticalHeader={!!state.distortion}
+          title="Distortion"
+        >
+          {state.distortion && (
+            <Distortion
+              distortion={state.distortion}
+              onChange={(distortion) => patchState({ distortion })}
+            />
           )}
         </Panel>
       </div>

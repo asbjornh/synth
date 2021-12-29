@@ -1,6 +1,7 @@
 import { Note } from "../interface/state";
 import { evalEnvelope } from "./envelope";
 import { frequencies } from "./frequencies";
+import { distortion } from "./fx";
 import { transpose } from "./osc";
 import { Options, PlayerState } from "./player";
 import { clamp, map, mapO } from "./util";
@@ -68,6 +69,13 @@ export const generateSample = (
         filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
       }
       noteSample = filter[channel](noteSample);
+    }
+
+    if (state.distortion) {
+      const { gain, mix, outGain } = state.distortion;
+      const distMax = distortion(gain);
+      const wet = (1 / distMax) * outGain * distortion(noteSample * gain);
+      noteSample = mix * wet + (1 - mix) * noteSample;
     }
 
     sample += noteSample;

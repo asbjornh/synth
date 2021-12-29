@@ -8,7 +8,7 @@ html {
   display: grid;
   gap: 10px;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas: "presets presets" "osc filters_envs" "keyboard master";
+  grid-template-areas: "presets presets" "osc fx" "keyboard master";
 
   &__presets {
     grid-area: presets;
@@ -19,12 +19,12 @@ html {
     grid-area: osc;
   }
 
-  &__filters-envs {
+  &__fx {
     align-self: flex-start;
     display: grid;
     gap: 10px;
     grid-template-columns: 1fr;
-    grid-area: filters_envs;
+    grid-area: fx;
   }
 
   &__keyboard {

@@ -12,7 +12,6 @@
 ## FX
 
 - Delay
-- Distortion
 - Limiter
 
 ## Playing

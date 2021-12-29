@@ -78,8 +78,15 @@ export type Envelope = {
   R: number;
 };
 
+export type Distortion = {
+  mix: number;
+  gain: number;
+  outGain: number;
+};
+
 export type State = {
   ampEnv: Envelope | undefined;
+  distortion: Distortion | undefined;
   filter: Filter | undefined;
   filterEnv: Envelope | undefined;
   filterEnvAmt: number;
@@ -90,13 +97,11 @@ export type State = {
   transpose: number;
 };
 
-export type Preset = Pick<
-  State,
-  "ampEnv" | "filter" | "filterEnv" | "filterEnvAmt" | "oscillators"
-> & { displayName: string };
+export type Preset = Omit<State, "notes"> & { displayName: string };
 
 export const initialState: State = {
   ampEnv: undefined,
+  distortion: undefined,
   filter: undefined,
   filterEnv: undefined,
   filterEnvAmt: 0,

@@ -21,11 +21,14 @@ const systemPresetOptions = [
 
 const empty: Preset = {
   displayName: "",
+  distortion: undefined,
   ampEnv: undefined,
   filter: undefined,
   filterEnv: undefined,
   filterEnvAmt: 0,
+  gain: 1,
   oscillators: [],
+  transpose: 0,
 };
 
 export const Presets: React.FC<{

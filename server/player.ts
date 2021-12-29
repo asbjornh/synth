@@ -3,7 +3,7 @@ import { AudioIO } from "naudiodon";
 
 import { filter, FilterInstance } from "./filter";
 import { clamp, map, mapO } from "./util";
-import { Envelope, Filter, Note, State } from "../interface/state";
+import { Distortion, Envelope, Filter, Note, State } from "../interface/state";
 import { oscillator, OscillatorInstance, transpose } from "./osc";
 import { generateSample } from "./generate-sample";
 
@@ -24,6 +24,7 @@ type NoteState = {
 
 export type PlayerState = {
   ampEnv: Envelope | undefined;
+  distortion: Distortion | undefined;
   filterEnv: Envelope | undefined;
   filterEnvAmt: number;
   gain: number;
@@ -68,6 +69,7 @@ const toPlayerState = (
   });
   return {
     ampEnv: next.ampEnv,
+    distortion: next.distortion,
     filterEnv: next.filterEnv,
     filterEnvAmt: next.filterEnvAmt,
     gain: next.gain,
@@ -80,6 +82,7 @@ const toPlayerState = (
 export const Player = (opts: Options) => {
   let state: PlayerState = {
     ampEnv: undefined,
+    distortion: undefined,
     filterEnv: undefined,
     filterEnvAmt: 0,
     gain: 1,
@@ -117,7 +120,7 @@ export const Player = (opts: Options) => {
         for (let channel = 0; channel < opts.channels; channel++) {
           const t = (samplesGenerated + i) / opts.sampleRate;
           const sample = generateSample(t, channel, state, opts, onSilent);
-          const val = amplitude * state.gain * clamp(sample, -1, 1);
+          const val = amplitude * clamp(sample * state.gain, -1, 1);
           const offset = i * sampleSize * opts.channels + channel * sampleSize;
           if (opts.bitDepth === 8) buf.writeInt8(val, offset);
           if (opts.bitDepth === 16) buf.writeInt16LE(val, offset);
