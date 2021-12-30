@@ -84,7 +84,14 @@ export const Presets: React.FC<{
         onChange={(e) => setPresetName(e.target.value)}
         placeholder="Preset name"
       />
-      <Button onClick={() => setPreset("")} color="dark">
+      <Button
+        onClick={() => {
+          setPreset("");
+          props.onSelect(empty);
+          setPresetName("");
+        }}
+        color="dark"
+      >
         <FilePlus />
       </Button>
       <Button disabled={!presetName} onClick={save} color="dark">
