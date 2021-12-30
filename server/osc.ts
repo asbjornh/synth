@@ -1,5 +1,4 @@
-import { Note, Osc } from "../interface/state";
-import { frequencies } from "./frequencies";
+import { Osc } from "../interface/state";
 import { mapRange } from "./util";
 
 type OscFn = (t: number, freq: number) => number;
@@ -16,25 +15,16 @@ const sampleFrom = (samples: number[]) => (t: number, freq: number) => {
   return samples[i];
 };
 
-const fromWord = (word: string) =>
-  sampleFrom(
-    word
-      .split("")
-      .map((c) => c.charCodeAt(0))
-      .map((c) => mapRange(c, [65, 122], [-1, 1]))
-  );
-
 const sawSteps = (n: number) =>
   Array.from({ length: n }).map((_, i) => mapRange(i, [0, n - 1], [-1, 1]));
 
 const triSteps = (n: number) => {
   const up = sawSteps(n);
-  const down = up.slice(1, 15).reverse();
+  const down = up.slice(1, n * 2 - 1).reverse();
   return up.concat(down);
 };
 
 const nesTriangle = sampleFrom(triSteps(8));
-const nesSaw = sampleFrom(sawSteps(6));
 
 const getGenerator = (osc: Osc): OscFn => {
   if (osc.type === "saw") return saw;

@@ -3,10 +3,18 @@ import { AudioIO } from "naudiodon";
 
 import { filter, FilterInstance } from "./filter";
 import { clamp, map, mapO } from "./util";
-import { Distortion, Envelope, Filter, Note, State } from "../interface/state";
+import {
+  Distortion,
+  Envelope,
+  Filter,
+  LFOTarget,
+  Note,
+  State,
+} from "../interface/state";
 import { oscillator, OscillatorInstance, transpose } from "./osc";
 import { generateSample } from "./generate-sample";
 import { delay, DelayInstance } from "./fx";
+import { fromEntries } from "../client/util";
 
 export type Options = {
   bitDepth: 8 | 16 | 32;
@@ -23,6 +31,12 @@ type NoteState = {
   filter: FilterInstance[];
 };
 
+type LFOInstance = {
+  osc: OscillatorInstance;
+  amount: number;
+  freq: number;
+};
+
 export type PlayerState = {
   ampEnv: Envelope | undefined;
   delay: DelayInstance | undefined;
@@ -30,6 +44,7 @@ export type PlayerState = {
   filterEnv: Envelope | undefined;
   filterEnvAmt: number;
   gain: number;
+  LFOs: Record<LFOTarget, LFOInstance | undefined>;
   notes: Partial<Record<Note, NoteState>>;
   oscillators: OscillatorInstance[];
   /** In octaves */
@@ -74,6 +89,13 @@ const toPlayerState = (
     ? delay(next.delay, opts, cur.delay?.getState())
     : undefined;
 
+  const nextLFOs = fromEntries(
+    next.LFOs.map<[LFOTarget, LFOInstance]>((LFO) => [
+      LFO.target,
+      { osc: oscillator(LFO.osc), amount: LFO.amount, freq: LFO.freq },
+    ])
+  );
+
   return {
     ampEnv: next.ampEnv,
     delay: nextDelay,
@@ -81,6 +103,7 @@ const toPlayerState = (
     filterEnv: next.filterEnv,
     filterEnvAmt: next.filterEnvAmt,
     gain: next.gain,
+    LFOs: nextLFOs,
     notes: notes,
     oscillators,
     transpose: next.transpose,
@@ -95,6 +118,11 @@ export const Player = (opts: Options) => {
     filterEnv: undefined,
     filterEnvAmt: 0,
     gain: 1,
+    LFOs: {
+      amplitude: undefined,
+      cutoff: undefined,
+      pitch: undefined,
+    },
     notes: {},
     oscillators: [],
     transpose: 0,

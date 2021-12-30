@@ -8,6 +8,7 @@ export const defaultParams: Omit<Preset, "displayName"> = {
   filterEnv: undefined,
   filterEnvAmt: 0,
   gain: 1,
+  LFOs: [],
   oscillators: [],
   transpose: 0,
 };

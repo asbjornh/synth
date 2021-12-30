@@ -90,6 +90,16 @@ export type Delay = {
   feedback: number;
 };
 
+export type LFOTarget = "pitch" | "amplitude" | "cutoff";
+
+export type LFO = {
+  id: string;
+  amount: number;
+  freq: number;
+  osc: Osc;
+  target: LFOTarget;
+};
+
 export type State = {
   ampEnv: Envelope | undefined;
   delay: Delay | undefined;
@@ -98,6 +108,7 @@ export type State = {
   filterEnv: Envelope | undefined;
   filterEnvAmt: number;
   gain: number;
+  LFOs: LFO[];
   notes: Note[];
   oscillators: Osc[];
   /** In octaves */
@@ -114,6 +125,7 @@ export const initialState: State = {
   filterEnv: undefined,
   filterEnvAmt: 0,
   gain: 1,
+  LFOs: [],
   notes: [],
   oscillators: [],
   transpose: 0,

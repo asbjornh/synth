@@ -1,3 +1,4 @@
+import { mapRange } from "../client/util";
 import { Note } from "../interface/state";
 import { evalEnvelope } from "./envelope";
 import { frequencies } from "./frequencies";
@@ -31,7 +32,7 @@ export const generateSample = (
       const opts = oscillator.getOptions();
       const stereoAmp = stereoAmplitude(opts.balance, channel);
 
-      const { value: amplitude, done } = state.ampEnv
+      const { value: envAmp, done } = state.ampEnv
         ? evalEnvelope(t, start, end, state.ampEnv)
         : { value: 1, done: end && t >= end };
 
@@ -42,17 +43,17 @@ export const generateSample = (
 
       if (opts.unison === 1) {
         noteSample +=
-          amplitude * stereoAmp * oscillator(t + period * opts.phase, freq);
+          envAmp * stereoAmp * oscillator(t + period * opts.phase, freq);
       } else {
         map(Array.from({ length: opts.unison }), (_, i) => {
           const p = (i / opts.unison) * (i % 2 === 0 ? 1 : -1);
           const t2 = t + p * period * opts.unison * opts.phase;
           // TODO: Figure out how to correctly scale amplitude:
-          const amplitude2 = amplitude / (opts.unison * 0.3);
+          const envAmp2 = envAmp / (opts.unison * 0.3);
           const stereoAmp2 =
             stereoAmp * stereoAmplitude(opts.widthU * p, channel);
           const freq2 = freq * transpose(0, opts.detuneU * p);
-          noteSample += amplitude2 * stereoAmp2 * oscillator(t2, freq2);
+          noteSample += envAmp2 * stereoAmp2 * oscillator(t2, freq2);
         });
       }
     });
@@ -80,6 +81,12 @@ export const generateSample = (
 
     sample += noteSample;
   });
+
+  const aLFO = state.LFOs.amplitude;
+  if (aLFO) {
+    const LFOamp = 1 + aLFO.osc(t, aLFO.freq) * aLFO.amount;
+    sample = sample * LFOamp;
+  }
 
   if (state.delay) {
     const { options } = state.delay;

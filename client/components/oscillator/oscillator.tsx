@@ -29,7 +29,7 @@ const types: Record<Osc["type"], string> = {
   noise: "White noise",
 };
 
-const typeOptions = entries(types).map(([value, label]) => ({
+export const oscTypeOptions = entries(types).map(([value, label]) => ({
   value,
   label,
 }));
@@ -90,7 +90,7 @@ export const Oscillator: React.FC<{
           <Control label="Wave">
             <Select
               value={osc.type}
-              options={typeOptions}
+              options={oscTypeOptions}
               onChange={changeType}
             />
           </Control>

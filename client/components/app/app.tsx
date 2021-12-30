@@ -11,6 +11,7 @@ import { defaultEnvelope, Envelope } from "../envelope/envelope";
 import { defaultFilter, Filter } from "../filter/filter";
 import { Keyboard } from "../keyboard/keyboard";
 import { Knob } from "../knob/knob";
+import { LFOs } from "../LFOs/LFOs";
 import { Oscillators } from "../oscillators/oscillators";
 import { Panel } from "../panel/panel";
 import { Presets } from "../presets/presets";
@@ -162,6 +163,8 @@ export const App: React.FC = () => {
             />
           )}
         </Panel>
+
+        <LFOs LFOs={state.LFOs} onChange={(LFOs) => patchState({ LFOs })} />
       </div>
 
       <div className="app__keyboard">
