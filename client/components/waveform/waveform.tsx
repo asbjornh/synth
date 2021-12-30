@@ -56,7 +56,7 @@ export const Waveform: React.FC = (props) => {
     ctx.lineJoin = "round";
     const color = matchMedia("(prefers-color-scheme: dark)").matches
       ? "#62ffb3"
-      : "black";
+      : "#6c7f99";
     ctx.strokeStyle = color;
     ctx.shadowBlur = 10;
     ctx.shadowColor = color;

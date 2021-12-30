@@ -4,7 +4,7 @@
   position: relative;
 
   canvas {
-    background-color: #6c7f99;
+    background-color: var(--waveform-bg);
     border-radius: 3px;
     overflow: hidden;
     box-shadow: vars.$shadow-inner;
