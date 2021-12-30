@@ -50,7 +50,7 @@ export const Waveform: React.FC = (props) => {
     const diff = (t / frameDur) * frameDiff;
     // NOTE: Nudge period slightly to avoid left line for square and saw flickering
     const start = Math.round((period * 0.99 - (diff % period)) * sampleRate);
-    const numSamples = sampleRate * period * 4;
+    const numSamples = sampleRate * period * 3;
     ctx.beginPath();
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
