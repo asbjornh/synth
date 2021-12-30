@@ -6,7 +6,7 @@
   "scripts": {
     "serve": "ts-node-dev server",
     "serve:mock": "ts-node-dev server/serve-mock",
-    "build": "webpack --mode=development --watch"
+    "build": "webpack --mode=development"
   },
   "author": "Asbjørn Hegdahl",
   "license": "MIT",
