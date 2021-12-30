@@ -185,6 +185,7 @@ export const App: React.FC = () => {
             </Control>
             <Control label="Transp." title="Transpose (octaves)">
               <Knob
+                centered
                 min={-4}
                 max={4}
                 step={1}

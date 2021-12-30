@@ -42,7 +42,10 @@
     display: block;
     height: $size;
     width: $size;
-    transform: rotate(135deg);
+
+    circle {
+      transform-origin: 50% 50%;
+    }
   }
 
   &__meter-background {

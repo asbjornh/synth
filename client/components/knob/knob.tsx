@@ -1,16 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDrag } from "../../hooks/use-drag";
 import { clamp, mapRange } from "../../util";
 
 import interpolate from "color-interpolate";
-
-const getColor = interpolate([
-  "#ff4242",
-  "#ff9c3a",
-  "#ffdf38",
-  "#c5fc2f",
-  "#3cf59b",
-]);
 
 import "./knob.scss";
 
@@ -33,16 +25,35 @@ const interpolateExponential = (value: number, delta: number, max: number) =>
   Math.pow(2, expX(value) + delta);
 
 export const Knob: React.FC<{
+  centered?: boolean;
   interpolation?: "linear" | "exponential";
   min: number;
   max: number;
   value: number;
   step: number;
   onChange: (next: number) => void;
-}> = ({ interpolation = "linear", min, max, value, onChange, step }) => {
+}> = ({
+  centered,
+  interpolation = "linear",
+  min,
+  max,
+  value,
+  onChange,
+  step,
+}) => {
   const [knobValue, setKnobValue] = useState(value);
   const [input, setInput] = useState("");
   const [el, setEl] = useState<HTMLDivElement | null>(null);
+
+  const getColor = useMemo(
+    () =>
+      interpolate(
+        centered
+          ? ["#ff9797", "#ff9c3a", "#bdc8d4", "#c5fc2f", "#3cf59b"]
+          : ["#bdc8d4", "#ff9797", "#ff9c3a", "#ffdf38", "#c5fc2f", "#3cf59b"]
+      ),
+    [centered]
+  );
 
   const quantize = (value: number) =>
     Math.round(value * (1 / step)) / (1 / step);
@@ -83,8 +94,14 @@ export const Knob: React.FC<{
     interpolation === "linear"
       ? mapRange(knobValue, [min, max], [0, 1])
       : mapRange(expX(knobValue), [expX(min), expX(max)], [0, 1]);
-  const rotation = mapRange(ratio, [0, 1], [-130, 130]);
+  const position = mapRange(ratio, [0, 1], [-130, 130]);
   const color = getColor(ratio);
+  const meterRotate = centered ? -90 : 135;
+  const meterOffset = !centered
+    ? mapRange(ratio, [0, 1], [314, 104])
+    : ratio > 0.5
+    ? mapRange(ratio, [0.5, 1], [314, 210])
+    : mapRange(ratio, [0.5, 0], [314, 418]);
 
   return (
     <div className="knob">
@@ -100,6 +117,7 @@ export const Knob: React.FC<{
             fill="none"
             strokeDasharray="314% 1000%"
             strokeDashoffset="104%"
+            style={{ transform: "rotate(135deg)" }}
           />
           <circle
             cx="50%"
@@ -109,15 +127,16 @@ export const Knob: React.FC<{
             stroke={color}
             strokeLinecap="round"
             fill="none"
-            strokeDasharray="314% 1000%"
-            strokeDashoffset={`${mapRange(ratio, [0, 1], [314, 104])}%`}
+            strokeDasharray="314% 280%"
+            strokeDashoffset={`${meterOffset}%`}
+            style={{ transform: `rotate(${meterRotate}deg)` }}
           />
         </svg>
         <div className="knob__wheel-wrapper">
           <div
             ref={(el) => setEl(el)}
             className="knob__wheel"
-            style={{ transform: `rotate(${rotation}deg)` }}
+            style={{ transform: `rotate(${position}deg)` }}
           >
             <div className="knob__dot" />
           </div>

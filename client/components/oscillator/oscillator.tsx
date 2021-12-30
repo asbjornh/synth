@@ -113,6 +113,7 @@ export const Oscillator: React.FC<{
 
         <Control label="Detune">
           <Knob
+            centered
             min={-24}
             max={24}
             value={detune}
@@ -122,11 +123,19 @@ export const Oscillator: React.FC<{
         </Control>
 
         <Control label="Octave">
-          <Knob min={-4} max={4} value={octave} step={1} onChange={setOctave} />
+          <Knob
+            centered
+            min={-4}
+            max={4}
+            value={octave}
+            step={1}
+            onChange={setOctave}
+          />
         </Control>
 
         <Control label="Balance">
           <Knob
+            centered
             min={-1}
             max={1}
             value={balance}
