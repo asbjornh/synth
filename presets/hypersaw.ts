@@ -23,7 +23,7 @@ export const hypersaw: Preset = {
         unison: 10,
         detuneU: 57,
         widthU: 1,
-        phase: 0.47,
+        phase: 0.18,
       },
     },
     {

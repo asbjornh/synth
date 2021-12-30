@@ -20,8 +20,10 @@
 - Arpeggiator
 - MIDI?
 - Portamento
+- Auto chords
 
 ## Other
 
 - Spectrogram
 - LFOs
+- LFO sync (between notes)

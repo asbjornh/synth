@@ -38,8 +38,8 @@ export const defaultLFO = (): LFOOpts => ({
     options: defaultOscOptions,
   },
   amount: 0.5,
-  freq: 5,
-  target: "pitch",
+  freq: 3,
+  target: "amplitude",
 });
 
 export const LFO: React.FC<{

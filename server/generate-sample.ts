@@ -22,13 +22,17 @@ export const generateSample = (
   options: Options,
   onSilent: (note: Note) => void
 ) => {
+  const dt = 1 / options.sampleRate;
   let sample = 0;
 
-  mapO(state.notes, ({ start, end, filter }, note) => {
+  mapO(state.notes, ({ start, end, filter, LFOs, oscillators }, note) => {
     // NOTE: Sample contribution for single note
     let noteSample = 0;
 
-    map(state.oscillators, (oscillator) => {
+    const pLFO = LFOs.pitch;
+    const LFODetune = pLFO ? pLFO.osc(dt, pLFO.freq) * 1200 * pLFO.amount : 0;
+
+    map(oscillators, (oscillator) => {
       const opts = oscillator.getOptions();
       const stereoAmp = stereoAmplitude(opts.balance, channel);
 
@@ -38,24 +42,9 @@ export const generateSample = (
 
       if (done) onSilent(note);
 
-      const freq = frequencies[note] * transpose(state.transpose, 0);
-      const period = freq / options.sampleRate;
+      const freq = frequencies[note] * transpose(state.transpose, LFODetune);
 
-      if (opts.unison === 1) {
-        noteSample +=
-          envAmp * stereoAmp * oscillator(t + period * opts.phase, freq);
-      } else {
-        map(Array.from({ length: opts.unison }), (_, i) => {
-          const p = (i / opts.unison) * (i % 2 === 0 ? 1 : -1);
-          const t2 = t + p * period * opts.unison * opts.phase;
-          // TODO: Figure out how to correctly scale amplitude:
-          const envAmp2 = envAmp / (opts.unison * 0.3);
-          const stereoAmp2 =
-            stereoAmp * stereoAmplitude(opts.widthU * p, channel);
-          const freq2 = freq * transpose(0, opts.detuneU * p);
-          noteSample += envAmp2 * stereoAmp2 * oscillator(t2, freq2);
-        });
-      }
+      noteSample += envAmp * stereoAmp * oscillator(dt, freq);
     });
 
     if (filter[channel]) {
@@ -79,14 +68,14 @@ export const generateSample = (
       noteSample = mix * wet + (1 - mix) * noteSample;
     }
 
+    const aLFO = LFOs.amplitude;
+    if (aLFO) {
+      const LFOamp = 1 + aLFO.osc(dt, aLFO.freq) * aLFO.amount;
+      noteSample = noteSample * LFOamp;
+    }
+
     sample += noteSample;
   });
-
-  const aLFO = state.LFOs.amplitude;
-  if (aLFO) {
-    const LFOamp = 1 + aLFO.osc(t, aLFO.freq) * aLFO.amount;
-    sample = sample * LFOamp;
-  }
 
   if (state.delay) {
     const { options } = state.delay;

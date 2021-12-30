@@ -1,5 +1,5 @@
-import { Osc } from "../interface/state";
-import { mapRange } from "./util";
+import { Osc, OscOptions } from "../interface/state";
+import { map, mapRange } from "./util";
 
 type OscFn = (t: number, freq: number) => number;
 
@@ -48,16 +48,42 @@ export const transpose = (octaves: number, cents: number) => {
   return octaveMultiplier * detuneMultiplier;
 };
 
-export const oscillator = (osc: Osc) => {
-  const { detune, octave, gain } = osc.options;
+export const oscillator = (osc: Osc, initialPhase?: number) => {
+  let { detune, octave, gain, phase: pOffset } = osc.options;
 
   const transpositionMultiplier = transpose(octave, detune);
   const generator = getGenerator(osc);
 
-  const oscFn = (t: number, freq: number) =>
-    gain * generator(t, freq * transpositionMultiplier);
+  let phase = initialPhase ?? 0;
 
+  const oscFn = (dt: number, freq: number) => {
+    const phaseDelta = (dt / (1 / freq)) % 1;
+    phase += phaseDelta;
+    const freq2 = freq * transpositionMultiplier;
+    const t = phase / (2 * freq) + pOffset * (1 / freq2) * 8;
+    return gain * generator(t, freq2);
+  };
+
+  oscFn.getOsc = () => osc;
   oscFn.getOptions = () => osc.options;
+  oscFn.getPhase = () => phase;
 
   return oscFn;
+};
+
+export const unison = (osc: Osc): OscillatorInstance[] => {
+  const { options: opts } = osc;
+  return map(Array.from({ length: opts.unison }), (_, i) => {
+    const p = (i / opts.unison) * (i % 2 === 0 ? 1 : -1);
+    const phase = Math.abs(p) * opts.unison * opts.phase;
+    // TODO: Figure out how to correctly scale amplitude:
+    const gain = (opts.gain * 1) / (opts.unison * 0.3);
+    const balance = opts.balance + p * opts.widthU;
+    const detune = opts.detune + p * opts.detuneU;
+
+    return oscillator({
+      ...osc,
+      options: { ...osc.options, phase, gain, balance, detune },
+    });
+  });
 };
