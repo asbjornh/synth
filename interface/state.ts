@@ -84,8 +84,15 @@ export type Distortion = {
   outGain: number;
 };
 
+export type Delay = {
+  length: number;
+  mix: number;
+  feedback: number;
+};
+
 export type State = {
   ampEnv: Envelope | undefined;
+  delay: Delay | undefined;
   distortion: Distortion | undefined;
   filter: Filter | undefined;
   filterEnv: Envelope | undefined;
@@ -101,6 +108,7 @@ export type Preset = Omit<State, "notes"> & { displayName: string };
 
 export const initialState: State = {
   ampEnv: undefined,
+  delay: undefined,
   distortion: undefined,
   filter: undefined,
   filterEnv: undefined,

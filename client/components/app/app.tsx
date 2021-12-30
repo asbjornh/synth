@@ -5,6 +5,7 @@ import { get, post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { Button } from "../button/button";
 import { Control, ControlStrip } from "../control-strip/control-strip";
+import { defaultDelay, Delay } from "../delay/delay";
 import { defaultDistortion, Distortion } from "../distortion/distortion";
 import { defaultEnvelope, Envelope } from "../envelope/envelope";
 import { defaultFilter, Filter } from "../filter/filter";
@@ -41,6 +42,9 @@ export const App: React.FC = () => {
     patchState({
       distortion: state.distortion ? undefined : defaultDistortion,
     });
+
+  const toggleDelay = () =>
+    patchState({ delay: state.delay ? undefined : defaultDelay });
 
   const setFromPreset = (preset: Preset) => {
     const { displayName, ...state } = preset;
@@ -138,6 +142,23 @@ export const App: React.FC = () => {
             <Distortion
               distortion={state.distortion}
               onChange={(distortion) => patchState({ distortion })}
+            />
+          )}
+        </Panel>
+
+        <Panel
+          actions={
+            <Button onClick={toggleDelay} color="dark">
+              {state.delay ? <MinusSquare /> : <PlusSquare />}
+            </Button>
+          }
+          verticalHeader={!!state.delay}
+          title="Delay"
+        >
+          {state.delay && (
+            <Delay
+              delay={state.delay}
+              onChange={(delay) => patchState({ delay })}
             />
           )}
         </Panel>

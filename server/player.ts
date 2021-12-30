@@ -6,6 +6,7 @@ import { clamp, map, mapO } from "./util";
 import { Distortion, Envelope, Filter, Note, State } from "../interface/state";
 import { oscillator, OscillatorInstance, transpose } from "./osc";
 import { generateSample } from "./generate-sample";
+import { delay, DelayInstance } from "./fx";
 
 export type Options = {
   bitDepth: 8 | 16 | 32;
@@ -24,6 +25,7 @@ type NoteState = {
 
 export type PlayerState = {
   ampEnv: Envelope | undefined;
+  delay: DelayInstance | undefined;
   distortion: Distortion | undefined;
   filterEnv: Envelope | undefined;
   filterEnvAmt: number;
@@ -67,8 +69,14 @@ const toPlayerState = (
 
     notes[note] = { ...state, end, filter: nextFilter };
   });
+
+  const nextDelay = next.delay
+    ? delay(next.delay, opts, cur.delay?.getState())
+    : undefined;
+
   return {
     ampEnv: next.ampEnv,
+    delay: nextDelay,
     distortion: next.distortion,
     filterEnv: next.filterEnv,
     filterEnvAmt: next.filterEnvAmt,
@@ -82,6 +90,7 @@ const toPlayerState = (
 export const Player = (opts: Options) => {
   let state: PlayerState = {
     ampEnv: undefined,
+    delay: undefined,
     distortion: undefined,
     filterEnv: undefined,
     filterEnvAmt: 0,
@@ -110,15 +119,6 @@ export const Player = (opts: Options) => {
       const numSamples = (chunkSize / blockAlign) | 0;
       const buf = Buffer.alloc(numSamples * blockAlign);
       const samples = new Array();
-
-      if (
-        state.oscillators.length === 0 ||
-        Object.keys(state.notes).length === 0
-      ) {
-        this.push(buf);
-        samplesGenerated += numSamples;
-        return;
-      }
 
       for (let i = 0; i < numSamples; i++) {
         for (let channel = 0; channel < opts.channels; channel++) {
@@ -153,6 +153,7 @@ export const Player = (opts: Options) => {
       sampleFormat: opts.bitDepth,
       sampleRate: opts.sampleRate,
       framesPerBuffer: 512, // Magic number. Crashes if too low
+      closeOnError: false,
     },
   });
   stream.pipe(io);

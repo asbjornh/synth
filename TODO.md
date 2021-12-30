@@ -11,8 +11,8 @@
 
 ## FX
 
-- Delay
 - Limiter
+- Ping pong delay
 
 ## Playing
 

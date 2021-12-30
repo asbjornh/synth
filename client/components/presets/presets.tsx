@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { FilePlus, Save, Trash2 } from "react-feather";
 import { Preset, State } from "../../../interface/state";
+import { defaultParams } from "../../../presets/default-params";
 import sysPresets from "../../../presets/presets";
 import { del, get, post } from "../../api";
+import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { entries } from "../../util";
 import { Button } from "../button/button";
 import { Select } from "../select/select";
@@ -20,15 +22,8 @@ const systemPresetOptions = [
 ];
 
 const empty: Preset = {
+  ...defaultParams,
   displayName: "",
-  distortion: undefined,
-  ampEnv: undefined,
-  filter: undefined,
-  filterEnv: undefined,
-  filterEnvAmt: 0,
-  gain: 1,
-  oscillators: [],
-  transpose: 0,
 };
 
 export const Presets: React.FC<{
@@ -43,7 +38,7 @@ export const Presets: React.FC<{
 
   useEffect(() => get("/presets").then(setUserPresets), []);
 
-  useEffect(() => {
+  useAfterMountEffect(() => {
     if (preset === "") props.onSelect(empty);
     else if (presets[preset]) props.onSelect(presets[preset]);
 

@@ -81,5 +81,13 @@ export const generateSample = (
     sample += noteSample;
   });
 
+  if (state.delay) {
+    const { options } = state.delay;
+    const wet = state.delay.tick();
+    const mix = options.mix * wet + (1 - options.mix) * sample;
+    state.delay.write(mix);
+    return mix;
+  }
+
   return sample;
 };
