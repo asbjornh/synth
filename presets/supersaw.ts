@@ -31,7 +31,7 @@ export const supersaw: Preset = {
         balance: -0.75,
         gain: 0.2,
         detune: -20,
-        octave: -1,
+        octave: 0,
       },
     },
     {
@@ -42,7 +42,7 @@ export const supersaw: Preset = {
         balance: -0.29,
         gain: 0.2,
         detune: -12,
-        octave: -1,
+        octave: 0,
       },
     },
     {
@@ -53,7 +53,7 @@ export const supersaw: Preset = {
         balance: 0.35,
         gain: 0.2,
         detune: 10,
-        octave: -1,
+        octave: 0,
       },
     },
     {
@@ -64,7 +64,7 @@ export const supersaw: Preset = {
         balance: 0.74,
         gain: 0.2,
         detune: 18,
-        octave: -1,
+        octave: 0,
       },
     },
   ],
