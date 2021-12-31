@@ -24,15 +24,12 @@ export type Options = {
 };
 
 type NoteState = {
-  /** Start time */
-  start: number;
-  /** End time */
-  end?: number;
   envelopes: Record<EnvelopeTarget, EnvelopeInstance | undefined>;
   LFOs: Record<LFOTarget, LFOInstance | undefined>;
   oscillators: OscillatorInstance[];
   /** One filter instance per channel */
   filter: FilterInstance[];
+  released: boolean;
 };
 
 type LFOInstance = {
@@ -69,11 +66,9 @@ const toPlayerState = (
   const f = next.filter;
   const notes = { ...cur.notes };
   map(next.notes, (note) => {
-    if (!notes[note] || notes[note]?.end) {
+    if (!notes[note] || notes[note]?.released) {
       notes[note] = {
-        start: t,
         filter: [],
-        end: undefined,
         envelopes: {
           amplitude: undefined,
           cutoff: undefined,
@@ -84,11 +79,12 @@ const toPlayerState = (
           pitch: undefined,
         },
         oscillators: [],
+        released: false,
       };
     }
   });
   mapO(notes, (state, note) => {
-    const end = state.end || (next.notes.includes(note) ? undefined : t);
+    const released = state.released || !next.notes.includes(note);
 
     const nextFilter =
       f && state.filter.length > 0
@@ -129,11 +125,11 @@ const toPlayerState = (
 
     notes[note] = {
       ...state,
-      end,
       filter: nextFilter,
       LFOs: nextLFOs,
       envelopes: nextEnvelopes,
       oscillators,
+      released,
     };
   });
 

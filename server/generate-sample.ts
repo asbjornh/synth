@@ -26,7 +26,7 @@ export const generateSample = (
 
   mapO(
     state.notes,
-    ({ start, end, filter, LFOs, envelopes, oscillators }, note) => {
+    ({ filter, LFOs, envelopes, oscillators, released }, note) => {
       // NOTE: Sample contribution for single note
       let noteSample = 0;
 
@@ -34,8 +34,8 @@ export const generateSample = (
       const LFODetune = pLFO ? pLFO.osc(dt, pLFO.freq) * 1200 * pLFO.amount : 0;
 
       const { value: envAmp, done } = envelopes.amplitude
-        ? envelopes.amplitude(end !== undefined)
-        : { value: 1, done: end && t >= end };
+        ? envelopes.amplitude(released)
+        : { value: 1, done: released };
 
       map(oscillators, (oscillator) => {
         const opts = oscillator.getOptions();
@@ -54,7 +54,7 @@ export const generateSample = (
         const LFOcutoff = cLFO ? cLFO.osc(dt, cLFO.freq) * cLFO.amount * 10 : 0;
 
         if (envelopes.cutoff && state.filterEnvAmt !== 0) {
-          const { value } = envelopes.cutoff(end !== undefined);
+          const { value } = envelopes.cutoff(released);
           const cutoff = adjustCutoff(
             opts.cutoff,
             state.filterEnvAmt * value + LFOcutoff
