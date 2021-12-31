@@ -7,31 +7,5 @@ html {
 .app {
   display: grid;
   gap: 10px;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: "presets presets" "osc fx" "keyboard master";
-
-  &__presets {
-    grid-area: presets;
-  }
-
-  &__osc {
-    display: flex;
-    grid-area: osc;
-  }
-
-  &__fx {
-    align-self: flex-start;
-    display: grid;
-    gap: 10px;
-    grid-template-columns: 1fr;
-    grid-area: fx;
-  }
-
-  &__keyboard {
-    grid-area: keyboard;
-  }
-
-  &__master {
-    grid-area: master;
-  }
+  grid-template-columns: 1fr;
 }

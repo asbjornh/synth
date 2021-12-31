@@ -27,7 +27,7 @@ const empty: Preset = {
 };
 
 export const Presets: React.FC<{
-  onSelect: (preset: Preset) => void;
+  onSelect: (preset: Preset, name: string) => void;
   state: State;
 }> = (props) => {
   const [userPresets, setUserPresets] = useState<Record<string, Preset>>({});
@@ -39,8 +39,8 @@ export const Presets: React.FC<{
   useEffect(() => get("/presets").then(setUserPresets), []);
 
   useAfterMountEffect(() => {
-    if (preset === "") props.onSelect(empty);
-    else if (presets[preset]) props.onSelect(presets[preset]);
+    if (preset === "") props.onSelect(empty, "");
+    else if (presets[preset]) props.onSelect(presets[preset], preset);
 
     setPresetName(userPresets[preset]?.displayName || "");
   }, [preset]);
@@ -87,7 +87,7 @@ export const Presets: React.FC<{
       <Button
         onClick={() => {
           setPreset("");
-          props.onSelect(empty);
+          props.onSelect(empty, "");
           setPresetName("");
         }}
         color="dark"
