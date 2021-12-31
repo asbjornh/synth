@@ -1,7 +1,7 @@
 import { Readable } from "stream";
 import { AudioIO } from "naudiodon";
 
-import { filter, FilterInstance } from "./filter";
+import { filter, FilterInstance, getEQ } from "./filter";
 import { clamp, map, mapO } from "./util";
 import {
   Distortion,
@@ -44,6 +44,8 @@ export type PlayerState = {
   ampEnv: Envelope | undefined;
   delay: DelayInstance | undefined;
   distortion: Distortion | undefined;
+  EQHigh: FilterInstance | undefined;
+  EQLow: FilterInstance | undefined;
   filterEnv: Envelope | undefined;
   filterEnvAmt: number;
   gain: number;
@@ -126,10 +128,25 @@ const toPlayerState = (
     ? delay(next.delay, opts, cur.delay?.getState())
     : undefined;
 
+  const EQLow = getEQ(
+    opts.sampleRate,
+    "low-shelf",
+    next.EQLow,
+    cur.EQLow?.getState()
+  );
+  const EQHigh = getEQ(
+    opts.sampleRate,
+    "high-shelf",
+    next.EQHigh,
+    cur.EQHigh?.getState()
+  );
+
   return {
     ampEnv: next.ampEnv,
     delay: nextDelay,
     distortion: next.distortion,
+    EQHigh,
+    EQLow,
     filterEnv: next.filterEnv,
     filterEnvAmt: next.filterEnvAmt,
     gain: next.gain,
@@ -143,6 +160,8 @@ export const Player = (opts: Options) => {
     ampEnv: undefined,
     delay: undefined,
     distortion: undefined,
+    EQHigh: undefined,
+    EQLow: undefined,
     filterEnv: undefined,
     filterEnvAmt: 0,
     gain: 1,

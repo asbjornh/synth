@@ -105,6 +105,10 @@ export type State = {
   ampEnv: Envelope | undefined;
   delay: Delay | undefined;
   distortion: Distortion | undefined;
+  /** In relative dB */
+  EQHigh: number;
+  /** In relative dB */
+  EQLow: number;
   filter: Filter | undefined;
   filterEnv: Envelope | undefined;
   filterEnvAmt: number;
@@ -122,6 +126,8 @@ export const initialState: State = {
   ampEnv: undefined,
   delay: undefined,
   distortion: undefined,
+  EQHigh: 0,
+  EQLow: 0,
   filter: undefined,
   filterEnv: undefined,
   filterEnvAmt: 0,

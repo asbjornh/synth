@@ -177,6 +177,26 @@ export const App: React.FC = () => {
       <div className="app__master">
         <Panel verticalHeader title="Master">
           <ControlStrip>
+            <Control label="EQ low">
+              <Knob
+                centered
+                min={-24}
+                max={24}
+                step={1}
+                value={state.EQLow}
+                onChange={(EQLow) => patchState({ EQLow })}
+              />
+            </Control>
+            <Control label="EQ high">
+              <Knob
+                centered
+                min={-24}
+                max={24}
+                step={1}
+                value={state.EQHigh}
+                onChange={(EQHigh) => patchState({ EQHigh })}
+              />
+            </Control>
             <Control label="Gain">
               <Knob
                 min={0}

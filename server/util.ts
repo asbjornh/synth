@@ -13,6 +13,7 @@ export const mapRange = (
 };
 
 export const map = <T, U>(arr: T[], fn: (el: T, index: number) => U): U[] => {
+  if (arr.length === 0) return [];
   const next: U[] = [];
   for (let i = 0; i < arr.length; i++) {
     next.push(fn(arr[i], i));

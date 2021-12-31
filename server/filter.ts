@@ -117,3 +117,23 @@ export const filter = (
 
   return filterFn;
 };
+
+export const getEQ = (
+  sampleRate: number,
+  shape: "high-shelf" | "low-shelf",
+  gain: number,
+  state = { ic1eq: 0, ic2eq: 0 }
+): FilterInstance | undefined => {
+  if (gain === 0) return;
+
+  return filter(
+    sampleRate,
+    {
+      shape,
+      cutoff: shape === "high-shelf" ? 1500 : 150,
+      bellGain: gain,
+      Q: 1,
+    },
+    state
+  );
+};

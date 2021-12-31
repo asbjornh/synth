@@ -91,5 +91,8 @@ export const generateSample = (
     return mix;
   }
 
+  if (state.EQHigh) sample = state.EQHigh(sample);
+  if (state.EQLow) sample = state.EQLow(sample);
+
   return sample;
 };

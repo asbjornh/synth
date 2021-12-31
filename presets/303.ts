@@ -4,6 +4,9 @@ import { defaultParams } from "./default-params";
 export const three03: Preset = {
   ...defaultParams,
   displayName: "303",
+  EQLow: 2,
+  EQHigh: 5,
+  gain: 0.9,
   ampEnv: {
     A: 0,
     D: 0.2,
@@ -28,7 +31,6 @@ export const three03: Preset = {
     R: 0.2,
   },
   filterEnvAmt: 3,
-  gain: 1,
   LFOs: [
     {
       id: "1640907886452",
@@ -58,9 +60,9 @@ export const three03: Preset = {
       type: "saw",
       options: {
         balance: 0,
-        gain: 0.44,
+        gain: 1,
         detune: 0,
-        octave: -2,
+        octave: 0,
         unison: 1,
         detuneU: 0.1,
         widthU: 0.1,
@@ -68,5 +70,5 @@ export const three03: Preset = {
       },
     },
   ],
-  transpose: 0,
+  transpose: -2,
 };
