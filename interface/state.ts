@@ -67,6 +67,8 @@ export type Filter = {
   bellGain: number;
 };
 
+export type EnvelopeTarget = "amplitude" | "cutoff";
+
 export type Envelope = {
   /** Attack duration */
   A: number;

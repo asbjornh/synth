@@ -6,9 +6,9 @@
 
 ## Env
 
-- Start env release from current value instead of from Sustain value
 - Pitch envelope
 - Envelope line tension
+- List of envs, target select like LFO
 
 ## FX
 

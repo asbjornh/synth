@@ -1,22 +1,34 @@
 import { Envelope } from "../interface/state";
+import { Options } from "./player";
 import { mapRange } from "./util";
 
-export const evalEnvelope = (
-  t: number,
-  startTime: number,
-  endTime: number | undefined,
-  config: Envelope
-): { value: number; done?: boolean } => {
-  const { A, D, S, R } = config;
-  if (endTime) {
-    const delta = t - endTime;
-    return {
-      value: Math.max(0, mapRange(delta, [0, R], [S, 0])),
-      done: delta >= R,
-    };
-  }
-  const delta = t - startTime;
-  if (delta <= A) return { value: mapRange(delta, [0, A], [0, 1]) };
-  if (delta <= A + D) return { value: mapRange(delta, [A, A + D], [1, S]) };
-  return { value: S };
+const ADS = (t: number, config: Envelope) => {
+  const { A, D, S } = config;
+  return t <= A
+    ? mapRange(t, [0, A], [0, 1])
+    : t <= A + D
+    ? mapRange(t, [A, A + D], [1, S])
+    : S;
+};
+
+const R = (endT: number, current: number, config: Envelope) =>
+  Math.max(0, mapRange(endT, [0, config.R], [current, 0]));
+
+export type EnvelopeInstance = ReturnType<typeof envelope>;
+
+export const envelope = (config: Envelope, opts: Options) => {
+  let t = 0;
+  let endT = 0;
+  let current = 0;
+
+  return (released: boolean) => {
+    const value = released ? R(endT, current, config) : ADS(t, config);
+
+    const dt = 1 / opts.sampleRate;
+    if (released) endT += dt;
+    else current = value;
+    t += dt;
+
+    return { value, done: endT >= config.R };
+  };
 };

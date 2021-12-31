@@ -9,9 +9,9 @@ export const three03: Preset = {
   gain: 0.9,
   ampEnv: {
     A: 0,
-    D: 0.2,
+    D: 0.4,
     S: 0,
-    R: 0.2,
+    R: 0.4,
   },
   distortion: {
     gain: 4,
@@ -20,17 +20,17 @@ export const three03: Preset = {
   },
   filter: {
     shape: "low-pass",
-    cutoff: 210,
+    cutoff: 600,
     Q: 7,
     bellGain: 1,
   },
   filterEnv: {
     A: 0,
-    D: 0.15,
-    S: 0.47,
+    D: 0.2,
+    S: 0,
     R: 0.2,
   },
-  filterEnvAmt: 3,
+  filterEnvAmt: 0.75,
   LFOs: [
     {
       id: "1640907886452",

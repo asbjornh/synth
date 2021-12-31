@@ -5,7 +5,7 @@ import { filter, FilterInstance, getEQ } from "./filter";
 import { clamp, map, mapO } from "./util";
 import {
   Distortion,
-  Envelope,
+  EnvelopeTarget,
   Filter,
   LFOTarget,
   Note,
@@ -15,7 +15,7 @@ import { oscillator, OscillatorInstance, transpose, unison } from "./osc";
 import { generateSample } from "./generate-sample";
 import { delay, DelayInstance } from "./fx";
 import { fromEntries } from "../client/util";
-import { frequencies } from "./frequencies";
+import { envelope, EnvelopeInstance } from "./envelope";
 
 export type Options = {
   bitDepth: 8 | 16 | 32;
@@ -28,6 +28,7 @@ type NoteState = {
   start: number;
   /** End time */
   end?: number;
+  envelopes: Record<EnvelopeTarget, EnvelopeInstance | undefined>;
   LFOs: Record<LFOTarget, LFOInstance | undefined>;
   oscillators: OscillatorInstance[];
   /** One filter instance per channel */
@@ -41,12 +42,10 @@ type LFOInstance = {
 };
 
 export type PlayerState = {
-  ampEnv: Envelope | undefined;
   delay: DelayInstance | undefined;
   distortion: Distortion | undefined;
   EQHigh: FilterInstance | undefined;
   EQLow: FilterInstance | undefined;
-  filterEnv: Envelope | undefined;
   filterEnvAmt: number;
   gain: number;
   notes: Partial<Record<Note, NoteState>>;
@@ -75,6 +74,10 @@ const toPlayerState = (
         start: t,
         filter: [],
         end: undefined,
+        envelopes: {
+          amplitude: undefined,
+          cutoff: undefined,
+        },
         LFOs: {
           amplitude: undefined,
           cutoff: undefined,
@@ -99,6 +102,15 @@ const toPlayerState = (
       osc.options.unison === 1 ? [oscillator(osc)] : unison(osc)
     );
 
+    const nextEnvelopes = {
+      amplitude: next.ampEnv
+        ? state.envelopes.amplitude || envelope(next.ampEnv, opts)
+        : undefined,
+      cutoff: next.filterEnv
+        ? state.envelopes.cutoff || envelope(next.filterEnv, opts)
+        : undefined,
+    };
+
     const oscillators =
       curOscillators.length === nextOscs.length
         ? map(nextOscs, (osc, index) =>
@@ -120,6 +132,7 @@ const toPlayerState = (
       end,
       filter: nextFilter,
       LFOs: nextLFOs,
+      envelopes: nextEnvelopes,
       oscillators,
     };
   });
@@ -142,12 +155,10 @@ const toPlayerState = (
   );
 
   return {
-    ampEnv: next.ampEnv,
     delay: nextDelay,
     distortion: next.distortion,
     EQHigh,
     EQLow,
-    filterEnv: next.filterEnv,
     filterEnvAmt: next.filterEnvAmt,
     gain: next.gain,
     notes: notes,
@@ -157,12 +168,10 @@ const toPlayerState = (
 
 export const Player = (opts: Options) => {
   let state: PlayerState = {
-    ampEnv: undefined,
     delay: undefined,
     distortion: undefined,
     EQHigh: undefined,
     EQLow: undefined,
-    filterEnv: undefined,
     filterEnvAmt: 0,
     gain: 1,
     notes: {},
