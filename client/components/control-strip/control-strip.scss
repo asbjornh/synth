@@ -1,10 +1,13 @@
 @use "../../vars.scss";
 
 .control-strip {
+  $root: &;
+
   display: flex;
   column-gap: 3px;
 
-  &__control {
+  &__control,
+  &__control-group {
     border: 1px solid var(--control-border);
     border-radius: 5px;
     box-shadow: vars.$shadow-small;
@@ -12,7 +15,7 @@
   }
 
   &__control-label {
-    padding: 5px 10px;
+    padding: 5px;
     background-color: var(--control-label-bg);
     text-align: center;
     border-radius: 5px;
@@ -30,6 +33,16 @@
 
     .control-strip__control {
       flex-grow: 1;
+    }
+  }
+
+  &__control-group-content {
+    display: flex;
+    column-gap: 3px;
+    padding: 2px;
+
+    #{$root}__control {
+      box-shadow: none;
     }
   }
 }

@@ -24,3 +24,13 @@ export const Control: React.FC<{ label?: string; title?: string }> = ({
 export const ControlStack: React.FC = ({ children }) => (
   <div className="control-strip__control-stack">{children}</div>
 );
+
+export const ControlGroup: React.FC<{ label?: string }> = ({
+  children,
+  label,
+}) => (
+  <div className="control-strip__control-group">
+    {label && <Label className="control-strip__control-label">{label}</Label>}
+    <div className="control-strip__control-group-content">{children}</div>
+  </div>
+);
