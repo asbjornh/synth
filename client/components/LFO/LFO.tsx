@@ -116,7 +116,7 @@ export const LFO: React.FC<{
         <Knob
           interpolation="exponential"
           min={0.1}
-          max={20}
+          max={40}
           step={0.1}
           value={freq}
           onChange={setFreq}
