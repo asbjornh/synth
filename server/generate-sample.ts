@@ -85,6 +85,9 @@ export const generateSample = (
     }
   );
 
+  if (state.EQHigh) sample = state.EQHigh(sample);
+  if (state.EQLow) sample = state.EQLow(sample);
+
   if (state.delay) {
     const { options } = state.delay;
     const wet = state.delay.tick();
@@ -92,9 +95,6 @@ export const generateSample = (
     state.delay.write(mix);
     return mix;
   }
-
-  if (state.EQHigh) sample = state.EQHigh(sample);
-  if (state.EQLow) sample = state.EQLow(sample);
 
   return sample;
 };

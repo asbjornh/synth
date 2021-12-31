@@ -7,12 +7,6 @@ export const distortion = (sample: number) =>
 
 export type DelayInstance = ReturnType<typeof delay>;
 
-const toLength = <T>(arr: T[], length: number, fill: T) => {
-  if (arr.length === length) return arr;
-  if (arr.length > length) return arr.slice(0, length);
-  return arr.concat(Array.from<T>({ length: length - arr.length }).fill(fill));
-};
-
 export const delay = (
   delay: Delay,
   options: Options,
