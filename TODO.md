@@ -1,9 +1,5 @@
 # TODO
 
-## Bug
-
-- Knobs don't update when changing presets
-
 ## Osc
 
 - Draw a waveform

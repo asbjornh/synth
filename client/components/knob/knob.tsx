@@ -5,6 +5,7 @@ import { clamp, mapRange } from "../../util";
 import interpolate from "color-interpolate";
 
 import "./knob.scss";
+import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 
 const resolution = 200;
 
@@ -57,6 +58,12 @@ export const Knob: React.FC<{
 
   const quantize = (value: number) =>
     Math.round(value * (1 / step)) / (1 / step);
+
+  useAfterMountEffect(() => {
+    if (value !== quantize(knobValue)) {
+      setKnobValue(value);
+    }
+  }, [value]);
 
   const onDrag = useCallback(
     (mouseDelta: { x: number; y: number }) => {
