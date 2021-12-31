@@ -26,7 +26,6 @@
 - MIDI?
 - Portamento
 - Auto chords
-- More keys
 
 ## Other
 

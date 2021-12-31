@@ -27,6 +27,10 @@ const keys: Key[] = [
   { label: "J", code: "KeyJ", note: "A#4", black: true },
   { label: "M", code: "KeyM", note: "B4" },
   { label: ",", code: "Comma", note: "C5" },
+  { label: "L", code: "KeyL", note: "C#5", black: true },
+  { label: ".", code: "Period", note: "D5" },
+  { label: "Ø", code: "Semicolon", note: "D#5", black: true },
+  { label: "-", code: "Slash", note: "E5" },
 ];
 
 export const Keyboard: React.FC<{
