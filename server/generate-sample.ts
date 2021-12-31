@@ -33,13 +33,13 @@ export const generateSample = (
       const pLFO = LFOs.pitch;
       const LFODetune = pLFO ? pLFO.osc(dt, pLFO.freq) * 1200 * pLFO.amount : 0;
 
+      const { value: envAmp, done } = envelopes.amplitude
+        ? envelopes.amplitude(end !== undefined)
+        : { value: 1, done: end && t >= end };
+
       map(oscillators, (oscillator) => {
         const opts = oscillator.getOptions();
         const stereoAmp = stereoAmplitude(opts.balance, channel);
-
-        const { value: envAmp, done } = envelopes.amplitude
-          ? envelopes.amplitude(end !== undefined)
-          : { value: 1, done: end && t >= end };
 
         if (done) onSilent(note);
 
