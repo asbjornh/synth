@@ -1,4 +1,4 @@
-import { defaultOscOptions, Preset } from "../interface/state";
+import { Preset } from "../interface/state";
 import { defaultParams } from "./default-params";
 
 export const three03: Preset = {
@@ -10,9 +10,14 @@ export const three03: Preset = {
     S: 0,
     R: 0.2,
   },
+  distortion: {
+    gain: 4,
+    mix: 1,
+    outGain: 1,
+  },
   filter: {
     shape: "low-pass",
-    cutoff: 1700,
+    cutoff: 210,
     Q: 7,
     bellGain: 1,
   },
@@ -23,17 +28,45 @@ export const three03: Preset = {
     R: 0.2,
   },
   filterEnvAmt: 3,
+  gain: 1,
+  LFOs: [
+    {
+      id: "1640907886452",
+      osc: {
+        id: "1640908078695",
+        options: {
+          balance: 0,
+          gain: 1,
+          detune: 0,
+          octave: 0,
+          phase: 0,
+          unison: 1,
+          detuneU: 0.1,
+          widthU: 0.1,
+        },
+        type: "sine",
+      },
+      amount: 0.14,
+      freq: 0.3,
+      sync: false,
+      target: "cutoff",
+    },
+  ],
   oscillators: [
     {
       id: "1640533702209",
       type: "saw",
       options: {
-        ...defaultOscOptions,
         balance: 0,
-        gain: 0.32,
+        gain: 0.44,
         detune: 0,
         octave: -2,
+        unison: 1,
+        detuneU: 0.1,
+        widthU: 0.1,
+        phase: 0,
       },
     },
   ],
+  transpose: 0,
 };

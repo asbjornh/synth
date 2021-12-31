@@ -15,6 +15,7 @@ import { oscillator, OscillatorInstance, transpose, unison } from "./osc";
 import { generateSample } from "./generate-sample";
 import { delay, DelayInstance } from "./fx";
 import { fromEntries } from "../client/util";
+import { frequencies } from "./frequencies";
 
 export type Options = {
   bitDepth: 8 | 16 | 32;
@@ -104,14 +105,12 @@ const toPlayerState = (
         : nextOscs;
 
     const nextLFOs = fromEntries(
-      next.LFOs.map<[LFOTarget, LFOInstance]>((LFO) => [
-        LFO.target,
-        {
-          osc: state.LFOs[LFO.target]?.osc || oscillator(LFO.osc),
-          amount: LFO.amount,
-          freq: LFO.freq,
-        },
-      ])
+      next.LFOs.map<[LFOTarget, LFOInstance]>((LFO) => {
+        const phase = LFO.sync ? undefined : t / (1 / LFO.freq);
+        const osc = state.LFOs[LFO.target]?.osc || oscillator(LFO.osc, phase);
+
+        return [LFO.target, { osc, amount: LFO.amount, freq: LFO.freq }];
+      })
     );
 
     notes[note] = {

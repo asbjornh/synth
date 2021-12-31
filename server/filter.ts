@@ -26,6 +26,13 @@ const getG = (
   return Math.tan((Math.PI * cutoff) / sampleRate);
 };
 
+const toExponential = (cutoff: number) => Math.pow(2, cutoff);
+const toLinear = (cutoff: number) => Math.log(cutoff) / Math.log(2);
+
+/** Transform cutoff in linear space, resulting in a change in exponential space. */
+export const adjustCutoff = (cutoff: number, delta: number) =>
+  toExponential(toLinear(cutoff) + delta);
+
 // https://www.cytomic.com/files/dsp/SvfLinearTrapOptimised2.pdf
 export const filter = (
   sampleRate: number,

@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Copy, Trash2 } from "react-feather";
+import {
+  CheckSquare,
+  Copy,
+  Square,
+  ToggleLeft,
+  ToggleRight,
+  Trash2,
+} from "react-feather";
 import {
   defaultOscOptions,
   LFO as LFOOpts,
@@ -39,6 +46,7 @@ export const defaultLFO = (): LFOOpts => ({
   },
   amount: 0.5,
   freq: 3,
+  sync: false,
   target: "amplitude",
 });
 
@@ -51,6 +59,7 @@ export const LFO: React.FC<{
   const [amount, setAmount] = useState(LFO.amount);
   const [freq, setFreq] = useState(LFO.freq);
   const [target, setTarget] = useState(LFO.target);
+  const [sync, setSync] = useState(LFO.sync);
 
   useAfterMountEffect(() => {
     const oscCommon = { id: String(Date.now()), options: defaultOscOptions };
@@ -65,9 +74,10 @@ export const LFO: React.FC<{
       osc,
       amount,
       freq,
+      sync,
       target,
     });
-  }, [type, amount, freq, target]);
+  }, [type, amount, freq, sync, target]);
 
   return (
     <ControlStrip>
@@ -85,9 +95,16 @@ export const LFO: React.FC<{
           </div>
         </Control>
         <Control>
-          <Button onClick={onRemove}>
-            <Trash2 />
-          </Button>
+          <div className="lfo__buttons">
+            <Button onClick={onRemove}>
+              <Trash2 />
+            </Button>
+            <Button onClick={() => setSync((s) => !s)}>
+              <div title="Sync LFO to note start" className="lfo__sync">
+                Sync {sync ? <CheckSquare /> : <Square />}
+              </div>
+            </Button>
+          </div>
         </Control>
       </ControlStack>
 

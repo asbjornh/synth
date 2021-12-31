@@ -7,4 +7,14 @@
     column-gap: 0.2rem;
     row-gap: 0.3rem;
   }
+
+  &__buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__sync {
+    display: flex;
+    column-gap: 5px;
+  }
 }

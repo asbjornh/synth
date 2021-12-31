@@ -48,6 +48,7 @@ export const softPlastic: Preset = {
       },
       amount: 0.5,
       freq: 3,
+      sync: true,
       target: "amplitude",
     },
   ],

@@ -1,6 +1,6 @@
-import { mapRange } from "../client/util";
 import { Note } from "../interface/state";
 import { evalEnvelope } from "./envelope";
+import { adjustCutoff } from "./filter";
 import { frequencies } from "./frequencies";
 import { distortion } from "./fx";
 import { transpose } from "./osc";
@@ -48,16 +48,22 @@ export const generateSample = (
     });
 
     if (filter[channel]) {
+      const opts = filter[channel].getOptions();
+      const cLFO = LFOs.cutoff;
+      const LFOcutoff = cLFO ? cLFO.osc(dt, cLFO.freq) * cLFO.amount * 10 : 0;
+
       if (state.filterEnv && state.filterEnvAmt !== 0) {
-        const opts = filter[channel].getOptions();
         const { value } = evalEnvelope(t, start, end, state.filterEnv);
-        // NOTE: Using 2^x as cutoff curve
-        const cutoff = Math.pow(
-          2,
-          Math.log(opts.cutoff) / Math.log(2) + state.filterEnvAmt * value
+        const cutoff = adjustCutoff(
+          opts.cutoff,
+          state.filterEnvAmt * value + LFOcutoff
         );
         filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
+      } else if (cLFO) {
+        const cutoff = adjustCutoff(opts.cutoff, LFOcutoff);
+        filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
       }
+
       noteSample = filter[channel](noteSample);
     }
 

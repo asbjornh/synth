@@ -1,5 +1,9 @@
 # TODO
 
+## Bug
+
+- Knobs don't update when changing presets
+
 ## Osc
 
 - Draw a waveform
@@ -8,6 +12,7 @@
 
 - Start env release from current value instead of from Sustain value
 - Pitch envelope
+- Envelope line tension
 
 ## FX
 
@@ -21,9 +26,8 @@
 - MIDI?
 - Portamento
 - Auto chords
+- More keys
 
 ## Other
 
 - Spectrogram
-- LFOs
-- LFO sync (between notes)

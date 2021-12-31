@@ -97,6 +97,7 @@ export type LFO = {
   amount: number;
   freq: number;
   osc: Osc;
+  sync: boolean;
   target: LFOTarget;
 };
 
