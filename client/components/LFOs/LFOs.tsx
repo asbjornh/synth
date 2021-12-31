@@ -28,16 +28,18 @@ export const LFOs: React.FC<{
       }
       title="LFOs"
     >
-      <div className="lfos__lfos">
-        {LFOs.map((props, index) => (
-          <LFO
-            key={props.id}
-            LFO={props}
-            onChange={set(index)}
-            onRemove={() => remove(index)}
-          />
-        ))}
-      </div>
+      {LFOs.length > 0 && (
+        <div className="lfos__lfos">
+          {LFOs.map((props, index) => (
+            <LFO
+              key={props.id}
+              LFO={props}
+              onChange={set(index)}
+              onRemove={() => remove(index)}
+            />
+          ))}
+        </div>
+      )}
     </Panel>
   );
 };
