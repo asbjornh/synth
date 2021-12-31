@@ -10,7 +10,7 @@ export const defaultFilter: FilterType = {
   shape: "low-pass",
   cutoff: 5000,
   Q: 0.5,
-  bellGain: 1,
+  bellGain: -24,
 };
 
 const types: Record<FilterType["shape"], string> = {
