@@ -9,9 +9,12 @@
 - Pitch envelope
 - Envelope line tension
 
+## LFO
+
+- Balance
+
 ## FX
 
-- Limiter / Compressor
 - Ping pong delay
 
 ## Playing
@@ -25,3 +28,4 @@
 ## Other
 
 - Spectrogram
+- DC offset

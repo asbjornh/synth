@@ -105,7 +105,15 @@ export type LFO = {
   target: LFOTarget;
 };
 
+export type Compressor = {
+  attack: number;
+  ratio: number;
+  release: number;
+  threshold: number;
+};
+
 export type State = {
+  compressor: Compressor | undefined;
   delay: Delay | undefined;
   distortion: Distortion | undefined;
   envelopes: Envelope[];
@@ -125,6 +133,7 @@ export type State = {
 export type Preset = Omit<State, "notes"> & { displayName: string };
 
 export const initialState: State = {
+  compressor: undefined,
   delay: undefined,
   distortion: undefined,
   envelopes: [],

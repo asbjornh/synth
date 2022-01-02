@@ -16,6 +16,7 @@ import { generateSample } from "./generate-sample";
 import { delay, DelayInstance } from "./fx";
 import { fromEntries } from "../client/util";
 import { envelope, EnvelopeInstance } from "./envelope";
+import { compressor, CompressorInstance } from "./compressor";
 
 export type Options = {
   bitDepth: 8 | 16 | 32;
@@ -39,6 +40,7 @@ type LFOInstance = {
 };
 
 export type PlayerState = {
+  compressor: CompressorInstance | undefined;
   delay: DelayInstance | undefined;
   distortion: Distortion | undefined;
   EQHigh: FilterInstance | undefined;
@@ -147,19 +149,25 @@ const toPlayerState = (
     cur.EQHigh?.getState()
   );
 
+  const nextCompressor = next.compressor
+    ? compressor(next.compressor, opts, cur.compressor?.getSamples())
+    : undefined;
+
   return {
+    compressor: nextCompressor,
     delay: nextDelay,
     distortion: next.distortion,
     EQHigh,
     EQLow,
     gain: next.gain,
-    notes: notes,
+    notes,
     transpose: next.transpose,
   };
 };
 
 export const Player = (opts: Options) => {
   let state: PlayerState = {
+    compressor: undefined,
     delay: undefined,
     distortion: undefined,
     EQHigh: undefined,
@@ -188,21 +196,24 @@ export const Player = (opts: Options) => {
       const numSamples = (chunkSize / blockAlign) | 0;
       const buf = Buffer.alloc(numSamples * blockAlign);
       const samples = new Array();
+      let left = 0;
 
       for (let i = 0; i < numSamples; i++) {
         for (let channel = 0; channel < opts.channels; channel++) {
           const t = (samplesGenerated + i) / opts.sampleRate;
-          const sample = clamp(
-            state.gain * generateSample(t, channel, state, opts, onSilent),
-            -1,
-            1
-          );
+          const compGain = state.compressor?.getGain() ?? 1;
+          const sample =
+            compGain *
+            state.gain *
+            generateSample(t, channel, state, opts, onSilent);
           if (channel === 0) {
+            left = sample;
             samples.push(sample / 2);
           } else {
+            state.compressor?.tick(left / 2 + sample / 2);
             samples[i] = samples[i] + sample / 2;
           }
-          const val = amplitude * sample;
+          const val = amplitude * clamp(sample, -1, 1);
           const offset = i * sampleSize * opts.channels + channel * sampleSize;
           if (opts.bitDepth === 8) buf.writeInt8(val, offset);
           if (opts.bitDepth === 16) buf.writeInt16LE(val, offset);

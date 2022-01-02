@@ -4,6 +4,12 @@ import { defaultParams } from "./default-params";
 export const softPlastic: Preset = {
   ...defaultParams,
   displayName: "Soft plastic",
+  compressor: {
+    attack: 0.01,
+    ratio: 1000,
+    release: 0.5,
+    threshold: 0.5,
+  },
   envelopes: [
     {
       amount: 1,
@@ -34,7 +40,7 @@ export const softPlastic: Preset = {
     Q: 1.5,
     bellGain: 1,
   },
-  gain: 0.7,
+  gain: 0.85,
   LFOs: [
     {
       id: "1640904063882",

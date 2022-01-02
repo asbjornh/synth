@@ -1,6 +1,7 @@
 import { Preset } from "../interface/state";
 
 export const defaultParams: Omit<Preset, "displayName"> = {
+  compressor: undefined,
   delay: undefined,
   distortion: undefined,
   envelopes: [],

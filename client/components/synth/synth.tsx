@@ -2,6 +2,7 @@ import React from "react";
 import { MinusSquare, PlusSquare } from "react-feather";
 import { State } from "../../../interface/state";
 import { Button } from "../button/button";
+import { Compressor, defaultCompressor } from "../compressor/compressor";
 import { Control, ControlStrip } from "../control-strip/control-strip";
 import { defaultDelay, Delay } from "../delay/delay";
 import { defaultDistortion, Distortion } from "../distortion/distortion";
@@ -15,6 +16,15 @@ import { Oscillators } from "../oscillators/oscillators";
 import { Panel } from "../panel/panel";
 import { Waveform } from "../waveform/waveform";
 import "./synth.scss";
+
+const Toggle: React.FC<{ active: boolean; onClick: () => void }> = ({
+  active,
+  onClick,
+}) => (
+  <Button onClick={onClick} color="dark">
+    {active ? <MinusSquare /> : <PlusSquare />}
+  </Button>
+);
 
 export const Synth: React.FC<{
   state: State;
@@ -37,6 +47,11 @@ export const Synth: React.FC<{
   const toggleDelay = () =>
     patchState({ delay: state.delay ? undefined : defaultDelay });
 
+  const toggleCompresor = () =>
+    patchState({
+      compressor: state.compressor ? undefined : defaultCompressor,
+    });
+
   return (
     <div className="synth">
       <div className="synth__osc">
@@ -47,19 +62,10 @@ export const Synth: React.FC<{
       </div>
 
       <div className="synth__fx">
-        <Envelopes
-          envelopes={state.envelopes}
-          onChange={(envelopes) => patchState({ envelopes })}
-        />
-
         <Panel
           title="Filter"
           verticalHeader={!!state.filter}
-          actions={
-            <Button onClick={toggleFilter} color="dark">
-              {state.filter ? <MinusSquare /> : <PlusSquare />}
-            </Button>
-          }
+          actions={<Toggle onClick={toggleFilter} active={!!state.filter} />}
         >
           {state.filter && (
             <Filter
@@ -69,11 +75,29 @@ export const Synth: React.FC<{
           )}
         </Panel>
 
+        <Envelopes
+          envelopes={state.envelopes}
+          onChange={(envelopes) => patchState({ envelopes })}
+        />
+
+        <LFOs LFOs={state.LFOs} onChange={(LFOs) => patchState({ LFOs })} />
+
+        <Panel
+          actions={<Toggle onClick={toggleDelay} active={!!state.delay} />}
+          verticalHeader={!!state.delay}
+          title="Delay"
+        >
+          {state.delay && (
+            <Delay
+              delay={state.delay}
+              onChange={(delay) => patchState({ delay })}
+            />
+          )}
+        </Panel>
+
         <Panel
           actions={
-            <Button onClick={toggleDistortion} color="dark">
-              {state.distortion ? <MinusSquare /> : <PlusSquare />}
-            </Button>
+            <Toggle onClick={toggleDistortion} active={!!state.distortion} />
           }
           verticalHeader={!!state.distortion}
           title="Distortion"
@@ -88,22 +112,18 @@ export const Synth: React.FC<{
 
         <Panel
           actions={
-            <Button onClick={toggleDelay} color="dark">
-              {state.delay ? <MinusSquare /> : <PlusSquare />}
-            </Button>
+            <Toggle onClick={toggleCompresor} active={!!state.compressor} />
           }
-          verticalHeader={!!state.delay}
-          title="Delay"
+          verticalHeader={!!state.compressor}
+          title="Compressor"
         >
-          {state.delay && (
-            <Delay
-              delay={state.delay}
-              onChange={(delay) => patchState({ delay })}
+          {state.compressor && (
+            <Compressor
+              compressor={state.compressor}
+              onChange={(compressor) => patchState({ compressor })}
             />
           )}
         </Panel>
-
-        <LFOs LFOs={state.LFOs} onChange={(LFOs) => patchState({ LFOs })} />
       </div>
 
       <div className="synth__keyboard">
