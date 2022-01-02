@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { initialState, Preset, State } from "../../../interface/state";
+import { initialState, Preset, UIState } from "../../../interface/state";
 import { post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { Panel } from "../panel/panel";
@@ -9,12 +9,12 @@ import { Synth } from "../synth/synth";
 import "./app.scss";
 
 export const App: React.FC = () => {
-  const [state, setState] = useState<State>(initialState);
+  const [state, setState] = useState<UIState>(initialState);
   const [presetName, setPresetName] = useState("");
 
   useAfterMountEffect(() => post("/set-state", state), [state]);
 
-  const patchState = (next: Partial<State>) =>
+  const patchState = (next: Partial<UIState>) =>
     setState((state) => ({
       ...state,
       ...next,

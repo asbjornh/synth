@@ -123,7 +123,7 @@ export type Master = {
   transpose: number;
 };
 
-export type State = {
+export type UIState = {
   compressor: Compressor | undefined;
   delay: Delay | undefined;
   distortion: Distortion | undefined;
@@ -135,9 +135,9 @@ export type State = {
   oscillators: Osc[];
 };
 
-export type Preset = Omit<State, "notes"> & { displayName: string };
+export type Preset = Omit<UIState, "notes"> & { displayName: string };
 
-export const initialState: State = {
+export const initialState: UIState = {
   compressor: undefined,
   delay: undefined,
   distortion: undefined,

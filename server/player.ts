@@ -9,7 +9,7 @@ import {
   Filter,
   LFOTarget,
   Note,
-  State,
+  UIState,
 } from "../interface/state";
 import { oscillator, OscillatorInstance, transpose, unison } from "./osc";
 import { generateSample } from "./generate-sample";
@@ -63,7 +63,7 @@ const filterInit = (opts: Options, filterOpts: Filter | undefined) =>
 
 const toPlayerState = (
   cur: PlayerState,
-  next: State,
+  next: UIState,
   opts: Options,
   t: number
 ): PlayerState => {
@@ -247,7 +247,7 @@ export const Player = (opts: Options) => {
   io.start();
 
   return {
-    setState: (next: State) => {
+    setState: (next: UIState) => {
       state = toPlayerState(
         state,
         next,

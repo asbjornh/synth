@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FilePlus, Save, Trash2 } from "react-feather";
-import { Preset, State } from "../../../interface/state";
+import { Preset, UIState } from "../../../interface/state";
 import { defaultParams } from "../../../presets/default-params";
 import sysPresets from "../../../presets/presets";
 import { del, get, post } from "../../api";
@@ -28,7 +28,7 @@ const empty: Preset = {
 
 export const Presets: React.FC<{
   onSelect: (preset: Preset, name: string) => void;
-  state: State;
+  state: UIState;
 }> = (props) => {
   const [userPresets, setUserPresets] = useState<Record<string, Preset>>({});
   const [preset, setPreset] = useState<string>("");

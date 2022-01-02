@@ -1,6 +1,6 @@
 import React from "react";
 import { MinusSquare, PlusSquare } from "react-feather";
-import { State } from "../../../interface/state";
+import { UIState } from "../../../interface/state";
 import { Button } from "../button/button";
 import { Compressor, defaultCompressor } from "../compressor/compressor";
 import { Control, ControlStrip } from "../control-strip/control-strip";
@@ -28,10 +28,10 @@ const Toggle: React.FC<{ active: boolean; onClick: () => void }> = ({
 );
 
 export const Synth: React.FC<{
-  state: State;
-  setState: React.Dispatch<React.SetStateAction<State>>;
+  state: UIState;
+  setState: React.Dispatch<React.SetStateAction<UIState>>;
 }> = ({ state, setState }) => {
-  const patchState = (next: Partial<State>) =>
+  const patchState = (next: Partial<UIState>) =>
     setState((state) => ({
       ...state,
       ...next,
