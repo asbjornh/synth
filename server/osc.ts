@@ -60,7 +60,7 @@ export const oscillator = (osc: Osc, initialPhase?: number) => {
     const phaseDelta = (dt / (1 / freq)) % 1;
     phase += phaseDelta;
     const freq2 = freq * transpositionMultiplier;
-    const t = phase / (2 * freq) + pOffset * (1 / freq2) * 8;
+    const t = phase / freq + pOffset * (1 / freq2);
     return gain * generator(t, freq2);
   };
 

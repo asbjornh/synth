@@ -22,17 +22,15 @@ export type EnvelopeInstance = ReturnType<typeof envelope>;
 
 export const envelope = (
   config: Envelope,
-  opts: Options,
   state = { t: 0, endT: 0, current: 0 }
 ) => {
   let t = state.t;
   let endT = state.endT;
   let current = state.current;
 
-  const envFn = (released: boolean) => {
+  const envFn = (dt: number, released: boolean) => {
     const value = released ? R(endT, current, config) : ADS(t, config);
 
-    const dt = 1 / opts.sampleRate;
     if (released) endT += dt;
     else current = value;
     t += dt;

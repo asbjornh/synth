@@ -1,9 +1,5 @@
 # TODO
 
-## Bug
-
-- Fix oscillators and envelopes progressing for both the left and right channels
-
 ## Osc
 
 - Draw a waveform

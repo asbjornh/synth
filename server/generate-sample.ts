@@ -15,13 +15,13 @@ const stereoAmplitude = (balance: number, channel: number) =>
     : 1;
 
 export const generateSample = (
-  t: number,
   channel: number,
   state: PlayerState,
   options: Options,
   onSilent: (note: Note) => void
 ) => {
-  const dt = 1 / options.sampleRate;
+  // NOTE: Only progress oscillator and envelope state once per multi-channel sample
+  const dt = channel === 0 ? 1 / options.sampleRate : 0;
   let sample = 0;
   const { master } = state;
 
@@ -35,7 +35,7 @@ export const generateSample = (
       const LFODetune = pLFO ? pLFO.osc(dt, pLFO.freq) * 1200 * pLFO.amount : 0;
 
       const { value: envAmp, done } = envelopes.amplitude
-        ? envelopes.amplitude(released)
+        ? envelopes.amplitude(dt, released)
         : { value: 1, done: released };
 
       map(oscillators, (oscillator) => {
@@ -55,7 +55,7 @@ export const generateSample = (
         const LFOcutoff = cLFO ? cLFO.osc(dt, cLFO.freq) * cLFO.amount * 10 : 0;
 
         if (envelopes.cutoff && envelopes.cutoff.config.amount !== 0) {
-          const { value } = envelopes.cutoff(released);
+          const { value } = envelopes.cutoff(dt, released);
           const cutoff = adjustCutoff(
             opts.cutoff,
             envelopes.cutoff.config.amount * value + LFOcutoff

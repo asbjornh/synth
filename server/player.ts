@@ -105,7 +105,7 @@ const toPlayerState = (
     const envelopes = fromEntries(
       next.envelopes.map<[EnvelopeTarget, EnvelopeInstance]>((env) => [
         env.target,
-        envelope(env, opts, state.envelopes[env.target]?.getState()),
+        envelope(env, state.envelopes[env.target]?.getState()),
       ])
     );
 
@@ -212,7 +212,7 @@ export const Player = (opts: Options) => {
           const sample =
             compGain *
             state.master.gain *
-            generateSample(t, channel, state, opts, onSilent);
+            generateSample(channel, state, opts, onSilent);
           if (channel === 0) {
             left = sample;
             samples.push(sample / 2);
