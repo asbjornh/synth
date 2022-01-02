@@ -70,6 +70,8 @@ export type Filter = {
 export type EnvelopeTarget = "amplitude" | "cutoff";
 
 export type Envelope = {
+  amount: number;
+  target: EnvelopeTarget;
   /** Attack duration */
   A: number;
   /** Decay duration */
@@ -87,9 +89,9 @@ export type Distortion = {
 };
 
 export type Delay = {
+  feedback: number;
   length: number;
   mix: number;
-  feedback: number;
 };
 
 export type LFOTarget = "pitch" | "amplitude" | "cutoff";
@@ -104,16 +106,14 @@ export type LFO = {
 };
 
 export type State = {
-  ampEnv: Envelope | undefined;
   delay: Delay | undefined;
   distortion: Distortion | undefined;
+  envelopes: Envelope[];
   /** In relative dB */
   EQHigh: number;
   /** In relative dB */
   EQLow: number;
   filter: Filter | undefined;
-  filterEnv: Envelope | undefined;
-  filterEnvAmt: number;
   gain: number;
   LFOs: LFO[];
   notes: Note[];
@@ -125,14 +125,12 @@ export type State = {
 export type Preset = Omit<State, "notes"> & { displayName: string };
 
 export const initialState: State = {
-  ampEnv: undefined,
   delay: undefined,
   distortion: undefined,
+  envelopes: [],
   EQHigh: 0,
   EQLow: 0,
   filter: undefined,
-  filterEnv: undefined,
-  filterEnvAmt: 0,
   gain: 1,
   LFOs: [],
   notes: [],

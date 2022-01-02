@@ -53,11 +53,11 @@ export const generateSample = (
         const cLFO = LFOs.cutoff;
         const LFOcutoff = cLFO ? cLFO.osc(dt, cLFO.freq) * cLFO.amount * 10 : 0;
 
-        if (envelopes.cutoff && state.filterEnvAmt !== 0) {
+        if (envelopes.cutoff && envelopes.cutoff.config.amount !== 0) {
           const { value } = envelopes.cutoff(released);
           const cutoff = adjustCutoff(
             opts.cutoff,
-            state.filterEnvAmt * value + LFOcutoff
+            envelopes.cutoff.config.amount * value + LFOcutoff
           );
           filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
         } else if (cLFO) {

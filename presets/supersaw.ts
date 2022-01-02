@@ -4,13 +4,17 @@ import { defaultParams } from "./default-params";
 export const supersaw: Preset = {
   ...defaultParams,
   displayName: "Supersaw",
-  ampEnv: {
-    A: 0.025,
-    D: 0,
-    S: 1,
-    R: 0.325,
-  },
-  filterEnvAmt: 0,
+  envelopes: [
+    {
+      amount: 1,
+      target: "amplitude",
+
+      A: 0.025,
+      D: 0,
+      S: 1,
+      R: 0.325,
+    },
+  ],
   oscillators: [
     {
       id: "1640532681726",

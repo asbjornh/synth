@@ -43,7 +43,6 @@ export type PlayerState = {
   distortion: Distortion | undefined;
   EQHigh: FilterInstance | undefined;
   EQLow: FilterInstance | undefined;
-  filterEnvAmt: number;
   gain: number;
   notes: Partial<Record<Note, NoteState>>;
   /** In octaves */
@@ -98,14 +97,12 @@ const toPlayerState = (
       osc.options.unison === 1 ? [oscillator(osc)] : unison(osc)
     );
 
-    const nextEnvelopes = {
-      amplitude: next.ampEnv
-        ? state.envelopes.amplitude || envelope(next.ampEnv, opts)
-        : undefined,
-      cutoff: next.filterEnv
-        ? state.envelopes.cutoff || envelope(next.filterEnv, opts)
-        : undefined,
-    };
+    const envelopes = fromEntries(
+      next.envelopes.map<[EnvelopeTarget, EnvelopeInstance]>((env) => [
+        env.target,
+        envelope(env, opts, state.envelopes[env.target]?.getState()),
+      ])
+    );
 
     const oscillators =
       curOscillators.length === nextOscs.length
@@ -114,7 +111,7 @@ const toPlayerState = (
           )
         : nextOscs;
 
-    const nextLFOs = fromEntries(
+    const LFOs = fromEntries(
       next.LFOs.map<[LFOTarget, LFOInstance]>((LFO) => {
         const phase = LFO.sync ? undefined : t / (1 / LFO.freq);
         const osc = state.LFOs[LFO.target]?.osc || oscillator(LFO.osc, phase);
@@ -126,8 +123,8 @@ const toPlayerState = (
     notes[note] = {
       ...state,
       filter: nextFilter,
-      LFOs: nextLFOs,
-      envelopes: nextEnvelopes,
+      LFOs,
+      envelopes,
       oscillators,
       released,
     };
@@ -155,7 +152,6 @@ const toPlayerState = (
     distortion: next.distortion,
     EQHigh,
     EQLow,
-    filterEnvAmt: next.filterEnvAmt,
     gain: next.gain,
     notes: notes,
     transpose: next.transpose,
@@ -168,7 +164,6 @@ export const Player = (opts: Options) => {
     distortion: undefined,
     EQHigh: undefined,
     EQLow: undefined,
-    filterEnvAmt: 0,
     gain: 1,
     notes: {},
     transpose: 0,

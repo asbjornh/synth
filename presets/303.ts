@@ -7,12 +7,24 @@ export const three03: Preset = {
   EQLow: 2,
   EQHigh: 5,
   gain: 0.9,
-  ampEnv: {
-    A: 0,
-    D: 0.4,
-    S: 0,
-    R: 0.4,
-  },
+  envelopes: [
+    {
+      amount: 1,
+      target: "amplitude",
+      A: 0,
+      D: 0.4,
+      S: 0,
+      R: 0.4,
+    },
+    {
+      amount: 0.75,
+      target: "cutoff",
+      A: 0,
+      D: 0.2,
+      S: 0,
+      R: 0.2,
+    },
+  ],
   distortion: {
     gain: 4,
     mix: 1,
@@ -24,13 +36,6 @@ export const three03: Preset = {
     Q: 7,
     bellGain: 1,
   },
-  filterEnv: {
-    A: 0,
-    D: 0.2,
-    S: 0,
-    R: 0.2,
-  },
-  filterEnvAmt: 0.75,
   LFOs: [
     {
       id: "1640907886452",

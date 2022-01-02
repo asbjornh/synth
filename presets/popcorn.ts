@@ -4,19 +4,22 @@ import { defaultParams } from "./default-params";
 export const popcorn: Preset = {
   ...defaultParams,
   displayName: "Popcorn",
-  ampEnv: {
-    A: 0.01,
-    D: 0.01,
-    S: 0,
-    R: 0,
-  },
+  envelopes: [
+    {
+      amount: 1,
+      target: "amplitude",
+      A: 0.02,
+      D: 0.02,
+      S: 0,
+      R: 0,
+    },
+  ],
   filter: {
     shape: "low-pass",
     cutoff: 3150,
     Q: 2,
     bellGain: 1,
   },
-  filterEnvAmt: 0,
   oscillators: [
     {
       id: "popcorn",

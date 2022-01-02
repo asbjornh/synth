@@ -8,11 +8,10 @@
 
 - Pitch envelope
 - Envelope line tension
-- List of envs, target select like LFO
 
 ## FX
 
-- Limiter
+- Limiter / Compressor
 - Ping pong delay
 
 ## Playing

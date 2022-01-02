@@ -6,6 +6,7 @@ import { Control, ControlStrip } from "../control-strip/control-strip";
 import { defaultDelay, Delay } from "../delay/delay";
 import { defaultDistortion, Distortion } from "../distortion/distortion";
 import { defaultEnvelope, Envelope } from "../envelope/envelope";
+import { Envelopes } from "../envelopes/envelopes";
 import { defaultFilter, Filter } from "../filter/filter";
 import { Keyboard } from "../keyboard/keyboard";
 import { Knob } from "../knob/knob";
@@ -25,14 +26,8 @@ export const Synth: React.FC<{
       ...next,
     }));
 
-  const toggleAmpenv = () =>
-    patchState({ ampEnv: state.ampEnv ? undefined : defaultEnvelope });
-
   const toggleFilter = () =>
     patchState({ filter: state.filter ? undefined : defaultFilter });
-
-  const toggleFilterEnv = () =>
-    patchState({ filterEnv: state.filterEnv ? undefined : defaultEnvelope });
 
   const toggleDistortion = () =>
     patchState({
@@ -52,22 +47,10 @@ export const Synth: React.FC<{
       </div>
 
       <div className="synth__fx">
-        <Panel
-          actions={
-            <Button color="dark" onClick={toggleAmpenv}>
-              {state.ampEnv ? <MinusSquare /> : <PlusSquare />}
-            </Button>
-          }
-          verticalHeader={!!state.ampEnv}
-          title="Amp env"
-        >
-          {state.ampEnv && (
-            <Envelope
-              envelope={state.ampEnv}
-              onChange={(env) => patchState({ ampEnv: env })}
-            />
-          )}
-        </Panel>
+        <Envelopes
+          envelopes={state.envelopes}
+          onChange={(envelopes) => patchState({ envelopes })}
+        />
 
         <Panel
           title="Filter"
@@ -83,33 +66,6 @@ export const Synth: React.FC<{
               filter={state.filter}
               onChange={(filter) => patchState({ filter })}
             />
-          )}
-        </Panel>
-
-        <Panel
-          actions={
-            <Button onClick={toggleFilterEnv} color="dark">
-              {state.filterEnv ? <MinusSquare /> : <PlusSquare />}
-            </Button>
-          }
-          verticalHeader={!!state.filterEnv}
-          title="Filter env"
-        >
-          {state.filterEnv && (
-            <Envelope
-              envelope={state.filterEnv}
-              onChange={(env) => patchState({ filterEnv: env })}
-            >
-              <Control label="Amount">
-                <Knob
-                  min={-4}
-                  max={4}
-                  value={state.filterEnvAmt}
-                  step={0.001}
-                  onChange={(filterEnvAmt) => patchState({ filterEnvAmt })}
-                />
-              </Control>
-            </Envelope>
           )}
         </Panel>
 

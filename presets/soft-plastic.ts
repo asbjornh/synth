@@ -4,12 +4,25 @@ import { defaultParams } from "./default-params";
 export const softPlastic: Preset = {
   ...defaultParams,
   displayName: "Soft plastic",
-  ampEnv: {
-    A: 0,
-    D: 1.125,
-    S: 0.4,
-    R: 3,
-  },
+  envelopes: [
+    {
+      amount: 1,
+      target: "amplitude",
+
+      A: 0,
+      D: 1.125,
+      S: 0.4,
+      R: 3,
+    },
+    {
+      amount: 2,
+      target: "cutoff",
+      A: 0,
+      D: 0.675,
+      S: 0,
+      R: 2.5,
+    },
+  ],
   delay: {
     length: 1,
     feedback: 0.5,
@@ -21,13 +34,6 @@ export const softPlastic: Preset = {
     Q: 1.5,
     bellGain: 1,
   },
-  filterEnv: {
-    A: 0,
-    D: 0.675,
-    S: 0,
-    R: 2.5,
-  },
-  filterEnvAmt: 2,
   gain: 0.7,
   LFOs: [
     {

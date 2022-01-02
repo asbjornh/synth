@@ -16,12 +16,16 @@ const R = (endT: number, current: number, config: Envelope) =>
 
 export type EnvelopeInstance = ReturnType<typeof envelope>;
 
-export const envelope = (config: Envelope, opts: Options) => {
-  let t = 0;
-  let endT = 0;
-  let current = 0;
+export const envelope = (
+  config: Envelope,
+  opts: Options,
+  state = { t: 0, endT: 0, current: 0 }
+) => {
+  let t = state.t;
+  let endT = state.endT;
+  let current = state.current;
 
-  return (released: boolean) => {
+  const envFn = (released: boolean) => {
     const value = released ? R(endT, current, config) : ADS(t, config);
 
     const dt = 1 / opts.sampleRate;
@@ -29,6 +33,11 @@ export const envelope = (config: Envelope, opts: Options) => {
     else current = value;
     t += dt;
 
-    return { value, done: endT >= config.R };
+    return { value, done: endT > config.R };
   };
+
+  envFn.getState = () => ({ t, endT, current });
+  envFn.config = config;
+
+  return envFn;
 };
