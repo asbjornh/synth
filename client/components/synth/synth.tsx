@@ -91,6 +91,18 @@ export const Synth: React.FC<{
                 onChange={(gain) => patchState({ gain })}
               />
             </Control>
+
+            <Control label="DC Off." title="DC offset">
+              <Knob
+                centered
+                min={-1}
+                max={1}
+                step={0.01}
+                value={state.dcOffset}
+                onChange={(dcOffset) => patchState({ dcOffset })}
+              />
+            </Control>
+
             <Control label="Transp." title="Transpose (octaves)">
               <Knob
                 centered

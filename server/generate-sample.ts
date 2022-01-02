@@ -85,6 +85,8 @@ export const generateSample = (
     }
   );
 
+  sample += state.dcOffset;
+
   if (state.EQHigh) sample = state.EQHigh(sample);
   if (state.EQLow) sample = state.EQLow(sample);
 

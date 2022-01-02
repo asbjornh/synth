@@ -114,6 +114,7 @@ export type Compressor = {
 
 export type State = {
   compressor: Compressor | undefined;
+  dcOffset: number;
   delay: Delay | undefined;
   distortion: Distortion | undefined;
   envelopes: Envelope[];
@@ -134,6 +135,7 @@ export type Preset = Omit<State, "notes"> & { displayName: string };
 
 export const initialState: State = {
   compressor: undefined,
+  dcOffset: 0,
   delay: undefined,
   distortion: undefined,
   envelopes: [],

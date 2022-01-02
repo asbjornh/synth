@@ -41,6 +41,7 @@ type LFOInstance = {
 
 export type PlayerState = {
   compressor: CompressorInstance | undefined;
+  dcOffset: number;
   delay: DelayInstance | undefined;
   distortion: Distortion | undefined;
   EQHigh: FilterInstance | undefined;
@@ -155,6 +156,7 @@ const toPlayerState = (
 
   return {
     compressor: nextCompressor,
+    dcOffset: next.dcOffset,
     delay: nextDelay,
     distortion: next.distortion,
     EQHigh,
@@ -168,6 +170,7 @@ const toPlayerState = (
 export const Player = (opts: Options) => {
   let state: PlayerState = {
     compressor: undefined,
+    dcOffset: 0,
     delay: undefined,
     distortion: undefined,
     EQHigh: undefined,

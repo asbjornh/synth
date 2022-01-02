@@ -28,4 +28,3 @@
 ## Other
 
 - Spectrogram
-- DC offset
