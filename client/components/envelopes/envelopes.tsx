@@ -4,6 +4,7 @@ import { Envelope as EnvelopeOpts } from "../../../interface/state";
 import { Button } from "../button/button";
 import { defaultEnvelope, Envelope } from "../envelope/envelope";
 import { Panel } from "../panel/panel";
+import "./envelopes.scss";
 
 export const Envelopes: React.FC<{
   envelopes: EnvelopeOpts[];

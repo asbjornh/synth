@@ -54,14 +54,66 @@ export const Synth: React.FC<{
 
   return (
     <div className="synth">
-      <div className="synth__osc">
+      <div className="synth__left">
         <Oscillators
           oscillators={state.oscillators}
           onChange={(oscillators) => patchState({ oscillators })}
         />
+
+        <Panel verticalHeader title="Master">
+          <ControlStrip>
+            <Control label="EQ low">
+              <Knob
+                centered
+                min={-24}
+                max={24}
+                step={1}
+                value={state.EQLow}
+                onChange={(EQLow) => patchState({ EQLow })}
+              />
+            </Control>
+            <Control label="EQ high">
+              <Knob
+                centered
+                min={-24}
+                max={24}
+                step={1}
+                value={state.EQHigh}
+                onChange={(EQHigh) => patchState({ EQHigh })}
+              />
+            </Control>
+            <Control label="Gain">
+              <Knob
+                min={0}
+                max={1}
+                step={0.01}
+                value={state.gain}
+                onChange={(gain) => patchState({ gain })}
+              />
+            </Control>
+            <Control label="Transp." title="Transpose (octaves)">
+              <Knob
+                centered
+                min={-4}
+                max={4}
+                step={1}
+                value={state.transpose}
+                onChange={(transpose) => patchState({ transpose })}
+              />
+            </Control>
+            <Control label="Wave">
+              <Waveform />
+            </Control>
+          </ControlStrip>
+        </Panel>
+
+        <Keyboard
+          notes={state.notes}
+          onChange={(notes) => patchState({ notes })}
+        />
       </div>
 
-      <div className="synth__fx">
+      <div className="synth__right">
         <Panel
           title="Filter"
           verticalHeader={!!state.filter}
@@ -123,62 +175,6 @@ export const Synth: React.FC<{
               onChange={(compressor) => patchState({ compressor })}
             />
           )}
-        </Panel>
-      </div>
-
-      <div className="synth__keyboard">
-        <Keyboard
-          notes={state.notes}
-          onChange={(notes) => patchState({ notes })}
-        />
-      </div>
-
-      <div className="synth__master">
-        <Panel verticalHeader title="Master">
-          <ControlStrip>
-            <Control label="EQ low">
-              <Knob
-                centered
-                min={-24}
-                max={24}
-                step={1}
-                value={state.EQLow}
-                onChange={(EQLow) => patchState({ EQLow })}
-              />
-            </Control>
-            <Control label="EQ high">
-              <Knob
-                centered
-                min={-24}
-                max={24}
-                step={1}
-                value={state.EQHigh}
-                onChange={(EQHigh) => patchState({ EQHigh })}
-              />
-            </Control>
-            <Control label="Gain">
-              <Knob
-                min={0}
-                max={1}
-                step={0.01}
-                value={state.gain}
-                onChange={(gain) => patchState({ gain })}
-              />
-            </Control>
-            <Control label="Transp." title="Transpose (octaves)">
-              <Knob
-                centered
-                min={-4}
-                max={4}
-                step={1}
-                value={state.transpose}
-                onChange={(transpose) => patchState({ transpose })}
-              />
-            </Control>
-            <Control label="Wave">
-              <Waveform />
-            </Control>
-          </ControlStrip>
         </Panel>
       </div>
     </div>

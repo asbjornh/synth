@@ -1,12 +1,17 @@
 .synth {
   display: grid;
+  align-items: flex-start;
   gap: 10px;
   grid-template-columns: 1fr 1fr;
-  grid-template-areas: "osc fx" "keyboard master";
+
+  &__left,
+  &__right {
+    display: grid;
+    row-gap: 10px;
+  }
 
   &__osc {
     display: flex;
-    grid-area: osc;
   }
 
   &__fx {
@@ -14,14 +19,5 @@
     display: grid;
     gap: 10px;
     grid-template-columns: 1fr;
-    grid-area: fx;
-  }
-
-  &__keyboard {
-    grid-area: keyboard;
-  }
-
-  &__master {
-    grid-area: master;
   }
 }
