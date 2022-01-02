@@ -72,6 +72,7 @@ export type EnvelopeTarget = "amplitude" | "cutoff";
 export type Envelope = {
   amount: number;
   target: EnvelopeTarget;
+  tension: number;
   /** Attack duration */
   A: number;
   /** Decay duration */

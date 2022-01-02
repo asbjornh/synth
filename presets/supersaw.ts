@@ -8,7 +8,7 @@ export const supersaw: Preset = {
     {
       amount: 1,
       target: "amplitude",
-
+      tension: 0,
       A: 0.025,
       D: 0,
       S: 1,

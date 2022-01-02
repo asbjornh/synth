@@ -13,11 +13,12 @@ import { Select } from "../select/select";
 
 export const defaultEnvelope: EnvType = {
   amount: 1,
+  target: "amplitude",
+  tension: 0,
   A: 0,
   D: 0.1,
   S: 0.5,
   R: 0.2,
-  target: "amplitude",
 };
 
 const targets: Record<EnvelopeTarget, string> = {
@@ -34,24 +35,26 @@ export const Envelope: React.FC<{
   envelope: EnvType;
   onChange: (env: EnvType) => void;
   onDelete: () => void;
-}> = ({ children, envelope, onChange, onDelete }) => {
+}> = ({ envelope, onChange, onDelete }) => {
   const [amount, setAmount] = useState(envelope.amount);
+  const [target, setTarget] = useState(envelope.target);
+  const [tension, setTension] = useState(envelope.tension);
   const [A, setA] = useState(envelope.A);
   const [D, setD] = useState(envelope.D);
   const [S, setS] = useState(envelope.S);
   const [R, setR] = useState(envelope.R);
-  const [target, setTarget] = useState(envelope.target);
 
   useEffect(() => {
     onChange({
       amount: target === "amplitude" ? 1 : amount,
+      target,
+      tension,
       A,
       D,
       S,
       R,
-      target,
     });
-  }, [amount, A, D, S, R, target]);
+  }, [amount, target, tension, A, D, S, R]);
 
   return (
     <ControlStrip>
@@ -81,6 +84,17 @@ export const Envelope: React.FC<{
 
       <Control label="Release">
         <Knob min={0} max={5} step={0.001} value={envelope.R} onChange={setR} />
+      </Control>
+
+      <Control label="Tension">
+        <Knob
+          centered
+          min={-10}
+          max={10}
+          step={0.1}
+          value={envelope.tension}
+          onChange={setTension}
+        />
       </Control>
 
       {target !== "amplitude" && (

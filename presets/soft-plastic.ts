@@ -19,7 +19,7 @@ export const softPlastic: Preset = {
     {
       amount: 1,
       target: "amplitude",
-
+      tension: 0,
       A: 0,
       D: 1.125,
       S: 0.4,
@@ -28,6 +28,7 @@ export const softPlastic: Preset = {
     {
       amount: 2,
       target: "cutoff",
+      tension: 0,
       A: 0,
       D: 0.675,
       S: 0,

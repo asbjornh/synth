@@ -4,7 +4,9 @@ import { defaultParams } from "./default-params";
 export const hypersaw: Preset = {
   ...defaultParams,
   displayName: "Hypersaw",
-  envelopes: [{ amount: 1, target: "amplitude", A: 0.1, D: 0, S: 1, R: 0.5 }],
+  envelopes: [
+    { amount: 1, target: "amplitude", tension: 0, A: 0.1, D: 0, S: 1, R: 0.5 },
+  ],
   oscillators: [
     {
       id: "1640707463632",

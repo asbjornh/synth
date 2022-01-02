@@ -8,6 +8,7 @@ export const popcorn: Preset = {
     {
       amount: 1,
       target: "amplitude",
+      tension: 0,
       A: 0.02,
       D: 0.02,
       S: 0,

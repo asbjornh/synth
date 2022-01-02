@@ -15,6 +15,7 @@ export const three03: Preset = {
     {
       amount: 1,
       target: "amplitude",
+      tension: 0,
       A: 0,
       D: 0.4,
       S: 0,
@@ -23,6 +24,7 @@ export const three03: Preset = {
     {
       amount: 0.75,
       target: "cutoff",
+      tension: 0,
       A: 0,
       D: 0.2,
       S: 0,

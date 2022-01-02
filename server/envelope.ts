@@ -1,18 +1,22 @@
 import { Envelope } from "../interface/state";
 import { Options } from "./player";
-import { mapRange } from "./util";
 
 const ADS = (t: number, config: Envelope) => {
   const { A, D, S } = config;
-  return t <= A
-    ? mapRange(t, [0, A], [0, 1])
+  return A > 0 && t <= A
+    ? interpolate(t / A, config.tension)
     : t <= A + D
-    ? mapRange(t, [A, A + D], [1, S])
+    ? 1 - interpolate((t - A) / D, -config.tension) * (1 - S)
     : S;
 };
 
 const R = (endT: number, current: number, config: Envelope) =>
-  Math.max(0, mapRange(endT, [0, config.R], [current, 0]));
+  current * (1 - interpolate(endT / config.R, -config.tension));
+
+const interpolate = (value: number, tension: number) =>
+  tension > 0
+    ? Math.pow(value, 1 + tension)
+    : Math.pow(value, 1 / (1 + Math.abs(tension)));
 
 export type EnvelopeInstance = ReturnType<typeof envelope>;
 
