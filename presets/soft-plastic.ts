@@ -10,6 +10,11 @@ export const softPlastic: Preset = {
     release: 0.5,
     threshold: 0.5,
   },
+  master: {
+    ...defaultParams.master,
+    dcOffset: 0.7,
+    gain: 0.7,
+  },
   envelopes: [
     {
       amount: 1,
@@ -40,7 +45,6 @@ export const softPlastic: Preset = {
     Q: 1.5,
     bellGain: 1,
   },
-  gain: 0.85,
   LFOs: [
     {
       id: "1640904063882",
@@ -117,5 +121,4 @@ export const softPlastic: Preset = {
       },
     },
   ],
-  transpose: 0,
 };

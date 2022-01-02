@@ -41,15 +41,17 @@ type LFOInstance = {
 
 export type PlayerState = {
   compressor: CompressorInstance | undefined;
-  dcOffset: number;
   delay: DelayInstance | undefined;
   distortion: Distortion | undefined;
-  EQHigh: FilterInstance | undefined;
-  EQLow: FilterInstance | undefined;
-  gain: number;
+  master: {
+    dcOffset: number;
+    EQHigh: FilterInstance | undefined;
+    EQLow: FilterInstance | undefined;
+    gain: number;
+    /** In octaves */
+    transpose: number;
+  };
   notes: Partial<Record<Note, NoteState>>;
-  /** In octaves */
-  transpose: number;
 };
 
 const filterInit = (opts: Options, filterOpts: Filter | undefined) =>
@@ -140,14 +142,14 @@ const toPlayerState = (
   const EQLow = getEQ(
     opts.sampleRate,
     "low-shelf",
-    next.EQLow,
-    cur.EQLow?.getState()
+    next.master.EQLow,
+    cur.master.EQLow?.getState()
   );
   const EQHigh = getEQ(
     opts.sampleRate,
     "high-shelf",
-    next.EQHigh,
-    cur.EQHigh?.getState()
+    next.master.EQHigh,
+    cur.master.EQHigh?.getState()
   );
 
   const nextCompressor = next.compressor
@@ -156,28 +158,30 @@ const toPlayerState = (
 
   return {
     compressor: nextCompressor,
-    dcOffset: next.dcOffset,
     delay: nextDelay,
     distortion: next.distortion,
-    EQHigh,
-    EQLow,
-    gain: next.gain,
+    master: {
+      ...next.master,
+      EQHigh,
+      EQLow,
+    },
     notes,
-    transpose: next.transpose,
   };
 };
 
 export const Player = (opts: Options) => {
   let state: PlayerState = {
     compressor: undefined,
-    dcOffset: 0,
     delay: undefined,
     distortion: undefined,
-    EQHigh: undefined,
-    EQLow: undefined,
-    gain: 1,
+    master: {
+      dcOffset: 0,
+      EQHigh: undefined,
+      EQLow: undefined,
+      gain: 1,
+      transpose: 0,
+    },
     notes: {},
-    transpose: 0,
   };
 
   let onFrame: (samples: number[], t: number) => void = () => {};
@@ -207,7 +211,7 @@ export const Player = (opts: Options) => {
           const compGain = state.compressor?.getGain() ?? 1;
           const sample =
             compGain *
-            state.gain *
+            state.master.gain *
             generateSample(t, channel, state, opts, onSilent);
           if (channel === 0) {
             left = sample;

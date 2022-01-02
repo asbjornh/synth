@@ -23,6 +23,7 @@ export const generateSample = (
 ) => {
   const dt = 1 / options.sampleRate;
   let sample = 0;
+  const { master } = state;
 
   mapO(
     state.notes,
@@ -43,7 +44,7 @@ export const generateSample = (
 
         if (done) onSilent(note);
 
-        const freq = frequencies[note] * transpose(state.transpose, LFODetune);
+        const freq = frequencies[note] * transpose(master.transpose, LFODetune);
 
         noteSample += envAmp * stereoAmp * oscillator(dt, freq);
       });
@@ -85,10 +86,10 @@ export const generateSample = (
     }
   );
 
-  sample += state.dcOffset;
+  sample += master.dcOffset;
 
-  if (state.EQHigh) sample = state.EQHigh(sample);
-  if (state.EQLow) sample = state.EQLow(sample);
+  if (master.EQHigh) sample = master.EQHigh(sample);
+  if (master.EQLow) sample = master.EQLow(sample);
 
   if (state.delay) {
     const { options } = state.delay;

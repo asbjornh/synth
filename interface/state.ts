@@ -112,39 +112,45 @@ export type Compressor = {
   threshold: number;
 };
 
-export type State = {
-  compressor: Compressor | undefined;
+export type Master = {
   dcOffset: number;
-  delay: Delay | undefined;
-  distortion: Distortion | undefined;
-  envelopes: Envelope[];
   /** In relative dB */
   EQHigh: number;
   /** In relative dB */
   EQLow: number;
-  filter: Filter | undefined;
   gain: number;
-  LFOs: LFO[];
-  notes: Note[];
-  oscillators: Osc[];
   /** In octaves */
   transpose: number;
+};
+
+export type State = {
+  compressor: Compressor | undefined;
+  delay: Delay | undefined;
+  distortion: Distortion | undefined;
+  envelopes: Envelope[];
+  filter: Filter | undefined;
+  LFOs: LFO[];
+  master: Master;
+  notes: Note[];
+  oscillators: Osc[];
 };
 
 export type Preset = Omit<State, "notes"> & { displayName: string };
 
 export const initialState: State = {
   compressor: undefined,
-  dcOffset: 0,
   delay: undefined,
   distortion: undefined,
   envelopes: [],
-  EQHigh: 0,
-  EQLow: 0,
   filter: undefined,
-  gain: 1,
   LFOs: [],
+  master: {
+    dcOffset: 0,
+    EQHigh: 0,
+    EQLow: 0,
+    gain: 1,
+    transpose: 0,
+  },
   notes: [],
   oscillators: [],
-  transpose: 0,
 };

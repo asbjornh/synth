@@ -12,6 +12,7 @@ import { defaultFilter, Filter } from "../filter/filter";
 import { Keyboard } from "../keyboard/keyboard";
 import { Knob } from "../knob/knob";
 import { LFOs } from "../LFOs/LFOs";
+import { Master } from "../master/master";
 import { Oscillators } from "../oscillators/oscillators";
 import { Panel } from "../panel/panel";
 import { Waveform } from "../waveform/waveform";
@@ -61,62 +62,10 @@ export const Synth: React.FC<{
         />
 
         <Panel verticalHeader title="Master">
-          <ControlStrip>
-            <Control label="EQ low">
-              <Knob
-                centered
-                min={-24}
-                max={24}
-                step={1}
-                value={state.EQLow}
-                onChange={(EQLow) => patchState({ EQLow })}
-              />
-            </Control>
-            <Control label="EQ high">
-              <Knob
-                centered
-                min={-24}
-                max={24}
-                step={1}
-                value={state.EQHigh}
-                onChange={(EQHigh) => patchState({ EQHigh })}
-              />
-            </Control>
-            <Control label="Gain">
-              <Knob
-                min={0}
-                max={1}
-                step={0.01}
-                value={state.gain}
-                onChange={(gain) => patchState({ gain })}
-              />
-            </Control>
-
-            <Control label="DC Off." title="DC offset">
-              <Knob
-                centered
-                min={-1}
-                max={1}
-                step={0.01}
-                value={state.dcOffset}
-                onChange={(dcOffset) => patchState({ dcOffset })}
-              />
-            </Control>
-
-            <Control label="Transp." title="Transpose (octaves)">
-              <Knob
-                centered
-                min={-4}
-                max={4}
-                step={1}
-                value={state.transpose}
-                onChange={(transpose) => patchState({ transpose })}
-              />
-            </Control>
-            <Control label="Wave">
-              <Waveform />
-            </Control>
-          </ControlStrip>
+          <Master
+            master={state.master}
+            onChange={(master) => patchState({ master })}
+          />
         </Panel>
 
         <Keyboard

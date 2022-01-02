@@ -4,9 +4,13 @@ import { defaultParams } from "./default-params";
 export const three03: Preset = {
   ...defaultParams,
   displayName: "303",
-  EQLow: 2,
-  EQHigh: 5,
-  gain: 0.9,
+  master: {
+    dcOffset: 0,
+    EQLow: 2,
+    EQHigh: 5,
+    gain: 0.9,
+    transpose: -2,
+  },
   envelopes: [
     {
       amount: 1,
@@ -75,5 +79,4 @@ export const three03: Preset = {
       },
     },
   ],
-  transpose: -2,
 };

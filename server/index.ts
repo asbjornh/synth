@@ -44,7 +44,7 @@ player.onFrame((samples, t) => {
     const [note] = state.notes;
     io.emit("frame", {
       samples,
-      freq: frequencies[note] * transpose(state.transpose, 0),
+      freq: frequencies[note] * transpose(state.master.transpose, 0),
       sampleRate: opts.sampleRate,
       t,
     });
