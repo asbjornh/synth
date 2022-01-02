@@ -77,7 +77,7 @@ export const Presets: React.FC<{
 
   return (
     <div className="presets">
-      <div>Preset:</div>
+      <div className="presets__label">Preset:</div>
       <Select options={presetOptions} value={preset} onChange={setPreset} />
       <input
         value={presetName}

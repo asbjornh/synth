@@ -5,6 +5,10 @@
   align-items: center;
   column-gap: 10px;
 
+  &__label {
+    font-size: 0.85rem;
+  }
+
   input {
     display: block;
     border: none;
