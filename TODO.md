@@ -20,4 +20,3 @@
 ## Other
 
 - Spectrogram
-- Use `Tape` for compressor. Delete `LQueue`

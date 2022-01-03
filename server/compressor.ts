@@ -1,6 +1,7 @@
 import { Compressor } from "../interface/state";
-import { LQueue } from "./l-queue";
 import { Options } from "./player";
+
+import { tape, TapeState } from "./tape";
 
 const size = 400;
 
@@ -9,20 +10,17 @@ export type CompressorInstance = ReturnType<typeof compressor>;
 export const compressor = (
   config: Compressor,
   opts: Options,
-  state?: LQueue<number>
+  state?: TapeState
 ) => {
   const { attack, ratio, release, threshold } = config;
 
-  const samples = state || new LQueue<number>();
-
-  if (samples.length === 0) {
-    samples.enqueueAll(Array.from<number>({ length: size }).fill(0));
-  }
+  const samples = tape(size, state);
 
   let gain = 1;
 
   const tick = (sample: number) => {
-    samples.enqueue(sample);
+    samples.tick();
+    samples.write(0, sample);
 
     let squareSum = 0;
     samples.forEach((sample) => {
@@ -46,12 +44,10 @@ export const compressor = (
         gain += (targetGain - gain) / (release * opts.sampleRate);
       }
     }
-
-    return samples.dequeue();
   };
 
   const getGain = () => gain;
-  const getSamples = () => samples;
+  const getSamples = () => samples.getState();
 
   return { getGain, getSamples, tick };
 };

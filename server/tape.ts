@@ -27,7 +27,9 @@ export const tape = (
     samples[wrap(length, pos + offset)] = sample;
   };
 
+  const forEach = (fn: (el: number) => void) => samples.forEach(fn);
+
   const getState = () => ({ pos, samples });
 
-  return { tick, read, write, getState };
+  return { tick, read, write, forEach, getState };
 };
