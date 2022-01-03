@@ -42,9 +42,15 @@ export const generateSample = (
         ? envelopes.amplitude(dt, released)
         : { value: 1, done: released };
 
+      const bLFO = LFOs.balance;
+      const LFObalance = bLFO ? bLFO.osc(dt, bLFO.freq) * bLFO.amount : 0;
+
       map(oscillators, (oscillator) => {
         const opts = oscillator.getOptions();
-        const stereoAmp = stereoAmplitude(opts.balance, channel);
+        const stereoAmp = stereoAmplitude(
+          clamp(opts.balance + LFObalance, -1, 1),
+          channel
+        );
 
         if (done) onSilent(note);
 

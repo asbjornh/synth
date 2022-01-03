@@ -28,6 +28,7 @@ import "./LFO.scss";
 
 const targets: Record<LFOTarget, string> = {
   amplitude: "Amplitude",
+  balance: "Balance",
   cutoff: "Cutoff",
   pitch: "Pitch",
 };

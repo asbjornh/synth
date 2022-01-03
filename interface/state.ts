@@ -96,7 +96,7 @@ export type Delay = {
   pingPong: number;
 };
 
-export type LFOTarget = "pitch" | "amplitude" | "cutoff";
+export type LFOTarget = "balance" | "pitch" | "amplitude" | "cutoff";
 
 export type LFO = {
   id: string;

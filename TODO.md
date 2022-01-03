@@ -4,10 +4,6 @@
 
 - Draw a waveform
 
-## LFO
-
-- Balance
-
 ## Playing
 
 - Sequencer

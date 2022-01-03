@@ -80,6 +80,7 @@ const toPlayerState = (
         },
         LFOs: {
           amplitude: undefined,
+          balance: undefined,
           cutoff: undefined,
           pitch: undefined,
         },
