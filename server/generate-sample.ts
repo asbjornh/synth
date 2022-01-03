@@ -34,6 +34,10 @@ export const generateSample = (
       const pLFO = LFOs.pitch;
       const LFODetune = pLFO ? pLFO.osc(dt, pLFO.freq) * 1200 * pLFO.amount : 0;
 
+      const pitch = envelopes.pitch?.(dt, released).value ?? 1;
+      const envDetune =
+        (1 - pitch) * 1200 * (envelopes.pitch?.config.amount ?? 0);
+
       const { value: envAmp, done } = envelopes.amplitude
         ? envelopes.amplitude(dt, released)
         : { value: 1, done: released };
@@ -44,7 +48,9 @@ export const generateSample = (
 
         if (done) onSilent(note);
 
-        const freq = frequencies[note] * transpose(master.transpose, LFODetune);
+        const freq =
+          frequencies[note] *
+          transpose(master.transpose, LFODetune + envDetune);
 
         noteSample += envAmp * stereoAmp * oscillator(dt, freq);
       });

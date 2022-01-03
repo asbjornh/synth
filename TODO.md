@@ -4,10 +4,6 @@
 
 - Draw a waveform
 
-## Env
-
-- Pitch envelope
-
 ## LFO
 
 - Balance

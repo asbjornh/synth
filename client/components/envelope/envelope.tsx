@@ -24,6 +24,7 @@ export const defaultEnvelope: EnvType = {
 const targets: Record<EnvelopeTarget, string> = {
   amplitude: "Amplitude",
   cutoff: "Cutoff",
+  pitch: "Pitch",
 };
 
 const targetOptions = entries(targets).map(([value, label]) => ({
@@ -100,6 +101,7 @@ export const Envelope: React.FC<{
       {target !== "amplitude" && (
         <Control label="Amount">
           <Knob
+            centered
             min={-4}
             max={4}
             step={0.001}

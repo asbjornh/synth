@@ -76,6 +76,7 @@ const toPlayerState = (
         envelopes: {
           amplitude: undefined,
           cutoff: undefined,
+          pitch: undefined,
         },
         LFOs: {
           amplitude: undefined,
