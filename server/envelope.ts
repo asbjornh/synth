@@ -1,11 +1,10 @@
 import { Envelope } from "../interface/state";
-import { Options } from "./player";
 
 const ADS = (t: number, config: Envelope) => {
   const { A, D, S } = config;
   return A > 0 && t <= A
-    ? interpolate(t / A, config.tension)
-    : t <= A + D
+    ? interpolate(t / A, config.tension) * (D > 0 ? 1 : S)
+    : D > 0 && t <= A + D
     ? 1 - interpolate((t - A) / D, -config.tension) * (1 - S)
     : S;
 };
