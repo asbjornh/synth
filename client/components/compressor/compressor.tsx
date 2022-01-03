@@ -34,6 +34,7 @@ export const Compressor: React.FC<{
           step={0.01}
           value={threshold}
           onChange={setThreshold}
+          theme="orange"
         />
       </Control>
 
@@ -45,6 +46,7 @@ export const Compressor: React.FC<{
           step={0.1}
           value={ratio}
           onChange={setRatio}
+          theme="orange"
         />
       </Control>
 
@@ -55,6 +57,7 @@ export const Compressor: React.FC<{
           step={0.001}
           value={attack}
           onChange={setAttack}
+          theme="orange"
         />
       </Control>
 
@@ -65,6 +68,7 @@ export const Compressor: React.FC<{
           step={0.01}
           value={release}
           onChange={setRelease}
+          theme="orange"
         />
       </Control>
     </ControlStrip>

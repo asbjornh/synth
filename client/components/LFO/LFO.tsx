@@ -109,7 +109,14 @@ export const LFO: React.FC<{
       </ControlStack>
 
       <Control label="Amount">
-        <Knob min={0} max={1} step={0.01} value={amount} onChange={setAmount} />
+        <Knob
+          min={0}
+          max={1}
+          step={0.01}
+          value={amount}
+          onChange={setAmount}
+          theme="green"
+        />
       </Control>
 
       <Control label="Freq">
@@ -120,6 +127,7 @@ export const LFO: React.FC<{
           step={0.1}
           value={freq}
           onChange={setFreq}
+          theme="green"
         />
       </Control>
     </ControlStrip>

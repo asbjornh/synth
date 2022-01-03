@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDrag } from "../../hooks/use-drag";
 import { clamp, mapRange } from "../../util";
 
-import interpolate from "color-interpolate";
-
 import "./knob.scss";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 
@@ -25,6 +23,16 @@ const interpolateLinear = (
 const interpolateExponential = (value: number, delta: number, max: number) =>
   Math.pow(2, expX(value) + delta);
 
+const colors = {
+  red: "#ff9797",
+  orange: "#ffb171",
+  yellow: "#ffdf38",
+  lime: "#9ce159",
+  green: "#3cf59b",
+  purple: "#b085f9",
+  blue: "#77bbe9",
+};
+
 export const Knob: React.FC<{
   centered?: boolean;
   interpolation?: "linear" | "exponential";
@@ -32,6 +40,7 @@ export const Knob: React.FC<{
   max: number;
   value: number;
   step: number;
+  theme?: keyof typeof colors;
   onChange: (next: number) => void;
 }> = ({
   centered,
@@ -41,20 +50,13 @@ export const Knob: React.FC<{
   value,
   onChange,
   step,
+  theme = "red",
 }) => {
   const [knobValue, setKnobValue] = useState(value);
   const [input, setInput] = useState("");
   const [el, setEl] = useState<HTMLDivElement | null>(null);
 
-  const getColor = useMemo(
-    () =>
-      interpolate(
-        centered
-          ? ["#ff9797", "#ff9c3a", "#bdc8d4", "#c5fc2f", "#3cf59b"]
-          : ["#bdc8d4", "#ff9797", "#ff9c3a", "#ffdf38", "#c5fc2f", "#3cf59b"]
-      ),
-    [centered]
-  );
+  const color = colors[theme];
 
   const quantize = (value: number) =>
     Math.round(value * (1 / step)) / (1 / step);
@@ -102,7 +104,6 @@ export const Knob: React.FC<{
       ? mapRange(knobValue, [min, max], [0, 1])
       : mapRange(expX(knobValue), [expX(min), expX(max)], [0, 1]);
   const position = mapRange(ratio, [0, 1], [-130, 130]);
-  const color = getColor(ratio);
   const meterRotate = centered ? -90 : 135;
   const meterOffset = !centered
     ? mapRange(ratio, [0, 1], [314, 104])
@@ -150,7 +151,7 @@ export const Knob: React.FC<{
         </div>
       </div>
 
-      <div className="knob__input" style={{ backgroundColor: color }}>
+      <div className="knob__input">
         <input value={input} onChange={(e) => onInput(e.target.value)} />
       </div>
     </div>

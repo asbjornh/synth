@@ -33,6 +33,7 @@ export const Delay: React.FC<{
           step={0.01}
           value={length}
           onChange={setLength}
+          theme="lime"
         />
       </Control>
 
@@ -43,11 +44,19 @@ export const Delay: React.FC<{
           step={0.01}
           value={feedback}
           onChange={setFeedback}
+          theme="lime"
         />
       </Control>
 
       <Control label="Mix">
-        <Knob min={0} max={1} step={0.01} value={mix} onChange={setMix} />
+        <Knob
+          min={0}
+          max={1}
+          step={0.01}
+          value={mix}
+          onChange={setMix}
+          theme="lime"
+        />
       </Control>
 
       <Control label="P. pong" title="Ping pong">
@@ -57,6 +66,7 @@ export const Delay: React.FC<{
           step={0.01}
           value={pingPong}
           onChange={setPingPong}
+          theme="lime"
         />
       </Control>
     </ControlStrip>

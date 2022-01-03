@@ -58,11 +58,19 @@ export const Filter: React.FC<{
             value={cutoff}
             step={1}
             onChange={setCutoff}
+            theme="purple"
           />
         </Control>
 
         <Control label="Q">
-          <Knob min={0.1} max={10} value={Q} step={0.1} onChange={setQ} />
+          <Knob
+            min={0.1}
+            max={10}
+            value={Q}
+            step={0.1}
+            onChange={setQ}
+            theme="purple"
+          />
         </Control>
       </ControlStrip>
     </div>

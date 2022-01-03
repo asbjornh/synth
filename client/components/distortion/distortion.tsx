@@ -22,11 +22,25 @@ export const Distortion: React.FC<{
   return (
     <ControlStrip>
       <Control label="Gain">
-        <Knob min={1} max={100} step={0.1} value={gain} onChange={setGain} />
+        <Knob
+          min={1}
+          max={100}
+          step={0.1}
+          value={gain}
+          onChange={setGain}
+          theme="yellow"
+        />
       </Control>
 
       <Control label="Mix">
-        <Knob min={0} max={1} step={0.01} value={mix} onChange={setMix} />
+        <Knob
+          min={0}
+          max={1}
+          step={0.01}
+          value={mix}
+          onChange={setMix}
+          theme="yellow"
+        />
       </Control>
 
       <Control label="Out" title="Output gain">
@@ -36,6 +50,7 @@ export const Distortion: React.FC<{
           step={0.001}
           value={outGain}
           onChange={setOutGain}
+          theme="yellow"
         />
       </Control>
     </ControlStrip>

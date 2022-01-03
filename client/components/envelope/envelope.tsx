@@ -72,19 +72,47 @@ export const Envelope: React.FC<{
       </ControlStack>
 
       <Control label="Attack">
-        <Knob min={0} max={5} step={0.001} value={envelope.A} onChange={setA} />
+        <Knob
+          min={0}
+          max={5}
+          step={0.001}
+          value={envelope.A}
+          onChange={setA}
+          theme="blue"
+        />
       </Control>
 
       <Control label="Decay">
-        <Knob min={0} max={5} step={0.001} value={envelope.D} onChange={setD} />
+        <Knob
+          min={0}
+          max={5}
+          step={0.001}
+          value={envelope.D}
+          onChange={setD}
+          theme="blue"
+        />
       </Control>
 
       <Control label="Sustain">
-        <Knob min={0} max={1} step={0.01} value={envelope.S} onChange={setS} />
+        <Knob
+          min={0}
+          max={1}
+          step={0.01}
+          value={envelope.S}
+          onChange={setS}
+          theme="blue"
+        />
       </Control>
 
       <Control label="Release">
-        <Knob min={0} max={5} step={0.001} value={envelope.R} onChange={setR} />
+        <Knob
+          min={0}
+          max={5}
+          step={0.001}
+          value={envelope.R}
+          onChange={setR}
+          theme="blue"
+        />
       </Control>
 
       <Control label="Tension">
@@ -95,6 +123,7 @@ export const Envelope: React.FC<{
           step={0.1}
           value={envelope.tension}
           onChange={setTension}
+          theme="blue"
         />
       </Control>
 
@@ -107,6 +136,7 @@ export const Envelope: React.FC<{
             step={0.001}
             value={envelope.amount}
             onChange={setAmount}
+            theme="blue"
           />
         </Control>
       )}

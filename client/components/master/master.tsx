@@ -29,6 +29,7 @@ export const Master: React.FC<{
           step={1}
           value={EQLow}
           onChange={setEQLow}
+          theme="orange"
         />
       </Control>
       <Control label="EQ high">
@@ -39,10 +40,18 @@ export const Master: React.FC<{
           step={1}
           value={EQHigh}
           onChange={setEQHigh}
+          theme="orange"
         />
       </Control>
       <Control label="Gain">
-        <Knob min={0} max={1} step={0.01} value={gain} onChange={setGain} />
+        <Knob
+          min={0}
+          max={1}
+          step={0.01}
+          value={gain}
+          onChange={setGain}
+          theme="orange"
+        />
       </Control>
 
       <Control label="DC Off." title="DC offset">
@@ -53,6 +62,7 @@ export const Master: React.FC<{
           step={0.01}
           value={dcOffset}
           onChange={setDcOffset}
+          theme="orange"
         />
       </Control>
 
@@ -64,6 +74,7 @@ export const Master: React.FC<{
           step={1}
           value={transpose}
           onChange={setTranspose}
+          theme="orange"
         />
       </Control>
       <Control label="Wave">
