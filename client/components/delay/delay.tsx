@@ -7,6 +7,7 @@ export const defaultDelay: DelayOpts = {
   length: 0.5,
   feedback: 0.5,
   mix: 0.5,
+  pingPong: 0,
 };
 
 export const Delay: React.FC<{
@@ -16,8 +17,12 @@ export const Delay: React.FC<{
   const [length, setLength] = useState(delay.length);
   const [feedback, setFeedback] = useState(delay.feedback);
   const [mix, setMix] = useState(delay.mix);
+  const [pingPong, setPingPong] = useState(delay.pingPong);
 
-  useEffect(() => onChange({ length, feedback, mix }), [length, feedback, mix]);
+  useEffect(
+    () => onChange({ length, feedback, mix, pingPong }),
+    [length, feedback, mix, pingPong]
+  );
 
   return (
     <ControlStrip>
@@ -43,6 +48,16 @@ export const Delay: React.FC<{
 
       <Control label="Mix">
         <Knob min={0} max={1} step={0.01} value={mix} onChange={setMix} />
+      </Control>
+
+      <Control label="P. pong" title="Ping pong">
+        <Knob
+          min={0}
+          max={1}
+          step={0.01}
+          value={pingPong}
+          onChange={setPingPong}
+        />
       </Control>
     </ControlStrip>
   );

@@ -93,6 +93,7 @@ export type Delay = {
   feedback: number;
   length: number;
   mix: number;
+  pingPong: number;
 };
 
 export type LFOTarget = "pitch" | "amplitude" | "cutoff";

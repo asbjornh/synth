@@ -11,9 +11,9 @@ import {
   Note,
   UIState,
 } from "../interface/state";
-import { oscillator, OscillatorInstance, transpose, unison } from "./osc";
+import { oscillator, OscillatorInstance, unison } from "./osc";
 import { generateSample } from "./generate-sample";
-import { delay, DelayInstance } from "./fx";
+import { delay, DelayInstance } from "./delay";
 import { fromEntries } from "../client/util";
 import { envelope, EnvelopeInstance } from "./envelope";
 import { compressor, CompressorInstance } from "./compressor";

@@ -99,9 +99,9 @@ export const generateSample = (
 
   if (state.delay) {
     const { options } = state.delay;
-    const wet = state.delay.tick();
+    const wet = state.delay.tick(channel);
     const mix = options.mix * wet + (1 - options.mix) * sample;
-    state.delay.write((wet + sample) * options.feedback);
+    state.delay.write(channel, sample);
     return mix;
   }
 

@@ -13,7 +13,7 @@ export const softPlastic: Preset = {
   master: {
     ...defaultParams.master,
     dcOffset: 0.7,
-    gain: 0.7,
+    gain: 0.6,
   },
   envelopes: [
     {
@@ -36,9 +36,10 @@ export const softPlastic: Preset = {
     },
   ],
   delay: {
-    length: 1,
+    pingPong: 0.7,
+    length: 0.5,
     feedback: 0.5,
-    mix: 0.5,
+    mix: 0.4,
   },
   filter: {
     shape: "low-pass",

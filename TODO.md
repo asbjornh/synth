@@ -8,10 +8,6 @@
 
 - Balance
 
-## FX
-
-- Ping pong delay
-
 ## Playing
 
 - Sequencer
@@ -19,7 +15,9 @@
 - MIDI?
 - Portamento
 - Auto chords
+- Mod wheel
 
 ## Other
 
 - Spectrogram
+- Use `Tape` for compressor. Delete `LQueue`
