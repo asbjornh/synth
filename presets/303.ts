@@ -45,11 +45,7 @@ export const three03: Preset = {
   LFOs: [
     {
       id: "1640907886452",
-      osc: {
-        id: "1640908078695",
-        options: defaultOscOptions,
-        type: "sine",
-      },
+      osc: "sine",
       amount: 0.14,
       freq: 0.3,
       sync: false,

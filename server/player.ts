@@ -4,6 +4,7 @@ import { AudioIO } from "naudiodon";
 import { filter, FilterInstance, getEQ } from "./filter";
 import { clamp, map, mapO } from "./util";
 import {
+  defaultOscOptions,
   Distortion,
   EnvelopeTarget,
   Filter,
@@ -11,7 +12,7 @@ import {
   Note,
   UIState,
 } from "../interface/state";
-import { oscillator, OscillatorInstance, unison } from "./osc";
+import { defaultOsc, oscillator, OscillatorInstance, unison } from "./osc";
 import { generateSample } from "./generate-sample";
 import { delay, DelayInstance } from "./delay";
 import { fromEntries } from "../client/util";
@@ -121,7 +122,8 @@ const toPlayerState = (
     const LFOs = fromEntries(
       next.LFOs.map<[LFOTarget, LFOInstance]>((LFO) => {
         const phase = LFO.sync ? undefined : t / (1 / LFO.freq);
-        const osc = state.LFOs[LFO.target]?.osc || oscillator(LFO.osc, phase);
+        const osc =
+          state.LFOs[LFO.target]?.osc || oscillator(defaultOsc(LFO.osc), phase);
 
         return [LFO.target, { osc, amount: LFO.amount, freq: LFO.freq }];
       })

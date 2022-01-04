@@ -40,11 +40,7 @@ const targetOptions = entries(targets).map(([value, label]) => ({
 
 export const defaultLFO = (): LFOOpts => ({
   id: String(Date.now()),
-  osc: {
-    id: String(Date.now()),
-    type: "sine",
-    options: defaultOscOptions,
-  },
+  osc: "sine",
   amount: 0.5,
   freq: 3,
   sync: false,
@@ -56,20 +52,13 @@ export const LFO: React.FC<{
   onChange: (LFO: LFOOpts) => void;
   onRemove: () => void;
 }> = ({ LFO, onChange, onRemove }) => {
-  const [type, setType] = useState(LFO.osc.type);
+  const [osc, setOsc] = useState(LFO.osc);
   const [amount, setAmount] = useState(LFO.amount);
   const [freq, setFreq] = useState(LFO.freq);
   const [target, setTarget] = useState(LFO.target);
   const [sync, setSync] = useState(LFO.sync);
 
   useAfterMountEffect(() => {
-    const oscCommon = { id: String(Date.now()), options: defaultOscOptions };
-    const osc: Osc =
-      type === "pulse"
-        ? { ...oscCommon, type, pulse: { width: 0.5 } }
-        : type === "nesTriangle"
-        ? { ...oscCommon, type, nesTriangle: { samples: 16 } }
-        : { ...oscCommon, type };
     onChange({
       id: LFO.id,
       osc,
@@ -78,7 +67,7 @@ export const LFO: React.FC<{
       sync,
       target,
     });
-  }, [type, amount, freq, sync, target]);
+  }, [osc, amount, freq, sync, target]);
 
   return (
     <ControlStrip>
@@ -86,7 +75,7 @@ export const LFO: React.FC<{
         <Control>
           <div className="lfo__selects">
             <label>Wave</label>
-            <Select value={type} options={oscTypeOptions} onChange={setType} />
+            <Select value={osc} options={oscTypeOptions} onChange={setOsc} />
             <label>Target</label>
             <Select
               value={target}

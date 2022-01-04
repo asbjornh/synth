@@ -50,11 +50,7 @@ export const softPlastic: Preset = {
   LFOs: [
     {
       id: "1640904063882",
-      osc: {
-        id: "1640904063882",
-        type: "sine",
-        options: defaultOscOptions,
-      },
+      osc: "sine",
       amount: 0.5,
       freq: 3,
       sync: true,

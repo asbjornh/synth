@@ -14,11 +14,7 @@ export const hammondOrgan: Preset = {
   LFOs: [
     {
       id: "1641319195859",
-      osc: {
-        id: "1641319210203",
-        options: defaultOscOptions,
-        type: "sine",
-      },
+      osc: "sine",
       amount: 0.3,
       freq: 1,
       sync: false,
@@ -26,11 +22,7 @@ export const hammondOrgan: Preset = {
     },
     {
       id: "hammond-pitch",
-      osc: {
-        id: "hammond-pitch",
-        options: defaultOscOptions,
-        type: "sine",
-      },
+      osc: "sine",
       amount: 0.01,
       freq: 8,
       sync: false,

@@ -61,6 +61,7 @@ export type Pulse = Oscillator<"pulse"> & { pulse: { width: number } };
 export type Noise = Oscillator<"noise">;
 
 export type Osc = Saw | Square | Sine | Triangle | NesTriangle | Pulse | Noise;
+export type OscType = Osc["type"];
 
 export type Filter = {
   shape: FilterShape;
@@ -104,7 +105,7 @@ export type LFO = {
   id: string;
   amount: number;
   freq: number;
-  osc: Osc;
+  osc: OscType;
   sync: boolean;
   target: LFOTarget;
 };
@@ -152,7 +153,7 @@ export const initialState: UIState = {
     dcOffset: 0,
     EQHigh: 0,
     EQLow: 0,
-    gain: 1,
+    gain: 0.5,
     transpose: 0,
   },
   notes: [],

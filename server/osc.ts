@@ -1,4 +1,9 @@
-import { Osc, OscOptions } from "../interface/state";
+import {
+  defaultOscOptions,
+  Osc,
+  OscOptions,
+  OscType,
+} from "../interface/state";
 import { map, mapRange } from "./util";
 
 type OscFn = (t: number, freq: number) => number;
@@ -46,6 +51,15 @@ export const transpose = (octaves: number, cents: number) => {
   const octMagnitude = Math.pow(2, Math.abs(octaves));
   const octaveMultiplier = octaves < 0 ? 1 / octMagnitude : octMagnitude;
   return octaveMultiplier * detuneMultiplier;
+};
+
+export const defaultOsc = (type: OscType): Osc => {
+  const oscBase = { id: "", options: defaultOscOptions };
+  return type === "pulse"
+    ? { ...oscBase, type, pulse: { width: 0.5 } }
+    : type === "nesTriangle"
+    ? { ...oscBase, type, nesTriangle: { samples: 16 } }
+    : { ...oscBase, type };
 };
 
 export const oscillator = (osc: Osc, initialPhase?: number) => {
