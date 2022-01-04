@@ -3,6 +3,11 @@ import { defaultParams } from "./default-params";
 
 export const popcorn: Preset = {
   ...defaultParams,
+  master: {
+    ...defaultParams.master,
+    gain: 0.5,
+    transpose: 1,
+  },
   displayName: "Popcorn",
   envelopes: [
     {
@@ -25,13 +30,7 @@ export const popcorn: Preset = {
     {
       id: "popcorn",
       type: "square",
-      options: {
-        ...defaultOscOptions,
-        gain: 0.5,
-        detune: 0,
-        octave: 1,
-        balance: 0,
-      },
+      options: defaultOscOptions,
     },
   ],
 };

@@ -1,4 +1,4 @@
-import { Preset } from "../interface/state";
+import { defaultOscOptions, Preset } from "../interface/state";
 import { defaultParams } from "./default-params";
 
 export const softPlastic: Preset = {
@@ -53,16 +53,7 @@ export const softPlastic: Preset = {
       osc: {
         id: "1640904063882",
         type: "sine",
-        options: {
-          balance: 0,
-          gain: 1,
-          detune: 0,
-          octave: 0,
-          phase: 0,
-          unison: 1,
-          detuneU: 0.1,
-          widthU: 0.1,
-        },
+        options: defaultOscOptions,
       },
       amount: 0.5,
       freq: 3,
@@ -74,14 +65,9 @@ export const softPlastic: Preset = {
     {
       id: "1640904060659",
       options: {
+        ...defaultOscOptions,
         balance: -1,
-        gain: 1,
-        detune: 1,
-        octave: 0,
-        unison: 1,
-        detuneU: 0.1,
-        widthU: 0.1,
-        phase: 0,
+        fine: 1,
       },
       type: "nesTriangle",
       nesTriangle: {
@@ -91,14 +77,9 @@ export const softPlastic: Preset = {
     {
       id: "1640904230578",
       options: {
+        ...defaultOscOptions,
         balance: 1,
-        gain: 1,
-        detune: -1,
-        octave: 0,
-        phase: 0,
-        unison: 1,
-        detuneU: 0.1,
-        widthU: 0.1,
+        fine: -1,
       },
       type: "nesTriangle",
       nesTriangle: {
@@ -108,14 +89,8 @@ export const softPlastic: Preset = {
     {
       id: "1640904306328",
       options: {
-        balance: 0,
+        ...defaultOscOptions,
         gain: 0.55,
-        detune: 0,
-        octave: 0,
-        unison: 1,
-        detuneU: 0.1,
-        widthU: 0.1,
-        phase: 0,
       },
       type: "pulse",
       pulse: {

@@ -45,7 +45,8 @@ export const Oscillator: React.FC<{
 
   const [balance, setBalance] = useState(init.balance);
   const [gain, setGain] = useState(init.gain);
-  const [detune, setDetune] = useState(init.detune);
+  const [coarse, setCoarse] = useState(init.coarse);
+  const [fine, setFine] = useState(init.fine);
   const [octave, setOctave] = useState(init.octave);
   const [pw, setPw] = useState((osc as Pulse).pulse?.width ?? 0.5);
   const [unison, setUnison] = useState(init.unison);
@@ -65,15 +66,16 @@ export const Oscillator: React.FC<{
   const options: Osc["options"] = useMemo(
     () => ({
       balance,
+      coarse,
+      fine,
       gain,
-      detune,
       octave,
       unison,
       detuneU,
       widthU,
       phase,
     }),
-    [balance, gain, detune, octave, unison, detuneU, widthU, phase]
+    [balance, coarse, fine, gain, octave, unison, detuneU, widthU, phase]
   );
 
   const current: Osc = useMemo(() => {
@@ -111,17 +113,6 @@ export const Oscillator: React.FC<{
           <Knob min={0} max={1} step={0.01} value={gain} onChange={setGain} />
         </Control>
 
-        <Control label="Detune">
-          <Knob
-            centered
-            min={-24}
-            max={24}
-            value={detune}
-            step={1}
-            onChange={setDetune}
-          />
-        </Control>
-
         <Control label="Octave">
           <Knob
             centered
@@ -130,6 +121,28 @@ export const Oscillator: React.FC<{
             value={octave}
             step={1}
             onChange={setOctave}
+          />
+        </Control>
+
+        <Control label="Coarse" title="Offset number of semitones">
+          <Knob
+            centered
+            min={-12}
+            max={12}
+            value={coarse}
+            step={1}
+            onChange={setCoarse}
+          />
+        </Control>
+
+        <Control label="Fine" title="Offset number of cents">
+          <Knob
+            centered
+            min={-100}
+            max={100}
+            value={fine}
+            step={1}
+            onChange={setFine}
           />
         </Control>
 

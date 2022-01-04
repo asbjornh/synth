@@ -19,7 +19,8 @@ export type Note = `${PitchClass}${Octave}`;
 
 export type OscOptions = {
   balance: number;
-  detune: number;
+  coarse: number;
+  fine: number;
   gain: number;
   octave: number;
   phase: number;
@@ -33,8 +34,9 @@ export type OscOptions = {
 // NOTE: Do not change these values. The system presets might depend on them
 export const defaultOscOptions: OscOptions = {
   balance: 0,
+  coarse: 0,
+  fine: 0,
   gain: 1,
-  detune: 0,
   octave: 0,
   phase: 0,
   unison: 1,

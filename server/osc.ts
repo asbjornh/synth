@@ -49,9 +49,10 @@ export const transpose = (octaves: number, cents: number) => {
 };
 
 export const oscillator = (osc: Osc, initialPhase?: number) => {
-  let { detune, octave, gain, phase: pOffset } = osc.options;
+  let { coarse, fine, octave, gain, phase: pOffset } = osc.options;
+  const cents = coarse * 100 + fine;
 
-  const transpositionMultiplier = transpose(octave, detune);
+  const transpositionMultiplier = transpose(octave, cents);
   const generator = getGenerator(osc);
 
   let phase = initialPhase ?? 0;
@@ -79,11 +80,11 @@ export const unison = (osc: Osc): OscillatorInstance[] => {
     // TODO: Figure out how to correctly scale amplitude:
     const gain = (opts.gain * 1) / (opts.unison * 0.3);
     const balance = opts.balance + p * opts.widthU;
-    const detune = opts.detune + p * opts.detuneU;
+    const fine = opts.fine + p * opts.detuneU;
 
     return oscillator({
       ...osc,
-      options: { ...osc.options, phase, gain, balance, detune },
+      options: { ...osc.options, phase, gain, balance, fine },
     });
   });
 };

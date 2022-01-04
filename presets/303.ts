@@ -1,4 +1,4 @@
-import { Preset } from "../interface/state";
+import { defaultOscOptions, Preset } from "../interface/state";
 import { defaultParams } from "./default-params";
 
 export const three03: Preset = {
@@ -47,16 +47,7 @@ export const three03: Preset = {
       id: "1640907886452",
       osc: {
         id: "1640908078695",
-        options: {
-          balance: 0,
-          gain: 1,
-          detune: 0,
-          octave: 0,
-          phase: 0,
-          unison: 1,
-          detuneU: 0.1,
-          widthU: 0.1,
-        },
+        options: defaultOscOptions,
         type: "sine",
       },
       amount: 0.14,
@@ -69,16 +60,7 @@ export const three03: Preset = {
     {
       id: "1640533702209",
       type: "saw",
-      options: {
-        balance: 0,
-        gain: 1,
-        detune: 0,
-        octave: 0,
-        unison: 1,
-        detuneU: 0.1,
-        widthU: 0.1,
-        phase: 0,
-      },
+      options: defaultOscOptions,
     },
   ],
 };
