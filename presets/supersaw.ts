@@ -4,6 +4,10 @@ import { defaultParams } from "./default-params";
 export const supersaw: Preset = {
   ...defaultParams,
   displayName: "Supersaw",
+  master: {
+    ...defaultParams.master,
+    gain: 0.6,
+  },
   envelopes: [
     {
       amount: 1,

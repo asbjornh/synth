@@ -13,7 +13,7 @@ export const softPlastic: Preset = {
   master: {
     ...defaultParams.master,
     dcOffset: 0.7,
-    gain: 0.6,
+    gain: 0.4,
   },
   envelopes: [
     {

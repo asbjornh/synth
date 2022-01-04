@@ -8,7 +8,7 @@ export const three03: Preset = {
     dcOffset: 0,
     EQLow: 2,
     EQHigh: 5,
-    gain: 0.9,
+    gain: 0.6,
     transpose: -2,
   },
   envelopes: [

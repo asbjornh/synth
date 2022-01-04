@@ -41,7 +41,7 @@ export const hammondOrgan: Preset = {
     dcOffset: 0,
     EQHigh: 0,
     EQLow: 3,
-    gain: 0.23,
+    gain: 0.1,
     transpose: 0,
   },
   oscillators: [
