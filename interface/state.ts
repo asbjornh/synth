@@ -63,6 +63,12 @@ export type Noise = Oscillator<"noise">;
 export type Osc = Saw | Square | Sine | Triangle | NesTriangle | Pulse | Noise;
 export type OscType = Osc["type"];
 
+export type FMOsc = {
+  gain: number;
+  ratio: number;
+  type: OscType;
+};
+
 export type Filter = {
   shape: FilterShape;
   cutoff: number;
@@ -134,6 +140,7 @@ export type UIState = {
   distortion: Distortion | undefined;
   envelopes: Envelope[];
   filter: Filter | undefined;
+  FMOsc: FMOsc | undefined;
   LFOs: LFO[];
   master: Master;
   notes: Note[];
@@ -148,6 +155,7 @@ export const initialState: UIState = {
   distortion: undefined,
   envelopes: [],
   filter: undefined,
+  FMOsc: undefined,
   LFOs: [],
   master: {
     dcOffset: 0,

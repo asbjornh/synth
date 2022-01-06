@@ -12,7 +12,14 @@ import {
   Note,
   UIState,
 } from "../interface/state";
-import { defaultOsc, oscillator, OscillatorInstance, unison } from "./osc";
+import {
+  defaultOsc,
+  FMOscillator,
+  FMOscillatorInstance,
+  oscillator,
+  OscillatorInstance,
+  unison,
+} from "./osc";
 import { generateSample } from "./generate-sample";
 import { delay, DelayInstance } from "./delay";
 import { fromEntries } from "../client/util";
@@ -27,6 +34,7 @@ export type Options = {
 
 type NoteState = {
   envelopes: Record<EnvelopeTarget, EnvelopeInstance | undefined>;
+  FMOsc: FMOscillatorInstance | undefined;
   LFOs: Record<LFOTarget, LFOInstance | undefined>;
   oscillators: OscillatorInstance[];
   /** One filter instance per channel */
@@ -79,6 +87,7 @@ const toPlayerState = (
           cutoff: undefined,
           pitch: undefined,
         },
+        FMOsc: undefined,
         LFOs: {
           amplitude: undefined,
           balance: undefined,
@@ -119,6 +128,10 @@ const toPlayerState = (
           )
         : nextOscs;
 
+    const FMOsc = next.FMOsc
+      ? FMOscillator(next.FMOsc, state.FMOsc?.osc.getPhase())
+      : undefined;
+
     const LFOs = fromEntries(
       next.LFOs.map<[LFOTarget, LFOInstance]>((LFO) => {
         const phase = LFO.sync ? undefined : t / (1 / LFO.freq);
@@ -134,6 +147,7 @@ const toPlayerState = (
       filter: nextFilter,
       LFOs,
       envelopes,
+      FMOsc,
       oscillators,
       released,
     };

@@ -5,8 +5,6 @@ import { clamp, mapRange } from "../../util";
 import "./knob.scss";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 
-const resolution = 200;
-
 /** Returns the x coordinate for a y in 2^x */
 const expX = (y: number) => Math.log(y) / Math.log(2);
 
@@ -39,6 +37,7 @@ export const Knob: React.FC<{
   min: number;
   max: number;
   value: number;
+  resolution?: number;
   step: number;
   theme?: keyof typeof colors;
   onChange: (next: number) => void;
@@ -49,6 +48,7 @@ export const Knob: React.FC<{
   max,
   value,
   onChange,
+  resolution = 200,
   step,
   theme = "red",
 }) => {

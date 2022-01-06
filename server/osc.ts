@@ -1,5 +1,6 @@
 import {
   defaultOscOptions,
+  FMOsc,
   Osc,
   OscOptions,
   OscType,
@@ -101,4 +102,14 @@ export const unison = (osc: Osc): OscillatorInstance[] => {
       options: { ...osc.options, phase, gain, balance, fine },
     });
   });
+};
+
+export type FMOscillatorInstance = ReturnType<typeof FMOscillator>;
+
+export const FMOscillator = (fmOsc: FMOsc, initialPhase?: number) => {
+  const { type, ...rest } = fmOsc;
+  return {
+    osc: oscillator(defaultOsc(fmOsc.type), initialPhase),
+    ...rest,
+  };
 };
