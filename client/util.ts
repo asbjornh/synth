@@ -20,3 +20,11 @@ export const entries = <T extends Record<string, any>>(obj: T) =>
 
 export const fromEntries = <T extends [string, any][]>(entries: T) =>
   Object.fromEntries<T>(entries) as Record<T[number][0], T[number][1]>;
+
+export const mapValues = <T extends Record<string, any>, U>(
+  obj: T,
+  fn: (val: T[keyof T]) => U
+): Record<string, U> =>
+  Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [key, fn(value)])
+  );

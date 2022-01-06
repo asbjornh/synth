@@ -5,7 +5,7 @@ import { defaultParams } from "../../../presets/default-params";
 import sysPresets from "../../../presets/presets";
 import { del, get, post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
-import { entries } from "../../util";
+import { entries, mapValues } from "../../util";
 import { Button } from "../button/button";
 import { Select } from "../select/select";
 import "./presets.scss";
@@ -36,7 +36,18 @@ export const Presets: React.FC<{
 
   const presets = { ...systemPresets, ...userPresets };
 
-  useEffect(() => get("/presets").then(setUserPresets), []);
+  useEffect(
+    () =>
+      get("/presets").then((presets: Record<string, Preset>) =>
+        setUserPresets(
+          mapValues(presets, (preset) => ({
+            ...defaultParams,
+            ...preset,
+          }))
+        )
+      ),
+    []
+  );
 
   useAfterMountEffect(() => {
     if (preset === "") props.onSelect(empty, "");

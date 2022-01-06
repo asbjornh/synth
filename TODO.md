@@ -3,7 +3,6 @@
 ## Bug
 
 - Compressor increases in volume when releasing keys
-- Effects stay in state when picking user preset
 
 ## Osc
 
