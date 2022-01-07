@@ -34,3 +34,5 @@ export const mapO = <O extends Record<string, any>, U>(
 
 export const clamp = (v: number, min: number, max: number) =>
   Math.max(min, Math.min(max, v));
+
+export const isOdd = (num: number) => num % 2 !== 0;

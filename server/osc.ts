@@ -5,7 +5,8 @@ import {
   OscOptions,
   OscType,
 } from "../interface/state";
-import { map, mapRange } from "./util";
+import { randoms } from "./random";
+import { isOdd, map, mapRange } from "./util";
 
 type OscFn = (t: number, freq: number) => number;
 
@@ -87,19 +88,30 @@ export const oscillator = (osc: Osc, initialPhase?: number) => {
   return oscFn;
 };
 
+const unisonParamAmount = (unison: number, i: number) => {
+  const direction = isOdd(i) ? 1 : -1;
+  if (isOdd(unison)) {
+    if (i === 0) return 0;
+    return 2 * ((1 + Math.floor(i / 3)) / (unison - 1)) * direction;
+  } else {
+    return 2 * ((1 + Math.floor(i / 2)) / unison) * direction;
+  }
+};
+
 export const unison = (osc: Osc): OscillatorInstance[] => {
   const { options: opts } = osc;
   return map(Array.from({ length: opts.unison }), (_, i) => {
-    const p = (i / opts.unison) * (i % 2 === 0 ? 1 : -1);
-    const phase = Math.abs(p) * opts.unison * opts.phase;
+    const n = unisonParamAmount(opts.unison, i);
+    const r = randoms[i % randoms.length] ?? 1;
+    const phase = n * opts.unison * opts.phase * r;
     // TODO: Figure out how to correctly scale amplitude:
-    const gain = (opts.gain * 1) / (opts.unison * 0.3);
-    const balance = opts.balance + p * opts.widthU;
-    const fine = opts.fine + p * opts.detuneU;
+    const gain = opts.gain / (opts.unison * 0.3);
+    const balance = opts.balance + n * opts.widthU;
+    const fine = opts.fine + n * opts.detuneU;
 
     return oscillator({
       ...osc,
-      options: { ...osc.options, phase, gain, balance, fine },
+      options: { ...opts, phase, gain, balance, fine },
     });
   });
 };
