@@ -6,11 +6,23 @@ export const hypersaw: Preset = {
   displayName: "Hypersaw",
   master: {
     ...defaultParams.master,
-    gain: 0.5,
+    gain: 0.4,
+    EQHigh: 4,
+  },
+  distortion: {
+    gain: 2,
+    mix: 1,
+    outGain: 1,
   },
   envelopes: [
-    { amount: 1, target: "amplitude", tension: 0, A: 0.1, D: 0, S: 1, R: 0.5 },
+    { amount: 1, target: "amplitude", tension: 0, A: 0.02, D: 0, S: 1, R: 0.5 },
   ],
+  filter: {
+    shape: "peak",
+    cutoff: 10_000,
+    Q: 1,
+    bellGain: -24,
+  },
   oscillators: [
     {
       id: "1640707463632",
@@ -19,9 +31,9 @@ export const hypersaw: Preset = {
         ...defaultOscOptions,
         gain: 0.38,
         unison: 10,
-        detuneU: 57,
+        detuneU: 40,
         widthU: 1,
-        phase: 0.18,
+        phase: 1,
       },
     },
     {
@@ -29,16 +41,17 @@ export const hypersaw: Preset = {
       type: "saw",
       options: {
         ...defaultOscOptions,
-        gain: 0.3,
+        gain: 0.2,
+        unison: 2,
         widthU: 1,
-        phase: 0.4,
+        detuneU: 4,
       },
     },
     {
       id: "1640707699200",
       options: {
         ...defaultOscOptions,
-        gain: 0.15,
+        gain: 0.1,
       },
       type: "noise",
     },

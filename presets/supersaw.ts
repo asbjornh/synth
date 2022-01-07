@@ -33,7 +33,7 @@ export const supersaw: Preset = {
       type: "saw",
       options: {
         ...defaultOscOptions,
-        balance: -0.75,
+        balance: -1,
         gain: 0.2,
         fine: -20,
       },
@@ -43,9 +43,9 @@ export const supersaw: Preset = {
       type: "saw",
       options: {
         ...defaultOscOptions,
-        balance: -0.29,
+        balance: -0.5,
         gain: 0.2,
-        fine: -12,
+        fine: -10,
       },
     },
     {
@@ -53,7 +53,7 @@ export const supersaw: Preset = {
       type: "saw",
       options: {
         ...defaultOscOptions,
-        balance: 0.35,
+        balance: 0.5,
         gain: 0.2,
         fine: 10,
       },
@@ -63,9 +63,9 @@ export const supersaw: Preset = {
       type: "saw",
       options: {
         ...defaultOscOptions,
-        balance: 0.74,
+        balance: 1,
         gain: 0.2,
-        fine: 18,
+        fine: 20,
       },
     },
   ],
