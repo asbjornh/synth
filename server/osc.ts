@@ -19,7 +19,9 @@ const pulse = (width: number) => (t: number, freq: number) =>
 
 const sampleFrom = (samples: number[]) => (t: number, freq: number) => {
   const i = Math.floor(((t * freq) % 1) * samples.length);
-  return samples[i];
+  const sample = i >= 0 ? samples[i] : samples[samples.length + i];
+  if (sample === undefined) console.error("sampleFrom: undefined");
+  return sample;
 };
 
 const sawSteps = (n: number) =>
