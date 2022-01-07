@@ -7,7 +7,7 @@ export const hypersaw: Preset = {
   master: {
     ...defaultParams.master,
     gain: 0.4,
-    EQHigh: 4,
+    EQHigh: 2,
   },
   distortion: {
     gain: 2,
@@ -15,7 +15,15 @@ export const hypersaw: Preset = {
     outGain: 1,
   },
   envelopes: [
-    { amount: 1, target: "amplitude", tension: 0, A: 0.02, D: 0, S: 1, R: 0.5 },
+    {
+      amount: 1,
+      target: "amplitude",
+      tension: 1.5,
+      A: 0.02,
+      D: 0,
+      S: 1,
+      R: 1.5,
+    },
   ],
   filter: {
     shape: "peak",
