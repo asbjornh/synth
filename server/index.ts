@@ -14,7 +14,7 @@ const debug = process.argv.includes("--debug");
 let state = initialState;
 
 const opts: Options = {
-  bitDepth: 16,
+  bitDepth: 32,
   channels: 2,
   sampleRate: 44100,
 };
