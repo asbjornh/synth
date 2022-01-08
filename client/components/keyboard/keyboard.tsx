@@ -13,24 +13,46 @@ type Key = {
   note: Note;
 };
 
-const keys: Key[] = [
-  { label: "Z", code: "KeyZ", note: "C4" },
-  { label: "S", code: "KeyS", note: "C#4", black: true },
-  { label: "X", code: "KeyX", note: "D4" },
-  { label: "D", code: "KeyD", note: "D#4", black: true },
-  { label: "C", code: "KeyC", note: "E4" },
-  { label: "V", code: "KeyV", note: "F4" },
-  { label: "G", code: "KeyG", note: "F#4", black: true },
-  { label: "B", code: "KeyB", note: "G4" },
-  { label: "H", code: "KeyH", note: "G#4", black: true },
-  { label: "N", code: "KeyN", note: "A4" },
-  { label: "J", code: "KeyJ", note: "A#4", black: true },
-  { label: "M", code: "KeyM", note: "B4" },
-  { label: ",", code: "Comma", note: "C5" },
-  { label: "L", code: "KeyL", note: "C#5", black: true },
-  { label: ".", code: "Period", note: "D5" },
-  { label: "Ø", code: "Semicolon", note: "D#5", black: true },
-  { label: "-", code: "Slash", note: "E5" },
+const keys: Key[][] = [
+  [
+    { label: "W", code: "KeyW", note: "C4" },
+    { label: "3", code: "Digit3", note: "C#4", black: true },
+    { label: "E", code: "KeyE", note: "D4" },
+    { label: "4", code: "Digit4", note: "D#4", black: true },
+    { label: "R", code: "KeyR", note: "E4" },
+    { label: "T", code: "KeyT", note: "F4" },
+    { label: "6", code: "Digit6", note: "F#4", black: true },
+    { label: "Y", code: "KeyY", note: "G4" },
+    { label: "7", code: "Digit7", note: "G#4", black: true },
+    { label: "U", code: "KeyU", note: "A4" },
+    { label: "8", code: "Digit8", note: "A#4", black: true },
+    { label: "I", code: "KeyI", note: "B4" },
+    { label: "O", code: "KeyO", note: "C5" },
+    { label: "0", code: "Digit0", note: "C#5", black: true },
+    { label: "P", code: "KeyP", note: "D5" },
+    { label: "?", code: "Minus", note: "D#5", black: true },
+    { label: "Å", code: "BracketLeft", note: "E5" },
+    { label: "^", code: "BracketRight", note: "F5" },
+  ],
+  [
+    { label: "Z", code: "KeyZ", note: "C3" },
+    { label: "S", code: "KeyS", note: "C#3", black: true },
+    { label: "X", code: "KeyX", note: "D3" },
+    { label: "D", code: "KeyD", note: "D#3", black: true },
+    { label: "C", code: "KeyC", note: "E3" },
+    { label: "V", code: "KeyV", note: "F3" },
+    { label: "G", code: "KeyG", note: "F#3", black: true },
+    { label: "B", code: "KeyB", note: "G3" },
+    { label: "H", code: "KeyH", note: "G#3", black: true },
+    { label: "N", code: "KeyN", note: "A3" },
+    { label: "J", code: "KeyJ", note: "A#3", black: true },
+    { label: "M", code: "KeyM", note: "B3" },
+    { label: ",", code: "Comma", note: "C4" },
+    { label: "L", code: "KeyL", note: "C#4", black: true },
+    { label: ".", code: "Period", note: "D4" },
+    { label: "Ø", code: "Semicolon", note: "D#4", black: true },
+    { label: "-", code: "Slash", note: "E4" },
+  ],
 ];
 
 export const Keyboard: React.FC<{
@@ -39,23 +61,28 @@ export const Keyboard: React.FC<{
 }> = (props) => {
   useKeys((codes) =>
     props.onChange(
-      keys.filter(({ code }) => codes.includes(code)).map(({ note }) => note)
+      keys
+        .flat()
+        .filter(({ code }) => codes.includes(code))
+        .map(({ note }) => note)
     )
   );
 
   return (
     <div className="keyboard">
       <Panel verticalHeader title="Keyboard">
-        <ul className="keyboard__keys">
-          {keys.map((key) => (
-            <Key
-              key={key.code}
-              notes={props.notes}
-              onChange={props.onChange}
-              {...key}
-            />
-          ))}
-        </ul>
+        {keys.map((row, index) => (
+          <ul key={index} className="keyboard__keys">
+            {row.map((key) => (
+              <Key
+                key={key.code}
+                notes={props.notes}
+                onChange={props.onChange}
+                {...key}
+              />
+            ))}
+          </ul>
+        ))}
       </Panel>
     </div>
   );

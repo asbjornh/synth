@@ -19,7 +19,8 @@ export const useKeys = (onChange: (codes: string[]) => void) => {
     update();
   });
   useKeyup((e) => {
-    pressed.current[e.code] = false;
+    // pressed.current[e.code] = false;
+    delete pressed.current[e.code];
     update();
   });
 };
