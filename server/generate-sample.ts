@@ -42,11 +42,19 @@ export const generateSample = (
         ? envelopes.amplitude(dt, released)
         : { value: 1, done: released };
 
+      const FMPitch = envelopes.FMPitch?.(dt, released).value ?? 0;
+      const FMEnvDetune =
+        (1 - FMPitch) * (envelopes.FMPitch?.config.amount ?? 0);
+      const FMEnvAmp = envelopes.FMAmplitude?.(dt, released).value ?? 1;
+
       const freq =
         frequencies[note] * transpose(master.transpose, LFODetune + envDetune);
 
       const FMdetune = FMOsc
-        ? 1 + FMOsc.gain * FMOsc.osc(dt, freq * FMOsc.ratio)
+        ? 1 +
+          FMOsc.gain *
+            FMEnvAmp *
+            FMOsc.osc(dt, freq * (FMOsc.ratio + FMEnvDetune))
         : 1;
 
       const bLFO = LFOs.balance;

@@ -36,3 +36,6 @@ export const clamp = (v: number, min: number, max: number) =>
   Math.max(min, Math.min(max, v));
 
 export const isOdd = (num: number) => num % 2 !== 0;
+
+export const ratio = (value: number) =>
+  value >= 0 ? 1 + value : 1 / Math.abs(value);

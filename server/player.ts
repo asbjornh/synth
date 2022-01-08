@@ -85,6 +85,8 @@ const toPlayerState = (
         envelopes: {
           amplitude: undefined,
           cutoff: undefined,
+          FMAmplitude: undefined,
+          FMPitch: undefined,
           pitch: undefined,
         },
         FMOsc: undefined,

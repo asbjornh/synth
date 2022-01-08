@@ -23,6 +23,8 @@ export const defaultEnvelope: EnvType = {
 
 const targets: Record<EnvelopeTarget, string> = {
   amplitude: "Amplitude",
+  FMAmplitude: "FM amplitude",
+  FMPitch: "FM pitch",
   cutoff: "Cutoff",
   pitch: "Pitch",
 };
@@ -127,7 +129,7 @@ export const Envelope: React.FC<{
         />
       </Control>
 
-      {target !== "amplitude" && (
+      {target !== "amplitude" && target !== "FMAmplitude" && (
         <Control label="Amount">
           <Knob
             centered

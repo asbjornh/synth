@@ -76,7 +76,12 @@ export type Filter = {
   bellGain: number;
 };
 
-export type EnvelopeTarget = "pitch" | "amplitude" | "cutoff";
+export type EnvelopeTarget =
+  | "pitch"
+  | "amplitude"
+  | "cutoff"
+  | "FMAmplitude"
+  | "FMPitch";
 
 export type Envelope = {
   amount: number;
