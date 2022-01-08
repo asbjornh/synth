@@ -1,22 +1,18 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { MinusSquare, PlusSquare } from "react-feather";
-import { UIState } from "../../../interface/state";
+import { Note, UIState } from "../../../interface/state";
 import { Button } from "../button/button";
 import { Compressor, defaultCompressor } from "../compressor/compressor";
-import { Control, ControlStrip } from "../control-strip/control-strip";
 import { defaultDelay, Delay } from "../delay/delay";
 import { defaultDistortion, Distortion } from "../distortion/distortion";
-import { defaultEnvelope, Envelope } from "../envelope/envelope";
 import { Envelopes } from "../envelopes/envelopes";
 import { defaultFilter, Filter } from "../filter/filter";
 import { defaultFMOsc, FMOsc } from "../fm-osc/fm-osc";
-import { Keyboard } from "../keyboard/keyboard";
-import { Knob } from "../knob/knob";
+import { KeyInput } from "../key-input/key-input";
 import { LFOs } from "../LFOs/LFOs";
 import { Master } from "../master/master";
 import { Oscillators } from "../oscillators/oscillators";
 import { Panel } from "../panel/panel";
-import { Waveform } from "../waveform/waveform";
 import "./synth.scss";
 
 const Toggle: React.FC<{ active: boolean; onClick: () => void }> = ({
@@ -57,6 +53,11 @@ export const Synth: React.FC<{
   const toggleFM = () =>
     patchState({ FMOsc: state.FMOsc ? undefined : defaultFMOsc });
 
+  const onPlay = useCallback(
+    (notes: Note[]) => patchState({ notes }),
+    [state.notes]
+  );
+
   return (
     <div className="synth">
       <div className="synth__left">
@@ -85,10 +86,7 @@ export const Synth: React.FC<{
           />
         </Panel>
 
-        <Keyboard
-          notes={state.notes}
-          onChange={(notes) => patchState({ notes })}
-        />
+        <KeyInput notes={state.notes} onChange={onPlay} />
       </div>
 
       <div className="synth__right">

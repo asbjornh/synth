@@ -13,10 +13,13 @@
 
 - Sequencer
 - Arpeggiator
-- MIDI?
 - Portamento
 - Auto chords
 - Mod wheel
+
+## MIDI
+
+- Do something with velocity
 
 ## Other
 
