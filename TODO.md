@@ -15,14 +15,14 @@
 - Arpeggiator
 - Portamento
 - Auto chords
-- Mod wheel
 
 ## MIDI
 
 - Do something with velocity
+- Mod wheel
+- Pitch wheel
 
 ## Other
 
 - Spectrogram
 - Mod matrix
-- Recording

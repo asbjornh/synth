@@ -1,16 +1,18 @@
+import fs from "fs";
+import path from "path";
 import { Readable } from "stream";
 import { AudioIO } from "naudiodon";
 
 import { filter, FilterInstance, getEQ } from "./filter";
 import { clamp, map, mapO } from "./util";
 import {
-  defaultOscOptions,
   Distortion,
   EnvelopeTarget,
   Filter,
   LFOTarget,
   Note,
   UIState,
+  Velocity,
 } from "../interface/state";
 import {
   defaultOsc,
@@ -25,6 +27,7 @@ import { delay, DelayInstance } from "./delay";
 import { fromEntries } from "../client/util";
 import { envelope, EnvelopeInstance } from "./envelope";
 import { compressor, CompressorInstance } from "./compressor";
+import { getFileHeaders } from "./wav-headers";
 
 export type Options = {
   bitDepth: 8 | 16 | 32;
@@ -40,6 +43,7 @@ type NoteState = {
   /** One filter instance per channel */
   filter: FilterInstance[];
   released: boolean;
+  velocity: number;
 };
 
 type LFOInstance = {
@@ -61,6 +65,8 @@ export type PlayerState = {
     transpose: number;
   };
   notes: Partial<Record<Note, NoteState>>;
+  recorder: fs.WriteStream | undefined;
+  velocity: Velocity;
 };
 
 const filterInit = (opts: Options, filterOpts: Filter | undefined) =>
@@ -79,8 +85,8 @@ const toPlayerState = (
   const f = next.filter;
   const notes = { ...cur.notes };
   map(next.notes, (note) => {
-    if (!notes[note] || notes[note]?.released) {
-      notes[note] = {
+    if (!notes[note.note] || notes[note.note]?.released) {
+      notes[note.note] = {
         filter: [],
         envelopes: {
           amplitude: undefined,
@@ -98,11 +104,13 @@ const toPlayerState = (
         },
         oscillators: [],
         released: false,
+        velocity: note.velocity,
       };
     }
   });
+  const nextNotes = map(next.notes, ({ note }) => note);
   mapO(notes, (state, note) => {
-    const released = state.released || !next.notes.includes(note);
+    const released = state.released || !nextNotes.includes(note);
 
     const nextFilter =
       f && state.filter.length > 0
@@ -176,6 +184,23 @@ const toPlayerState = (
     ? compressor(next.compressor, opts, cur.compressor?.getSamples())
     : undefined;
 
+  const recorder = next.master.recording
+    ? cur.recorder ??
+      fs.createWriteStream(
+        path.resolve(
+          __dirname,
+          "../recordings",
+          new Date().toUTCString() + ".wav"
+        )
+      )
+    : undefined;
+
+  if (cur.recorder && !next.master.recording) {
+    cur.recorder.close();
+  } else if (!cur.recorder && recorder) {
+    recorder.write(getFileHeaders({ ...opts, dataLength: 0 }));
+  }
+
   return {
     compressor: nextCompressor,
     delay: nextDelay,
@@ -186,6 +211,8 @@ const toPlayerState = (
       EQLow,
     },
     notes,
+    recorder,
+    velocity: next.velocity,
   };
 };
 
@@ -202,6 +229,11 @@ export const Player = (opts: Options) => {
       transpose: 0,
     },
     notes: {},
+    recorder: undefined,
+    velocity: {
+      scale: 1,
+      offset: 0,
+    },
   };
 
   let onFrame: (samples: number[], t: number) => void = () => {};
@@ -250,6 +282,10 @@ export const Player = (opts: Options) => {
 
       onFrame(samples, samplesGenerated / opts.sampleRate);
       this.push(buf);
+
+      if (state.recorder) {
+        state.recorder.write(buf);
+      }
 
       samplesGenerated += numSamples;
     },

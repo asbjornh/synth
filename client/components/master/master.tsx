@@ -1,8 +1,10 @@
+import cn from "classnames";
 import React, { useEffect, useState } from "react";
 import { Master as MasterOpts } from "../../../interface/state";
 import { Control, ControlStrip } from "../control-strip/control-strip";
 import { Knob } from "../knob/knob";
 import { Waveform } from "../waveform/waveform";
+import "./master.scss";
 
 export const Master: React.FC<{
   master: MasterOpts;
@@ -13,10 +15,11 @@ export const Master: React.FC<{
   const [EQHigh, setEQHigh] = useState(master.EQHigh);
   const [gain, setGain] = useState(master.gain);
   const [transpose, setTranspose] = useState(master.transpose);
+  const [recording, setRecording] = useState(master.recording);
 
   useEffect(
-    () => onChange({ dcOffset, EQHigh, EQLow, gain, transpose }),
-    [dcOffset, EQLow, EQHigh, gain, transpose]
+    () => onChange({ dcOffset, EQHigh, EQLow, gain, recording, transpose }),
+    [dcOffset, EQLow, EQHigh, gain, recording, transpose]
   );
 
   return (
@@ -77,8 +80,19 @@ export const Master: React.FC<{
           theme="orange"
         />
       </Control>
+
       <Control label="Wave">
         <Waveform />
+      </Control>
+
+      <Control label="Rec.">
+        <div
+          className={cn("master__rec", { "master__rec--active": recording })}
+        >
+          <button onClick={() => setRecording((recording) => !recording)}>
+            <div className="master__rec-dot" />
+          </button>
+        </div>
       </Control>
     </ControlStrip>
   );

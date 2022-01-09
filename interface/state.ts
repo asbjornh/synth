@@ -137,6 +137,8 @@ export type Master = {
   gain: number;
   /** In octaves */
   transpose: number;
+  recording?: boolean;
+};
 };
 
 export type UIState = {
