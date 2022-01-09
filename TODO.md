@@ -22,6 +22,10 @@
 - Mod wheel
 - Pitch wheel
 
+## Perf
+
+- Split `set-state` endpoint into `config` and `play` endpoints
+
 ## Other
 
 - Spectrogram

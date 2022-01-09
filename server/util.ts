@@ -32,6 +32,15 @@ export const mapO = <O extends Record<string, any>, U>(
   return next;
 };
 
+export const forEachO = <O extends Record<string, any>>(
+  obj: O,
+  fn: (value: NonNullable<O[keyof O]>, key: keyof O) => void
+) => {
+  for (let key in obj) {
+    fn(obj[key], key);
+  }
+};
+
 export const clamp = (v: number, min: number, max: number) =>
   Math.max(min, Math.min(max, v));
 

@@ -3,8 +3,9 @@ import { adjustCutoff } from "./filter";
 import { frequencies } from "./frequencies";
 import { distortion } from "./fx";
 import { transpose } from "./osc";
-import { Options, PlayerState } from "./player";
-import { clamp, map, mapO } from "./util";
+import { Options } from "./player";
+import { PlayerState } from "./player-state";
+import { clamp, forEachO } from "./util";
 
 /** Stereo amplitude for the given channel */
 const stereoAmplitude = (balance: number, channel: number) =>
@@ -15,72 +16,80 @@ const stereoAmplitude = (balance: number, channel: number) =>
     : 1;
 
 export const generateSample = (
-  channel: number,
   state: PlayerState,
   options: Options,
   onSilent: (note: Note) => void
-) => {
-  // NOTE: Only progress oscillator and envelope state once per multi-channel sample
-  const dt = channel === 0 ? 1 / options.sampleRate : 0;
-  let sample = 0;
+): [number, number] => {
+  const sample: [number, number] = [0, 0];
   const { master } = state;
 
-  mapO(
-    state.notes,
-    (
-      { filter, FMOsc, LFOs, envelopes, oscillators, released, velocity },
-      note
-    ) => {
-      // NOTE: Sample contribution for single note
-      let noteSample = 0;
+  forEachO(state.notes, (noteState, note) => {
+    const modT = 1 / options.sampleRate;
 
-      const veloAmp = clamp(
-        velocity * state.velocity.scale + state.velocity.offset,
-        0,
-        1
-      );
+    const { filter, FMOsc, LFOs, envelopes, oscillators, released, velocity } =
+      noteState;
 
-      const pLFO = LFOs.pitch;
-      const LFODetune = pLFO ? pLFO.osc(dt, pLFO.freq) * 1200 * pLFO.amount : 0;
+    // NOTE: Sample contribution for single note
+    const noteSample: [number, number] = [0, 0];
 
-      const pitch = envelopes.pitch?.(dt, released).value ?? 1;
-      const envDetune =
-        (1 - pitch) * 1200 * (envelopes.pitch?.config.amount ?? 0);
+    const veloAmp = clamp(
+      velocity * state.velocity.scale + state.velocity.offset,
+      0,
+      1
+    );
 
-      const { value: envAmp, done } = envelopes.amplitude
-        ? envelopes.amplitude(dt, released)
-        : { value: 1, done: released };
+    const pLFO = LFOs.pitch;
+    const LFODetune = pLFO ? pLFO.osc(modT, pLFO.freq) * 1200 * pLFO.amount : 0;
 
-      const FMPitch = envelopes.FMPitch?.(dt, released).value ?? 0;
-      const FMEnvDetune =
-        (1 - FMPitch) * (envelopes.FMPitch?.config.amount ?? 0);
-      const FMEnvAmp = envelopes.FMAmplitude?.(dt, released).value ?? 1;
+    const aLFO = LFOs.amplitude;
+    const LFOamp = aLFO ? 1 + aLFO.osc(modT, aLFO.freq) * aLFO.amount : 1;
 
-      const freq =
-        frequencies[note] * transpose(master.transpose, LFODetune + envDetune);
+    const pitch = envelopes.pitch?.(modT, released).value ?? 1;
+    const envDetune =
+      (1 - pitch) * 1200 * (envelopes.pitch?.config.amount ?? 0);
 
-      const FMdetune = FMOsc
-        ? 1 +
-          FMOsc.gain *
-            FMEnvAmp *
-            FMOsc.osc(dt, freq * (FMOsc.ratio + FMEnvDetune))
-        : 1;
+    const { value: envAmp, done } = envelopes.amplitude
+      ? envelopes.amplitude(modT, released)
+      : { value: 1, done: released };
 
-      const bLFO = LFOs.balance;
-      const LFObalance = bLFO ? bLFO.osc(dt, bLFO.freq) * bLFO.amount : 0;
+    const FMPitch = envelopes.FMPitch?.(modT, released).value ?? 0;
+    const FMEnvDetune = (1 - FMPitch) * (envelopes.FMPitch?.config.amount ?? 0);
+    const FMEnvAmp = envelopes.FMAmplitude?.(modT, released).value ?? 1;
 
-      map(oscillators, (oscillator) => {
+    const freq =
+      frequencies[note] * transpose(master.transpose, LFODetune + envDetune);
+
+    const FMdetune = FMOsc
+      ? 1 +
+        FMOsc.gain *
+          FMEnvAmp *
+          FMOsc.osc(modT, freq * (FMOsc.ratio + FMEnvDetune))
+      : 1;
+
+    const bLFO = LFOs.balance;
+    const LFObalance = bLFO ? bLFO.osc(modT, bLFO.freq) * bLFO.amount : 0;
+
+    for (
+      let channel = 0, l = sample.length;
+      channel < sample.length;
+      channel++
+    ) {
+      // NOTE: Only progress oscillator and envelope state once per multi-channel sample
+      const dt = channel === 0 ? 1 / options.sampleRate : 0;
+
+      for (let i = 0, l = oscillators.length; i < l; i++) {
+        const oscillator = oscillators[i];
         const opts = oscillator.getOptions();
         const stereoAmp = stereoAmplitude(
           clamp(opts.balance + LFObalance, -1, 1),
           channel
         );
+        const amp = envAmp * stereoAmp * veloAmp * LFOamp;
 
         if (done) onSilent(note);
 
-        noteSample +=
-          envAmp * stereoAmp * veloAmp * oscillator(dt, freq * FMdetune);
-      });
+        noteSample[channel] += amp * oscillator(dt, freq * FMdetune);
+      }
 
       if (filter[channel]) {
         const opts = filter[channel].getOptions();
@@ -99,38 +108,43 @@ export const generateSample = (
           filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
         }
 
-        noteSample = filter[channel](noteSample);
+        noteSample[channel] = filter[channel](noteSample[channel]);
       }
 
       if (state.distortion) {
         const { gain, mix, outGain } = state.distortion;
         const distMax = distortion(gain);
-        const wet = (1 / distMax) * outGain * distortion(noteSample * gain);
-        noteSample = mix * wet + (1 - mix) * noteSample;
+        const wet =
+          (1 / distMax) * outGain * distortion(noteSample[channel] * gain);
+        noteSample[channel] = mix * wet + (1 - mix) * noteSample[channel];
       }
 
-      const aLFO = LFOs.amplitude;
-      if (aLFO) {
-        const LFOamp = 1 + aLFO.osc(dt, aLFO.freq) * aLFO.amount;
-        noteSample = noteSample * LFOamp;
-      }
-
-      sample += noteSample;
+      sample[channel] += noteSample[channel];
     }
-  );
+  });
 
-  sample += master.dcOffset;
+  for (let channel = 0, l = sample.length; channel < l; channel++) {
+    sample[channel] += master.dcOffset;
 
-  if (master.EQHigh) sample = master.EQHigh(sample);
-  if (master.EQLow) sample = master.EQLow(sample);
+    if (master.EQHigh) sample[channel] = master.EQHigh(sample[channel]);
+    if (master.EQLow) sample[channel] = master.EQLow(sample[channel]);
 
-  if (state.delay) {
-    const { options } = state.delay;
-    const wet = state.delay.tick(channel);
-    const mix = options.mix * wet + (1 - options.mix) * sample;
-    state.delay.write(channel, sample);
-    return mix;
+    if (state.delay) {
+      const { options } = state.delay;
+      const wet = state.delay.tick(channel);
+      const mix = options.mix * wet + (1 - options.mix) * sample[channel];
+      state.delay.write(channel, sample[channel]);
+      sample[channel] = mix;
+    }
+
+    sample[channel] *= state.master.gain;
+
+    if (state.compressor) {
+      sample[channel] *= state.compressor.getGain();
+    }
   }
+
+  state.compressor?.tick(sample[0] + sample[1] / 2);
 
   return sample;
 };
