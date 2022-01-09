@@ -1,6 +1,6 @@
 import cn from "classnames";
 import React from "react";
-import { Note } from "../../../interface/state";
+import { Note, NoteState } from "../../../interface/state";
 import { useKeys } from "./use-keys";
 
 import "./keyboard.scss";
@@ -56,15 +56,15 @@ const keys: Key[][] = [
 ];
 
 export const Keyboard: React.FC<{
-  notes: Note[];
-  onChange: (notes: Note[]) => void;
+  notes: NoteState[];
+  onChange: (notes: NoteState[]) => void;
 }> = (props) => {
   useKeys((codes) =>
     props.onChange(
       keys
         .flat()
         .filter(({ code }) => codes.includes(code))
-        .map(({ note }) => note)
+        .map(({ note }) => ({ note, velocity: 1 }))
     )
   );
 
@@ -76,8 +76,7 @@ export const Keyboard: React.FC<{
             {row.map((key) => (
               <Key
                 key={key.code}
-                notes={props.notes}
-                onChange={props.onChange}
+                notes={props.notes.map(({ note }) => note)}
                 {...key}
               />
             ))}
@@ -88,9 +87,12 @@ export const Keyboard: React.FC<{
   );
 };
 
-const Key: React.FC<
-  Key & { notes: Note[]; onChange: (notes: Note[]) => void }
-> = ({ black, label, note, notes }) => {
+const Key: React.FC<Key & { notes: Note[] }> = ({
+  black,
+  label,
+  note,
+  notes,
+}) => {
   const isActive = notes.includes(note);
 
   return (

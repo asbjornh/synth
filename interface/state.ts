@@ -139,6 +139,12 @@ export type Master = {
   transpose: number;
   recording?: boolean;
 };
+
+export type NoteState = { note: Note; velocity: number };
+
+export type Velocity = {
+  scale: number;
+  offset: number;
 };
 
 export type UIState = {
@@ -150,8 +156,9 @@ export type UIState = {
   FMOsc: FMOsc | undefined;
   LFOs: LFO[];
   master: Master;
-  notes: Note[];
+  notes: NoteState[];
   oscillators: Osc[];
+  velocity: Velocity;
 };
 
 export type Preset = Omit<UIState, "notes"> & { displayName: string };
@@ -173,4 +180,8 @@ export const initialState: UIState = {
   },
   notes: [],
   oscillators: [],
+  velocity: {
+    scale: 1,
+    offset: 0,
+  },
 };

@@ -38,16 +38,16 @@ process.on("SIGUSR1", onExit);
 process.on("SIGUSR2", onExit);
 
 player.onFrame((samples, t) => {
-  if (state.notes.length > 1) {
-    io.emit("frame", { samples: [], freq: 0, sampleRate: opts.sampleRate, t });
-  } else {
+  if (state.notes.length === 1) {
     const [note] = state.notes;
     io.emit("frame", {
       samples,
-      freq: frequencies[note] * transpose(state.master.transpose, 0),
+      freq: frequencies[note.note] * transpose(state.master.transpose, 0),
       sampleRate: opts.sampleRate,
       t,
     });
+  } else {
+    io.emit("frame", { samples: [], freq: 0, sampleRate: opts.sampleRate, t });
   }
 });
 

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { MinusSquare, PlusSquare } from "react-feather";
-import { Note, UIState } from "../../../interface/state";
+import { Note, NoteState, UIState } from "../../../interface/state";
 import { Button } from "../button/button";
 import { Compressor, defaultCompressor } from "../compressor/compressor";
 import { defaultDelay, Delay } from "../delay/delay";
@@ -54,7 +54,7 @@ export const Synth: React.FC<{
     patchState({ FMOsc: state.FMOsc ? undefined : defaultFMOsc });
 
   const onPlay = useCallback(
-    (notes: Note[]) => patchState({ notes }),
+    (notes: NoteState[]) => patchState({ notes }),
     [state.notes]
   );
 
@@ -86,7 +86,12 @@ export const Synth: React.FC<{
           />
         </Panel>
 
-        <KeyInput notes={state.notes} onChange={onPlay} />
+        <KeyInput
+          notes={state.notes}
+          onChange={onPlay}
+          onChangeVelocity={(velocity) => patchState({ velocity })}
+          velocity={state.velocity}
+        />
       </div>
 
       <div className="synth__right">

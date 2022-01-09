@@ -27,9 +27,18 @@ export const generateSample = (
 
   mapO(
     state.notes,
-    ({ filter, FMOsc, LFOs, envelopes, oscillators, released }, note) => {
+    (
+      { filter, FMOsc, LFOs, envelopes, oscillators, released, velocity },
+      note
+    ) => {
       // NOTE: Sample contribution for single note
       let noteSample = 0;
+
+      const veloAmp = clamp(
+        velocity * state.velocity.scale + state.velocity.offset,
+        0,
+        1
+      );
 
       const pLFO = LFOs.pitch;
       const LFODetune = pLFO ? pLFO.osc(dt, pLFO.freq) * 1200 * pLFO.amount : 0;
@@ -69,7 +78,8 @@ export const generateSample = (
 
         if (done) onSilent(note);
 
-        noteSample += envAmp * stereoAmp * oscillator(dt, freq * FMdetune);
+        noteSample +=
+          envAmp * stereoAmp * veloAmp * oscillator(dt, freq * FMdetune);
       });
 
       if (filter[channel]) {
