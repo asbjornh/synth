@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { NoteState, Velocity } from "../../../interface/state";
+import { NoteDescriptor, Velocity } from "../../../interface/state";
 import { Keyboard } from "../keyboard/keyboard";
 import { Midi } from "../midi/midi";
 
 export const KeyInput: React.FC<{
-  notes: NoteState[];
-  onChange: (next: NoteState[]) => void;
+  notes: NoteDescriptor[];
+  onChange: (next: NoteDescriptor[]) => void;
   onChangeVelocity: (next: Velocity) => void;
   velocity: Velocity;
 }> = ({ notes, onChange, onChangeVelocity, velocity }) => {

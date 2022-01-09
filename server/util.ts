@@ -21,6 +21,12 @@ export const map = <T, U>(arr: T[], fn: (el: T, index: number) => U): U[] => {
   return next;
 };
 
+export const forEach = <T>(arr: T[], fn: (el: T, index: number) => void) => {
+  for (let i = 0, l = arr.length; i < l; i++) {
+    fn(arr[i], i);
+  }
+};
+
 export const mapO = <O extends Record<string, any>, U>(
   obj: O,
   fn: (value: NonNullable<O[keyof O]>, key: keyof O) => U

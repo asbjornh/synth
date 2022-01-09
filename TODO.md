@@ -3,6 +3,7 @@
 ## Bug
 
 - Compressor increases in volume when releasing keys
+- Basic pass preset is silent if EQ params are changed
 
 ## Osc
 
@@ -21,10 +22,6 @@
 - Velocity target
 - Mod wheel
 - Pitch wheel
-
-## Perf
-
-- Split `set-state` endpoint into `config` and `play` endpoints
 
 ## Other
 

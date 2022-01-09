@@ -58,7 +58,7 @@ export const Presets: React.FC<{
 
   const save = () => {
     if (!presetName) return;
-    const { notes, ...state } = props.state;
+    const { ...state } = props.state;
     const preset: Preset = { ...state, displayName: presetName };
     post("/presets", preset)
       .then(setUserPresets)

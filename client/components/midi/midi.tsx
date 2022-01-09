@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NoteState, Velocity } from "../../../interface/state";
+import { NoteDescriptor, Velocity } from "../../../interface/state";
 import {
   Control,
   ControlGroup,
@@ -12,8 +12,8 @@ import { parse } from "./message-parser";
 
 export const Midi: React.FC<{
   devices: WebMidi.MIDIInput[];
-  notes: NoteState[];
-  onChange: (notes: NoteState[]) => void;
+  notes: NoteDescriptor[];
+  onChange: (notes: NoteDescriptor[]) => void;
   onChangeVelocity: (velocity: Velocity) => void;
   velocity: Velocity;
 }> = ({ devices, notes, onChange, onChangeVelocity, velocity }) => {

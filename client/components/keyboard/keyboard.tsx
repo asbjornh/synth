@@ -1,6 +1,6 @@
 import cn from "classnames";
 import React from "react";
-import { Note, NoteState } from "../../../interface/state";
+import { Note, NoteDescriptor } from "../../../interface/state";
 import { useKeys } from "./use-keys";
 
 import "./keyboard.scss";
@@ -56,8 +56,8 @@ const keys: Key[][] = [
 ];
 
 export const Keyboard: React.FC<{
-  notes: NoteState[];
-  onChange: (notes: NoteState[]) => void;
+  notes: NoteDescriptor[];
+  onChange: (notes: NoteDescriptor[]) => void;
 }> = (props) => {
   useKeys((codes) =>
     props.onChange(

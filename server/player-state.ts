@@ -2,13 +2,14 @@ import fs from "fs";
 import path from "path";
 
 import { filter, FilterInstance, getEQ } from "./filter";
-import { map, mapO } from "./util";
+import { forEachO, map } from "./util";
 import {
   Distortion,
   EnvelopeTarget,
   Filter,
   LFOTarget,
   Note,
+  NoteDescriptor,
   UIState,
   Velocity,
 } from "../interface/state";
@@ -68,116 +69,14 @@ const filterInit = (opts: Options, filterOpts: Filter | undefined) =>
       )
     : [];
 
-export const toPlayerState = (
-  cur: PlayerState,
+export const mutatePlayerState = (
+  state: PlayerState,
   next: UIState,
   opts: Options,
   t: number
-): PlayerState => {
-  const f = next.filter;
-  const notes = { ...cur.notes };
-  map(next.notes, (note) => {
-    if (!notes[note.note] || notes[note.note]?.released) {
-      notes[note.note] = {
-        filter: [],
-        envelopes: {
-          amplitude: undefined,
-          cutoff: undefined,
-          FMAmplitude: undefined,
-          FMPitch: undefined,
-          pitch: undefined,
-        },
-        FMOsc: undefined,
-        LFOs: {
-          amplitude: undefined,
-          balance: undefined,
-          cutoff: undefined,
-          pitch: undefined,
-        },
-        oscillators: [],
-        released: false,
-        velocity: note.velocity,
-      };
-    }
-  });
-  const nextNotes = map(next.notes, ({ note }) => note);
-  mapO(notes, (state, note) => {
-    const released = state.released || !nextNotes.includes(note);
-
-    const nextFilter =
-      f && state.filter.length > 0
-        ? map(state.filter, (instance) =>
-            filter(opts.sampleRate, f, instance.getState())
-          )
-        : filterInit(opts, f);
-
-    const curOscillators = notes[note]?.oscillators || [];
-    const nextOscs = next.oscillators.flatMap((osc) =>
-      osc.options.unison === 1 ? [oscillator(osc)] : unison(osc)
-    );
-
-    const envelopes = fromEntries(
-      next.envelopes.map<[EnvelopeTarget, EnvelopeInstance]>((env) => [
-        env.target,
-        envelope(env, state.envelopes[env.target]?.getState()),
-      ])
-    );
-
-    const oscillators =
-      curOscillators.length === nextOscs.length
-        ? map(nextOscs, (osc, index) =>
-            oscillator(osc.getOsc(), curOscillators[index].getPhase())
-          )
-        : nextOscs;
-
-    const FMOsc = next.FMOsc
-      ? FMOscillator(next.FMOsc, state.FMOsc?.osc.getPhase())
-      : undefined;
-
-    const LFOs = fromEntries(
-      next.LFOs.map<[LFOTarget, LFOInstance]>((LFO) => {
-        const phase = LFO.sync ? undefined : t / (1 / LFO.freq);
-        const osc =
-          state.LFOs[LFO.target]?.osc || oscillator(defaultOsc(LFO.osc), phase);
-
-        return [LFO.target, { osc, amount: LFO.amount, freq: LFO.freq }];
-      })
-    );
-
-    notes[note] = {
-      ...state,
-      filter: nextFilter,
-      LFOs,
-      envelopes,
-      FMOsc,
-      oscillators,
-      released,
-    };
-  });
-
-  const nextDelay = next.delay
-    ? delay(next.delay, opts, cur.delay?.getState())
-    : undefined;
-
-  const EQLow = getEQ(
-    opts.sampleRate,
-    "low-shelf",
-    next.master.EQLow,
-    cur.master.EQLow?.getState()
-  );
-  const EQHigh = getEQ(
-    opts.sampleRate,
-    "high-shelf",
-    next.master.EQHigh,
-    cur.master.EQHigh?.getState()
-  );
-
-  const nextCompressor = next.compressor
-    ? compressor(next.compressor, opts, cur.compressor?.getSamples())
-    : undefined;
-
+) => {
   const recorder = next.master.recording
-    ? cur.recorder ??
+    ? state.recorder ??
       fs.createWriteStream(
         path.resolve(
           __dirname,
@@ -187,23 +86,136 @@ export const toPlayerState = (
       )
     : undefined;
 
-  if (cur.recorder && !next.master.recording) {
-    cur.recorder.close();
-  } else if (!cur.recorder && recorder) {
+  if (state.recorder && !next.master.recording) {
+    state.recorder.close();
+  } else if (!state.recorder && recorder) {
     recorder.write(getFileHeaders({ ...opts, dataLength: 0 }));
   }
 
-  return {
-    compressor: nextCompressor,
-    delay: nextDelay,
-    distortion: next.distortion,
+  const newState: PlayerState = {
+    delay: next.delay
+      ? delay(next.delay, opts, state.delay?.getState())
+      : undefined,
     master: {
-      ...next.master,
-      EQHigh,
-      EQLow,
+      dcOffset: next.master.dcOffset,
+      gain: next.master.gain,
+      transpose: next.master.transpose,
+      EQLow: getEQ(
+        opts.sampleRate,
+        "low-shelf",
+        next.master.EQLow,
+        state.master.EQLow?.getState()
+      ),
+      EQHigh: getEQ(
+        opts.sampleRate,
+        "high-shelf",
+        next.master.EQHigh,
+        state.master.EQHigh?.getState()
+      ),
     },
-    notes,
+    notes: state.notes,
+    distortion: next.distortion,
+    compressor: next.compressor
+      ? compressor(next.compressor, opts, state.compressor?.getSamples())
+      : undefined,
     recorder,
     velocity: next.velocity,
   };
+
+  const f = next.filter;
+  forEachO(newState.notes, (cur) => {
+    cur.filter = f
+      ? map(cur.filter, (instance) =>
+          filter(opts.sampleRate, f, instance.getState())
+        )
+      : [];
+
+    const nextOscs = next.oscillators.flatMap((osc) =>
+      osc.options.unison === 1 ? [oscillator(osc)] : unison(osc)
+    );
+    cur.oscillators =
+      cur.oscillators.length === nextOscs.length
+        ? map(nextOscs, (osc, index) =>
+            oscillator(osc.getOsc(), cur.oscillators[index].getPhase())
+          )
+        : nextOscs;
+
+    cur.envelopes = fromEntries(
+      next.envelopes.map<[EnvelopeTarget, EnvelopeInstance]>((env) => [
+        env.target,
+        envelope(env, cur.envelopes[env.target]?.getState()),
+      ])
+    );
+
+    cur.FMOsc = next.FMOsc
+      ? FMOscillator(next.FMOsc, cur.FMOsc?.osc.getPhase())
+      : undefined;
+
+    cur.LFOs = fromEntries(
+      next.LFOs.map<[LFOTarget, LFOInstance]>((LFO) => {
+        const phase = LFO.sync ? undefined : t / (1 / LFO.freq);
+        const osc =
+          cur.LFOs[LFO.target]?.osc || oscillator(defaultOsc(LFO.osc), phase);
+
+        return [LFO.target, { osc, amount: LFO.amount, freq: LFO.freq }];
+      })
+    );
+  });
+
+  return newState;
+};
+
+/** Initialize new notes once they start playing, set `released` flag once notes stop being played */
+export const mutateNotes = (
+  notes: NoteDescriptor[],
+  state: UIState,
+  player: PlayerState,
+  opts: Options,
+  t: number
+) => {
+  const playing: Partial<Record<Note, boolean>> = {};
+
+  for (let i = 0, l = notes.length; i < l; i++) {
+    const { note, velocity } = notes[i];
+
+    playing[note] = true;
+
+    if (!player.notes[note] || player.notes[note]?.released) {
+      const envelopes = fromEntries(
+        state.envelopes.map<[EnvelopeTarget, EnvelopeInstance]>((env) => [
+          env.target,
+          envelope(env),
+        ])
+      );
+
+      const LFOs = fromEntries(
+        state.LFOs.map<[LFOTarget, LFOInstance]>((LFO) => {
+          const phase = LFO.sync ? undefined : t / (1 / LFO.freq);
+          const osc = oscillator(defaultOsc(LFO.osc), phase);
+
+          return [LFO.target, { osc, amount: LFO.amount, freq: LFO.freq }];
+        })
+      );
+
+      const oscillators = state.oscillators.flatMap((osc) =>
+        osc.options.unison === 1 ? [oscillator(osc)] : unison(osc)
+      );
+
+      player.notes[note] = {
+        envelopes,
+        FMOsc: state.FMOsc ? FMOscillator(state.FMOsc) : undefined,
+        LFOs,
+        oscillators,
+        filter: filterInit(opts, state.filter),
+        released: false,
+        velocity,
+      };
+    }
+  }
+
+  forEachO(player.notes, (state, key) => {
+    if (!playing[key]) {
+      state.released = true;
+    }
+  });
 };

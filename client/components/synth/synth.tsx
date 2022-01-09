@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { MinusSquare, PlusSquare } from "react-feather";
-import { Note, NoteState, UIState } from "../../../interface/state";
+import { Note, NoteDescriptor, UIState } from "../../../interface/state";
 import { Button } from "../button/button";
 import { Compressor, defaultCompressor } from "../compressor/compressor";
 import { defaultDelay, Delay } from "../delay/delay";
@@ -27,7 +27,9 @@ const Toggle: React.FC<{ active: boolean; onClick: () => void }> = ({
 export const Synth: React.FC<{
   state: UIState;
   setState: React.Dispatch<React.SetStateAction<UIState>>;
-}> = ({ state, setState }) => {
+  notes: NoteDescriptor[];
+  setNotes: React.Dispatch<React.SetStateAction<NoteDescriptor[]>>;
+}> = ({ state, setState, notes, setNotes }) => {
   const patchState = (next: Partial<UIState>) =>
     setState((state) => ({
       ...state,
@@ -52,11 +54,6 @@ export const Synth: React.FC<{
 
   const toggleFM = () =>
     patchState({ FMOsc: state.FMOsc ? undefined : defaultFMOsc });
-
-  const onPlay = useCallback(
-    (notes: NoteState[]) => patchState({ notes }),
-    [state.notes]
-  );
 
   return (
     <div className="synth">
@@ -87,8 +84,8 @@ export const Synth: React.FC<{
         </Panel>
 
         <KeyInput
-          notes={state.notes}
-          onChange={onPlay}
+          notes={notes}
+          onChange={setNotes}
           onChangeVelocity={(velocity) => patchState({ velocity })}
           velocity={state.velocity}
         />

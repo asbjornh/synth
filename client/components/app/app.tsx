@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { initialState, Preset, UIState } from "../../../interface/state";
+import {
+  initialState,
+  NoteDescriptor,
+  Preset,
+  UIState,
+} from "../../../interface/state";
 import { post } from "../../api";
 import { useAfterMountEffect } from "../../hooks/use-after-mount-effect";
 import { Panel } from "../panel/panel";
@@ -10,9 +15,11 @@ import "./app.scss";
 
 export const App: React.FC = () => {
   const [state, setState] = useState<UIState>(initialState);
+  const [notes, setNotes] = useState<NoteDescriptor[]>([]);
   const [presetName, setPresetName] = useState("");
 
-  useAfterMountEffect(() => post("/set-state", state), [state]);
+  useAfterMountEffect(() => post("/config", state), [state]);
+  useAfterMountEffect(() => post("play", notes), [notes]);
 
   const patchState = (next: Partial<UIState>) =>
     setState((state) => ({
@@ -41,7 +48,13 @@ export const App: React.FC = () => {
       />
 
       {/* NOTE: Remount when changing preset to ensure clean UI state */}
-      <Synth key={presetName} state={state} setState={setState} />
+      <Synth
+        key={presetName}
+        state={state}
+        setState={setState}
+        notes={notes}
+        setNotes={setNotes}
+      />
     </div>
   );
 };

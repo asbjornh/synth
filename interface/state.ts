@@ -140,7 +140,7 @@ export type Master = {
   recording?: boolean;
 };
 
-export type NoteState = { note: Note; velocity: number };
+export type NoteDescriptor = { note: Note; velocity: number };
 
 export type Velocity = {
   scale: number;
@@ -156,12 +156,11 @@ export type UIState = {
   FMOsc: FMOsc | undefined;
   LFOs: LFO[];
   master: Master;
-  notes: NoteState[];
   oscillators: Osc[];
   velocity: Velocity;
 };
 
-export type Preset = Omit<UIState, "notes"> & { displayName: string };
+export type Preset = UIState & { displayName: string };
 
 export const initialState: UIState = {
   compressor: undefined,
@@ -178,7 +177,6 @@ export const initialState: UIState = {
     gain: 0.5,
     transpose: 0,
   },
-  notes: [],
   oscillators: [],
   velocity: {
     scale: 1,

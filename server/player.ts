@@ -2,9 +2,14 @@ import { Readable } from "stream";
 import { AudioIO } from "naudiodon";
 
 import { clamp } from "./util";
-import { Note, UIState } from "../interface/state";
+import {
+  initialState,
+  Note,
+  NoteDescriptor,
+  UIState,
+} from "../interface/state";
 import { generateSample } from "./generate-sample";
-import { PlayerState, toPlayerState } from "./player-state";
+import { PlayerState, mutatePlayerState, mutateNotes } from "./player-state";
 
 export type Options = {
   bitDepth: 8 | 16 | 32;
@@ -13,6 +18,8 @@ export type Options = {
 };
 
 export const Player = (opts: Options) => {
+  let uiState: UIState = initialState;
+  let notes: NoteDescriptor[] = [];
   let state: PlayerState = {
     compressor: undefined,
     delay: undefined,
@@ -32,7 +39,12 @@ export const Player = (opts: Options) => {
     },
   };
 
-  let onFrame: (samples: number[], t: number) => void = () => {};
+  let onFrame: (
+    samples: number[],
+    state: UIState,
+    notes: NoteDescriptor[],
+    t: number
+  ) => void = () => {};
 
   const onSilent = (note: Note) => {
     delete state.notes[note];
@@ -73,7 +85,7 @@ export const Player = (opts: Options) => {
         samples.push((sample[0] + sample[1]) / 2);
       }
 
-      onFrame(samples, samplesGenerated / opts.sampleRate);
+      onFrame(samples, uiState, notes, samplesGenerated / opts.sampleRate);
       this.push(buf);
 
       if (state.recorder) {
@@ -88,7 +100,7 @@ export const Player = (opts: Options) => {
       channelCount: opts.channels,
       sampleFormat: opts.bitDepth,
       sampleRate: opts.sampleRate,
-      framesPerBuffer: 1024, // Magic number. Crashes if too low
+      framesPerBuffer: 512, // Magic number. Crashes if too low
       closeOnError: false,
     },
   });
@@ -97,15 +109,17 @@ export const Player = (opts: Options) => {
 
   return {
     setState: (next: UIState) => {
-      state = toPlayerState(
-        state,
-        next,
-        opts,
-        samplesGenerated / opts.sampleRate
-      );
+      uiState = next;
+      const t = samplesGenerated / opts.sampleRate;
+      state = mutatePlayerState(state, next, opts, t);
     },
-    onFrame: (fn: (frames: number[], t: number) => void) => {
+    onFrame: (fn: typeof onFrame) => {
       onFrame = fn;
+    },
+    onPlay: (next: NoteDescriptor[]) => {
+      notes = next;
+      const t = samplesGenerated / opts.sampleRate;
+      mutateNotes(next, uiState, state, opts, t);
     },
     kill: () => {
       stream.destroy();
