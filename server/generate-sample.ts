@@ -1,4 +1,5 @@
 import { Note } from "../interface/state";
+import { evalModulation } from "./eval-modulation";
 import { adjustCutoff } from "./filter";
 import { frequencies } from "./frequencies";
 import { distortion } from "./fx";
@@ -24,56 +25,13 @@ export const generateSample = (
   const { master } = state;
 
   forEachO(state.notes, (noteState, note) => {
-    const modT = 1 / options.sampleRate;
-
-    const { filter, FMOsc, LFOs, envelopes, oscillators, released, velocity } =
-      noteState;
+    const { filter, LFOs, envelopes, oscillators, released } = noteState;
 
     // NOTE: Sample contribution for single note
     const noteSample: [number, number] = [0, 0];
+    const mod = evalModulation(state, note, noteState, 1 / options.sampleRate);
 
-    const veloAmp = clamp(
-      velocity * state.velocity.scale + state.velocity.offset,
-      0,
-      1
-    );
-
-    const pLFO = LFOs.pitch;
-    const LFODetune = pLFO ? pLFO.osc(modT, pLFO.freq) * 1200 * pLFO.amount : 0;
-
-    const aLFO = LFOs.amplitude;
-    const LFOamp = aLFO ? 1 + aLFO.osc(modT, aLFO.freq) * aLFO.amount : 1;
-
-    const pitch = envelopes.pitch?.(modT, released).value ?? 1;
-    const envDetune =
-      (1 - pitch) * 1200 * (envelopes.pitch?.config.amount ?? 0);
-
-    const { value: envAmp, done } = envelopes.amplitude
-      ? envelopes.amplitude(modT, released)
-      : { value: 1, done: released };
-
-    const FMPitch = envelopes.FMPitch?.(modT, released).value ?? 0;
-    const FMEnvDetune = (1 - FMPitch) * (envelopes.FMPitch?.config.amount ?? 0);
-    const FMEnvAmp = envelopes.FMAmplitude?.(modT, released).value ?? 1;
-
-    const freq =
-      frequencies[note] * transpose(master.transpose, LFODetune + envDetune);
-
-    const FMdetune = FMOsc
-      ? 1 +
-        FMOsc.gain *
-          FMEnvAmp *
-          FMOsc.osc(modT, freq * (FMOsc.ratio + FMEnvDetune))
-      : 1;
-
-    const bLFO = LFOs.balance;
-    const LFObalance = bLFO ? bLFO.osc(modT, bLFO.freq) * bLFO.amount : 0;
-
-    for (
-      let channel = 0, l = sample.length;
-      channel < sample.length;
-      channel++
-    ) {
+    for (let channel = 0, l = sample.length; channel < l; channel++) {
       // NOTE: Only progress oscillator and envelope state once per multi-channel sample
       const dt = channel === 0 ? 1 / options.sampleRate : 0;
 
@@ -81,14 +39,15 @@ export const generateSample = (
         const oscillator = oscillators[i];
         const opts = oscillator.getOptions();
         const stereoAmp = stereoAmplitude(
-          clamp(opts.balance + LFObalance, -1, 1),
+          clamp(opts.balance + mod.balance, -1, 1),
           channel
         );
-        const amp = envAmp * stereoAmp * veloAmp * LFOamp;
 
-        if (done) onSilent(note);
+        if (mod.done) onSilent(note);
 
-        noteSample[channel] += amp * oscillator(dt, freq * FMdetune);
+        const amp = mod.amplitude * stereoAmp;
+        const freq = frequencies[note] * mod.detune * mod.FMdetune;
+        noteSample[channel] += amp * oscillator(dt, freq);
       }
 
       if (filter[channel]) {

@@ -28,7 +28,7 @@ import { compressor, CompressorInstance } from "./compressor";
 import { getFileHeaders } from "./wav-headers";
 import { Options } from "./player";
 
-type NoteState = {
+export type NoteState = {
   envelopes: Record<EnvelopeTarget, EnvelopeInstance | undefined>;
   FMOsc: FMOscillatorInstance | undefined;
   LFOs: Record<LFOTarget, LFOInstance | undefined>;

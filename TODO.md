@@ -4,6 +4,7 @@
 
 - Compressor increases in volume when releasing keys
 - Basic pass preset is silent if EQ params are changed
+- Waveform is negatively affected by small chunk sizes
 
 ## Osc
 
@@ -16,6 +17,7 @@
 - Arpeggiator
 - Portamento
 - Auto chords
+- Max polyphony
 
 ## MIDI
 
