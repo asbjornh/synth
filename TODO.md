@@ -3,8 +3,6 @@
 ## Bug
 
 - Compressor increases in volume when releasing keys
-- Basic pass preset is silent if EQ params are changed
-- Waveform is negatively affected by small chunk sizes
 
 ## Osc
 
@@ -29,3 +27,4 @@
 
 - Spectrogram
 - Mod matrix
+- Configurable frame size

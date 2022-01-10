@@ -31,6 +31,8 @@ export const generateSample = (
     const noteSample: [number, number] = [0, 0];
     const mod = evalModulation(state, note, noteState, 1 / options.sampleRate);
 
+    if (mod.done) return onSilent(note);
+
     for (let channel = 0, l = sample.length; channel < l; channel++) {
       // NOTE: Only progress oscillator and envelope state once per multi-channel sample
       const dt = channel === 0 ? 1 / options.sampleRate : 0;
@@ -42,8 +44,6 @@ export const generateSample = (
           clamp(opts.balance + mod.balance, -1, 1),
           channel
         );
-
-        if (mod.done) onSilent(note);
 
         const amp = mod.amplitude * stereoAmp;
         const freq = frequencies[note] * mod.detune * mod.FMdetune;
