@@ -1,9 +1,5 @@
 # TODO
 
-## Bug
-
-- Compressor increases in volume when releasing keys
-
 ## Osc
 
 - Draw a waveform

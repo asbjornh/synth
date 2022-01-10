@@ -94,7 +94,7 @@ export const generateSample = (
     }
   }
 
-  state.compressor?.tick(sample[0] + sample[1] / 2);
+  state.compressor?.tick((sample[0] + sample[1]) / 2);
 
   return sample;
 };
