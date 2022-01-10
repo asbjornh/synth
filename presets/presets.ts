@@ -5,13 +5,15 @@ import { hypersaw } from "./hypersaw";
 import { softPlastic } from "./soft-plastic";
 import { hammondOrgan } from "./hammond-organ";
 import { electricPiano } from "./electric-piano";
-import { snow } from "./snow";
+import { arctic } from "./arctic";
 import { skrollex } from "./scrollex";
 import { ghostPipes } from "./ghost-pipes";
 import { basicBass } from "./basic-synth-bass";
+import { vibraphone } from "./vibraphone";
 
 export default {
   303: three03,
+  arctic,
   basicBass,
   electricPiano,
   ghostPipes,
@@ -19,7 +21,7 @@ export default {
   hypersaw,
   popcorn,
   skrollex,
-  snow,
   softPlastic,
   supersaw,
+  vibraphone,
 };

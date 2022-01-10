@@ -1,9 +1,9 @@
 import { Preset } from "../interface/state";
 import { defaultParams } from "./default-params";
 
-export const snow: Preset = {
+export const arctic: Preset = {
   ...defaultParams,
-  displayName: "Snow",
+  displayName: "Arctic",
   delay: {
     length: 0.5,
     feedback: 0.5,
