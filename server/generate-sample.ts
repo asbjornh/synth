@@ -52,18 +52,9 @@ export const generateSample = (
 
       if (filter[channel]) {
         const opts = filter[channel].getOptions();
-        const cLFO = LFOs.cutoff;
-        const LFOcutoff = cLFO ? cLFO.osc(dt, cLFO.freq) * cLFO.amount * 10 : 0;
 
-        if (envelopes.cutoff && envelopes.cutoff.config.amount !== 0) {
-          const { value } = envelopes.cutoff(dt, released);
-          const cutoff = adjustCutoff(
-            opts.cutoff,
-            envelopes.cutoff.config.amount * value + LFOcutoff
-          );
-          filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
-        } else if (cLFO) {
-          const cutoff = adjustCutoff(opts.cutoff, LFOcutoff);
+        if (opts.cutoff !== mod.cutoff) {
+          const cutoff = adjustCutoff(opts.cutoff, mod.cutoff);
           filter[channel].setCutoff(clamp(cutoff, 0, 10_000));
         }
 

@@ -46,9 +46,17 @@ export const evalModulation = (
   const bLFO = LFOs.balance;
   const LFObalance = bLFO ? bLFO.osc(dt, bLFO.freq) * bLFO.amount : 0;
 
+  const cutEnv = envelopes.cutoff;
+  const envCutoff = cutEnv
+    ? cutEnv(dt, released).value * cutEnv.config.amount
+    : 0;
+  const cLFO = LFOs.cutoff;
+  const LFOcutoff = cLFO ? cLFO.osc(dt, cLFO.freq) * cLFO.amount * 10 : 0;
+
   return {
     amplitude: envAmp * veloAmp * LFOamp,
     balance: LFObalance,
+    cutoff: envCutoff + LFOcutoff,
     detune,
     done,
     FMdetune,
