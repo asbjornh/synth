@@ -47,6 +47,9 @@ html {
   --key-bg: white;
   --key-border: #eeedf1;
 
+  --rec-on: #c62323;
+  --rec-off: #ff9797;
+
   @media (prefers-color-scheme: dark) {
     --shadow-small: 0px 2px 4px #{rgba(black, 0.4)};
     --shadow-small-dark: 0px 2px 4px #{rgba(black, 0.4)};
@@ -87,5 +90,8 @@ html {
 
     --key-bg: #8986a1;
     --key-border: #27272c;
+
+    --rec-on: #ff6c6c;
+    --rec-off: #874444;
   }
 }
