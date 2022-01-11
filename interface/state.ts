@@ -149,9 +149,17 @@ export type Master = {
 
 export type NoteDescriptor = { note: Note; velocity: number };
 
+export type VelocityTarget =
+  | "amplitude"
+  | "cutoff"
+  | "FM_0_amplitude"
+  | "FM_1_amplitude"
+  | "FM_2_amplitude";
+
 export type Velocity = {
   scale: number;
   offset: number;
+  targets: Partial<Record<VelocityTarget, number>>;
 };
 
 export type UIState = {
@@ -188,5 +196,8 @@ export const initialState: UIState = {
   velocity: {
     scale: 1,
     offset: 0,
+    targets: {
+      amplitude: 1,
+    },
   },
 };

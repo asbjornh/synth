@@ -36,6 +36,7 @@ export const Player = (opts: Options) => {
     velocity: {
       scale: 1,
       offset: 0,
+      targets: {},
     },
   };
 

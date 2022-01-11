@@ -1,13 +1,28 @@
 @use "../../vars.scss";
 
 .knob {
-  $size: 50px;
-  $padding: 10px;
+  $root: &;
+
+  --size: 50px;
+  --padding: 10px;
+
+  &--small {
+    --size: 30px;
+    --padding: 5px;
+
+    #{$root}__input {
+      display: none;
+    }
+
+    #{$root}__dot {
+      top: 3px;
+    }
+  }
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: $size;
+  width: var(--size);
 
   &__label {
     margin-bottom: 5px;
@@ -33,15 +48,15 @@
 
   &__wrapper {
     flex-shrink: 0;
-    height: $size;
-    width: $size;
+    height: var(--size);
+    width: var(--size);
     position: relative;
   }
 
   &__meter {
     display: block;
-    height: $size;
-    width: $size;
+    height: var(--size);
+    width: var(--size);
 
     circle {
       transform-origin: 50% 50%;
@@ -54,8 +69,8 @@
 
   &__wheel-wrapper {
     position: absolute;
-    height: $size * 0.6;
-    width: $size * 0.6;
+    height: calc(var(--size) * 0.6);
+    width: calc(var(--size) * 0.6);
     top: 50%;
     left: 50%;
     box-shadow: var(--shadow-small-dark);

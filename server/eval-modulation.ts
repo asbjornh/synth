@@ -1,3 +1,4 @@
+import { Velocity, VelocityTarget } from "../interface/state";
 import { EnvelopeInstance } from "./envelope";
 import { transpose } from "./osc";
 import { NoteState, PlayerState } from "./player-state";
@@ -10,11 +11,7 @@ export const evalModulation = (
 ) => {
   const { LFOs, envelopes, released, velocity } = noteState;
 
-  const veloAmp = clamp(
-    velocity * state.velocity.scale + state.velocity.offset,
-    0,
-    1
-  );
+  const velo = getVelocity(state.velocity, velocity);
 
   const pLFO = LFOs.pitch;
   const LFODetune = pLFO ? pLFO.osc(dt, pLFO.freq) * 1200 * pLFO.amount : 0;
@@ -42,15 +39,33 @@ export const evalModulation = (
   const LFOcutoff = cLFO ? cLFO.osc(dt, cLFO.freq) * cLFO.amount * 10 : 0;
 
   return {
-    amplitude: envAmp * veloAmp * LFOamp,
+    amplitude: envAmp * velo("amplitude") * LFOamp,
     balance: LFObalance,
     cutoff: envCutoff + LFOcutoff,
     detune,
     done,
     FM: {
-      0: FMmod(envelopes.FM_0_pitch, envelopes.FM_0_amp, released, dt),
-      1: FMmod(envelopes.FM_1_pitch, envelopes.FM_1_amp, released, dt),
-      2: FMmod(envelopes.FM_2_pitch, envelopes.FM_2_amp, released, dt),
+      0: FMmod(
+        envelopes.FM_0_pitch,
+        envelopes.FM_0_amp,
+        velo("FM_0_amplitude"),
+        released,
+        dt
+      ),
+      1: FMmod(
+        envelopes.FM_1_pitch,
+        envelopes.FM_1_amp,
+        velo("FM_1_amplitude"),
+        released,
+        dt
+      ),
+      2: FMmod(
+        envelopes.FM_2_pitch,
+        envelopes.FM_2_amp,
+        velo("FM_2_amplitude"),
+        released,
+        dt
+      ),
     },
   };
 };
@@ -58,6 +73,7 @@ export const evalModulation = (
 const FMmod = (
   pitch: EnvelopeInstance | undefined,
   amp: EnvelopeInstance | undefined,
+  veloAmp: number,
   released: boolean,
   dt: number
 ) => {
@@ -68,7 +84,15 @@ const FMmod = (
     };
   const pitchValue = pitch?.(dt, released).value ?? 0;
   return {
-    amplitude: amp?.(dt, released).value ?? 1,
+    amplitude: (amp?.(dt, released).value ?? 1) * veloAmp,
     detune: (1 - pitchValue) * (pitch?.config.amount ?? 0),
+  };
+};
+
+const getVelocity = (config: Velocity, velocity: number) => {
+  const base = velocity * config.scale + config.offset;
+  return (target: VelocityTarget) => {
+    const amt = config.targets[target] ?? 0;
+    return 1 - amt + base * amt;
   };
 };

@@ -3,12 +3,14 @@ import { NoteDescriptor, Velocity } from "../../../interface/state";
 import {
   Control,
   ControlGroup,
+  ControlStack,
   ControlStrip,
 } from "../control-strip/control-strip";
 import { Knob } from "../knob/knob";
 import { Panel } from "../panel/panel";
 import { Select } from "../select/select";
 import { parse } from "./message-parser";
+import { VelocityTargets } from "./velocity-targets";
 
 export const Midi: React.FC<{
   devices: WebMidi.MIDIInput[];
@@ -20,6 +22,7 @@ export const Midi: React.FC<{
   const [device, setDevice] = useState(devices[0]);
   const [scale, setScale] = useState(velocity.scale);
   const [offset, setOffset] = useState(velocity.offset);
+  const [targets, setTargets] = useState(velocity.targets);
 
   const deviceOptions = devices.map((device) => ({
     label: `${device.manufacturer || ""} ${device.name || "Unknown"}`,
@@ -31,7 +34,10 @@ export const Midi: React.FC<{
     if (device) setDevice(device);
   };
 
-  useEffect(() => onChangeVelocity({ scale, offset }), [scale, offset]);
+  useEffect(
+    () => onChangeVelocity({ scale, offset, targets }),
+    [scale, offset, targets]
+  );
 
   useEffect(() => {
     device.onmidimessage = (message) => {
@@ -82,6 +88,10 @@ export const Midi: React.FC<{
               onChange={setOffset}
               theme="blue"
             />
+          </Control>
+
+          <Control label="Targets">
+            <VelocityTargets targets={targets} onChange={setTargets} />
           </Control>
         </ControlGroup>
       </ControlStrip>

@@ -15,7 +15,7 @@
 
 ## MIDI
 
-- Velocity target (multiple?)
+- Connect velocity cutoff
 - Mod wheel
 - Pitch wheel
 

@@ -1,3 +1,4 @@
+import cn from "classnames";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDrag } from "../../hooks/use-drag";
 import { clamp, mapRange } from "../../util";
@@ -38,6 +39,7 @@ export const Knob: React.FC<{
   max: number;
   value: number;
   resolution?: number;
+  small?: boolean;
   step: number;
   theme?: keyof typeof colors;
   onChange: (next: number) => void;
@@ -49,6 +51,7 @@ export const Knob: React.FC<{
   value,
   onChange,
   resolution = 200,
+  small,
   step,
   theme = "red",
 }) => {
@@ -112,7 +115,7 @@ export const Knob: React.FC<{
     : mapRange(ratio, [0.5, 0], [314, 418]);
 
   return (
-    <div className="knob">
+    <div className={cn("knob", { "knob--small": small })}>
       <div className="knob__wrapper">
         <svg className="knob__meter">
           <circle
