@@ -1,32 +1,76 @@
 import React, { useEffect, useState } from "react";
+import { Trash2 } from "react-feather";
 
-import { FMOsc as FMOscOpts } from "../../../interface/state";
-import { Control, ControlStrip } from "../control-strip/control-strip";
+import { FMOsc as FMOscOpts, FMTarget } from "../../../interface/state";
+import { entries } from "../../util";
+import { Button } from "../button/button";
+import {
+  Control,
+  ControlStack,
+  ControlStrip,
+} from "../control-strip/control-strip";
 import { Knob } from "../knob/knob";
 import { oscTypeOptions } from "../oscillator/oscillator";
 import { Select } from "../select/select";
+import "./fm-osc.scss";
 
-export const defaultFMOsc: FMOscOpts = {
+export const defaultFMOsc = (): FMOscOpts => ({
+  id: String(Date.now()),
   gain: 1,
   ratio: 3,
+  target: "all",
   type: "sine",
+});
+
+const targets: Record<FMTarget, string> = {
+  all: "All",
+  0: "Osc 1",
+  1: "Osc 2",
+  2: "Osc 3",
 };
+
+const targetOptions = entries(targets).map(([value, label]) => ({
+  value,
+  label,
+}));
 
 export const FMOsc: React.FC<{
   osc: FMOscOpts;
   onChange: (osc: FMOscOpts) => void;
-}> = ({ osc, onChange }) => {
+  onRemove: () => void;
+}> = ({ osc, onChange, onRemove }) => {
   const [gain, setGain] = useState(osc.gain);
   const [ratio, setRatio] = useState(osc.ratio);
+  const [target, setTarget] = useState(osc.target);
   const [type, setType] = useState(osc.type);
 
-  useEffect(() => onChange({ gain, ratio, type }), [gain, ratio, type]);
+  useEffect(
+    () => onChange({ id: osc.id, gain, ratio, target, type }),
+    [osc.id, gain, ratio, target, type]
+  );
 
   return (
     <ControlStrip>
-      <Control label="Wave">
-        <Select value={type} options={oscTypeOptions} onChange={setType} />
-      </Control>
+      <ControlStack>
+        <Control>
+          <div className="fm-osc__selects">
+            <label>Wave</label>
+            <Select value={type} options={oscTypeOptions} onChange={setType} />
+            <label>Target</label>
+            <Select
+              value={target}
+              options={targetOptions}
+              onChange={setTarget}
+            />
+          </div>
+        </Control>
+
+        <Control>
+          <Button onClick={onRemove}>
+            <Trash2 />
+          </Button>
+        </Control>
+      </ControlStack>
 
       <Control label="Gain">
         <Knob
@@ -43,7 +87,7 @@ export const FMOsc: React.FC<{
         <Knob
           theme="purple"
           min={0.01}
-          max={10}
+          max={40}
           resolution={1000}
           step={0.0001}
           value={ratio}

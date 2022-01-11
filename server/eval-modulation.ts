@@ -1,16 +1,14 @@
-import { Note } from "../interface/state";
-import { frequencies } from "./frequencies";
+import { EnvelopeInstance } from "./envelope";
 import { transpose } from "./osc";
 import { NoteState, PlayerState } from "./player-state";
 import { clamp } from "./util";
 
 export const evalModulation = (
   state: PlayerState,
-  note: Note,
   noteState: NoteState,
   dt: number
 ) => {
-  const { FMOsc, LFOs, envelopes, released, velocity } = noteState;
+  const { LFOs, envelopes, released, velocity } = noteState;
 
   const veloAmp = clamp(
     velocity * state.velocity.scale + state.velocity.offset,
@@ -31,17 +29,7 @@ export const evalModulation = (
     ? envelopes.amplitude(dt, released)
     : { value: 1, done: released };
 
-  const FMPitch = envelopes.FMPitch?.(dt, released).value ?? 0;
-  const FMEnvDetune = (1 - FMPitch) * (envelopes.FMPitch?.config.amount ?? 0);
-  const FMEnvAmp = envelopes.FMAmplitude?.(dt, released).value ?? 1;
-
   const detune = transpose(state.master.transpose, LFODetune + envDetune);
-  const freq = frequencies[note] * detune;
-
-  const FMdetune = FMOsc
-    ? 1 +
-      FMOsc.gain * FMEnvAmp * FMOsc.osc(dt, freq * (FMOsc.ratio + FMEnvDetune))
-    : 1;
 
   const bLFO = LFOs.balance;
   const LFObalance = bLFO ? bLFO.osc(dt, bLFO.freq) * bLFO.amount : 0;
@@ -59,6 +47,28 @@ export const evalModulation = (
     cutoff: envCutoff + LFOcutoff,
     detune,
     done,
-    FMdetune,
+    FM: {
+      0: FMmod(envelopes.FM_0_pitch, envelopes.FM_0_amp, released, dt),
+      1: FMmod(envelopes.FM_1_pitch, envelopes.FM_1_amp, released, dt),
+      2: FMmod(envelopes.FM_2_pitch, envelopes.FM_2_amp, released, dt),
+    },
+  };
+};
+
+const FMmod = (
+  pitch: EnvelopeInstance | undefined,
+  amp: EnvelopeInstance | undefined,
+  released: boolean,
+  dt: number
+) => {
+  if (!pitch && !amp)
+    return {
+      amplitude: 1,
+      detune: 0,
+    };
+  const pitchValue = pitch?.(dt, released).value ?? 0;
+  return {
+    amplitude: amp?.(dt, released).value ?? 1,
+    detune: (1 - pitchValue) * (pitch?.config.amount ?? 0),
   };
 };

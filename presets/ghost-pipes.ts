@@ -33,11 +33,15 @@ export const ghostPipes: Preset = {
     Q: 1,
     bellGain: -24,
   },
-  FMOsc: {
-    type: "noise",
-    gain: 0.4,
-    ratio: 1,
-  },
+  FMOscs: [
+    {
+      id: "ghost-fm-0",
+      target: "all",
+      type: "noise",
+      gain: 0.4,
+      ratio: 1,
+    },
+  ],
   LFOs: [
     {
       id: "1641250633257",

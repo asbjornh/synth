@@ -8,6 +8,7 @@ import { defaultDistortion, Distortion } from "../distortion/distortion";
 import { Envelopes } from "../envelopes/envelopes";
 import { defaultFilter, Filter } from "../filter/filter";
 import { defaultFMOsc, FMOsc } from "../fm-osc/fm-osc";
+import { FMOscillators } from "../fm-oscillators/fm-oscillators";
 import { KeyInput } from "../key-input/key-input";
 import { LFOs } from "../LFOs/LFOs";
 import { Master } from "../master/master";
@@ -52,9 +53,6 @@ export const Synth: React.FC<{
       compressor: state.compressor ? undefined : defaultCompressor,
     });
 
-  const toggleFM = () =>
-    patchState({ FMOsc: state.FMOsc ? undefined : defaultFMOsc });
-
   return (
     <div className="synth">
       <div className="synth__left">
@@ -63,18 +61,10 @@ export const Synth: React.FC<{
           onChange={(oscillators) => patchState({ oscillators })}
         />
 
-        <Panel
-          title="FM"
-          verticalHeader={!!state.FMOsc}
-          actions={<Toggle onClick={toggleFM} active={!!state.FMOsc} />}
-        >
-          {state.FMOsc && (
-            <FMOsc
-              osc={state.FMOsc}
-              onChange={(FMOsc) => patchState({ FMOsc })}
-            />
-          )}
-        </Panel>
+        <FMOscillators
+          FMOscs={state.FMOscs}
+          onChange={(FMOscs) => patchState({ FMOscs })}
+        />
 
         <Panel verticalHeader title="Master">
           <Master

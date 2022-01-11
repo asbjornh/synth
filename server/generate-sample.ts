@@ -1,6 +1,7 @@
 import { Note } from "../interface/state";
 import { evalModulation } from "./eval-modulation";
 import { adjustCutoff } from "./filter";
+import { evalFM } from "./fm";
 import { frequencies } from "./frequencies";
 import { distortion } from "./fx";
 import { transpose } from "./osc";
@@ -25,13 +26,18 @@ export const generateSample = (
   const { master } = state;
 
   forEachO(state.notes, (noteState, note) => {
-    const { filter, LFOs, envelopes, oscillators, released } = noteState;
+    const { filter, FMOsc, oscillators } = noteState;
 
     // NOTE: Sample contribution for single note
     const noteSample: [number, number] = [0, 0];
-    const mod = evalModulation(state, note, noteState, 1 / options.sampleRate);
+
+    const modT = 1 / options.sampleRate;
+    const mod = evalModulation(state, noteState, modT);
 
     if (mod.done) return onSilent(note);
+
+    const freq = frequencies[note] * mod.detune;
+    const FM = evalFM(FMOsc, mod.FM, freq, modT);
 
     for (let channel = 0, l = sample.length; channel < l; channel++) {
       // NOTE: Only progress oscillator and envelope state once per multi-channel sample
@@ -46,8 +52,8 @@ export const generateSample = (
         );
 
         const amp = mod.amplitude * stereoAmp;
-        const freq = frequencies[note] * mod.detune * mod.FMdetune;
-        noteSample[channel] += amp * oscillator(dt, freq);
+        const FMdetune = FM.all * (FM[oscillator.index] ?? 1);
+        noteSample[channel] += amp * oscillator(dt, freq * FMdetune);
       }
 
       if (filter[channel]) {

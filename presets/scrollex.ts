@@ -26,11 +26,15 @@ export const skrollex: Preset = {
     Q: 3.2,
     bellGain: -24,
   },
-  FMOsc: {
-    gain: 13.8,
-    ratio: 0.5,
-    type: "sine",
-  },
+  FMOscs: [
+    {
+      id: "skrollex-fm-0",
+      gain: 13.8,
+      ratio: 0.5,
+      target: "all",
+      type: "sine",
+    },
+  ],
   LFOs: [],
   master: {
     dcOffset: 0,

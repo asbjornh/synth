@@ -23,10 +23,14 @@ export const defaultEnvelope: EnvType = {
 
 const targets: Record<EnvelopeTarget, string> = {
   amplitude: "Amplitude",
-  FMAmplitude: "FM amplitude",
-  FMPitch: "FM pitch",
   cutoff: "Cutoff",
   pitch: "Pitch",
+  FM_0_amp: "FM 1 amplitude",
+  FM_0_pitch: "FM 1 pitch",
+  FM_1_amp: "FM 2 amplitude",
+  FM_1_pitch: "FM 2 pitch",
+  FM_2_amp: "FM 3 amplitude",
+  FM_2_pitch: "FM 3 pitch",
 };
 
 const targetOptions = entries(targets).map(([value, label]) => ({
@@ -129,19 +133,22 @@ export const Envelope: React.FC<{
         />
       </Control>
 
-      {target !== "amplitude" && target !== "FMAmplitude" && (
-        <Control label="Amount">
-          <Knob
-            centered
-            min={-4}
-            max={4}
-            step={0.001}
-            value={envelope.amount}
-            onChange={setAmount}
-            theme="blue"
-          />
-        </Control>
-      )}
+      {target !== "amplitude" &&
+        target !== "FM_0_amp" &&
+        target !== "FM_1_amp" &&
+        target !== "FM_2_amp" && (
+          <Control label="Amount">
+            <Knob
+              centered
+              min={-4}
+              max={4}
+              step={0.001}
+              value={envelope.amount}
+              onChange={setAmount}
+              theme="blue"
+            />
+          </Control>
+        )}
     </ControlStrip>
   );
 };

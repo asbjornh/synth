@@ -63,9 +63,12 @@ export type Noise = Oscillator<"noise">;
 export type Osc = Saw | Square | Sine | Triangle | NesTriangle | Pulse | Noise;
 export type OscType = Osc["type"];
 
+export type FMTarget = "all" | "0" | "1" | "2";
 export type FMOsc = {
+  id: string;
   gain: number;
   ratio: number;
+  target: FMTarget;
   type: OscType;
 };
 
@@ -80,8 +83,12 @@ export type EnvelopeTarget =
   | "pitch"
   | "amplitude"
   | "cutoff"
-  | "FMAmplitude"
-  | "FMPitch";
+  | "FM_0_amp"
+  | "FM_0_pitch"
+  | "FM_1_amp"
+  | "FM_1_pitch"
+  | "FM_2_amp"
+  | "FM_2_pitch";
 
 export type Envelope = {
   amount: number;
@@ -153,7 +160,7 @@ export type UIState = {
   distortion: Distortion | undefined;
   envelopes: Envelope[];
   filter: Filter | undefined;
-  FMOsc: FMOsc | undefined;
+  FMOscs: FMOsc[];
   LFOs: LFO[];
   master: Master;
   oscillators: Osc[];
@@ -168,7 +175,7 @@ export const initialState: UIState = {
   distortion: undefined,
   envelopes: [],
   filter: undefined,
-  FMOsc: undefined,
+  FMOscs: [],
   LFOs: [],
   master: {
     dcOffset: 0,

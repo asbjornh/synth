@@ -19,7 +19,7 @@ export const vibraphone: Preset = {
   envelopes: [
     {
       amount: 1,
-      target: "FMAmplitude",
+      target: "FM_0_amp",
       tension: 2.5,
       A: 0,
       D: 1.275,
@@ -36,11 +36,15 @@ export const vibraphone: Preset = {
       R: 2.45,
     },
   ],
-  FMOsc: {
-    gain: 0.8,
-    ratio: 6,
-    type: "sine",
-  },
+  FMOscs: [
+    {
+      id: "vibraphone-fm-0",
+      gain: 0.8,
+      ratio: 6,
+      target: "all",
+      type: "sine",
+    },
+  ],
   LFOs: [
     {
       id: "1641688266117",

@@ -66,7 +66,7 @@ export const defaultOsc = (type: OscType): Osc => {
     : { ...oscBase, type };
 };
 
-export const oscillator = (osc: Osc, initialPhase?: number) => {
+export const oscillator = (osc: Osc, index: number, initialPhase?: number) => {
   let { coarse, fine, octave, gain, phase: pOffset } = osc.options;
   const cents = coarse * 100 + fine;
 
@@ -86,6 +86,7 @@ export const oscillator = (osc: Osc, initialPhase?: number) => {
   oscFn.getOsc = () => osc;
   oscFn.getOptions = () => osc.options;
   oscFn.getPhase = () => phase;
+  oscFn.index = index;
 
   return oscFn;
 };
@@ -100,7 +101,7 @@ const unisonParamAmount = (unison: number, i: number) => {
   }
 };
 
-export const unison = (osc: Osc): OscillatorInstance[] => {
+export const unison = (osc: Osc, index: number): OscillatorInstance[] => {
   const { options: opts } = osc;
   return map(Array.from({ length: opts.unison }), (_, i) => {
     const n = unisonParamAmount(opts.unison, i);
@@ -111,10 +112,13 @@ export const unison = (osc: Osc): OscillatorInstance[] => {
     const balance = opts.balance + n * opts.widthU;
     const fine = opts.fine + n * opts.detuneU;
 
-    return oscillator({
-      ...osc,
-      options: { ...opts, phase, gain, balance, fine },
-    });
+    return oscillator(
+      {
+        ...osc,
+        options: { ...opts, phase, gain, balance, fine },
+      },
+      index
+    );
   });
 };
 
@@ -123,7 +127,7 @@ export type FMOscillatorInstance = ReturnType<typeof FMOscillator>;
 export const FMOscillator = (fmOsc: FMOsc, initialPhase?: number) => {
   const { type, ...rest } = fmOsc;
   return {
-    osc: oscillator(defaultOsc(fmOsc.type), initialPhase),
+    osc: oscillator(defaultOsc(fmOsc.type), -1, initialPhase),
     ...rest,
   };
 };

@@ -15,7 +15,7 @@
 
 ## MIDI
 
-- Velocity target
+- Velocity target (multiple?)
 - Mod wheel
 - Pitch wheel
 

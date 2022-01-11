@@ -1,0 +1,10 @@
+.fm-osc {
+  &__selects {
+    font-size: 0.85rem;
+    align-items: center;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 0.2rem;
+    row-gap: 0.3rem;
+  }
+}

@@ -21,11 +21,15 @@ export const arctic: Preset = {
       R: 1.725,
     },
   ],
-  FMOsc: {
-    gain: 0.69,
-    ratio: 1,
-    type: "noise",
-  },
+  FMOscs: [
+    {
+      id: "arctic-fm-0",
+      gain: 0.69,
+      ratio: 1,
+      target: "all",
+      type: "noise",
+    },
+  ],
   LFOs: [],
   master: {
     dcOffset: 0,
