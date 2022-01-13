@@ -79,7 +79,7 @@ const FMmod = (
 ) => {
   if (!pitch && !amp)
     return {
-      amplitude: 1,
+      amplitude: veloAmp,
       detune: 0,
     };
   const pitchValue = pitch?.(dt, released).value ?? 0;
