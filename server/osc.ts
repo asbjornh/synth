@@ -105,8 +105,8 @@ export const unison = (osc: Osc, index: number): OscillatorInstance[] => {
   const { options: opts } = osc;
   return map(Array.from({ length: opts.unison }), (_, i) => {
     const n = unisonParamAmount(opts.unison, i);
-    const r = randoms[i % randoms.length] ?? 1;
-    const phase = n * opts.unison * opts.phase * r;
+    const r = i >= 7 ? randoms[i % randoms.length] ?? 1 : 1;
+    const phase = n * opts.phase * r;
     // TODO: Figure out how to correctly scale amplitude:
     const gain = opts.gain / (opts.unison * 0.3);
     const balance = opts.balance + n * opts.widthU;
@@ -120,14 +120,4 @@ export const unison = (osc: Osc, index: number): OscillatorInstance[] => {
       index
     );
   });
-};
-
-export type FMOscillatorInstance = ReturnType<typeof FMOscillator>;
-
-export const FMOscillator = (fmOsc: FMOsc, initialPhase?: number) => {
-  const { type, ...rest } = fmOsc;
-  return {
-    osc: oscillator(defaultOsc(fmOsc.type), -1, initialPhase),
-    ...rest,
-  };
 };

@@ -1,5 +1,16 @@
-import { FMOscillatorInstance } from "./osc";
+import { FMOsc } from "../interface/state";
+import { defaultOsc, oscillator } from "./osc";
 import { forEach } from "./util";
+
+export type FMOscillatorInstance = ReturnType<typeof FMOscillator>;
+
+export const FMOscillator = (fmOsc: FMOsc, initialPhase?: number) => {
+  const { type, ...rest } = fmOsc;
+  return {
+    osc: oscillator(defaultOsc(fmOsc.type), -1, initialPhase),
+    ...rest,
+  };
+};
 
 type Modulation = Record<
   number,

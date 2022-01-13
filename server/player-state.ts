@@ -13,20 +13,14 @@ import {
   UIState,
   Velocity,
 } from "../interface/state";
-import {
-  defaultOsc,
-  FMOscillator,
-  FMOscillatorInstance,
-  oscillator,
-  OscillatorInstance,
-  unison,
-} from "./osc";
+import { defaultOsc, oscillator, OscillatorInstance, unison } from "./osc";
 import { delay, DelayInstance } from "./delay";
 import { fromEntries } from "../client/util";
 import { envelope, EnvelopeInstance } from "./envelope";
 import { compressor, CompressorInstance } from "./compressor";
 import { getFileHeaders } from "./wav-headers";
 import { Options } from "./player";
+import { FMOscillator, FMOscillatorInstance } from "./fm";
 
 export type NoteState = {
   envelopes: Record<EnvelopeTarget, EnvelopeInstance | undefined>;
