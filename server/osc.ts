@@ -91,7 +91,7 @@ export const oscillator = (
 
     const freq3 = freq2 * FMdetune;
 
-    const phaseDelta = (dt / (1 / freq3)) % 1;
+    const phaseDelta = (dt * freq3) % 1;
     phase += phaseDelta;
 
     return gain * generator(phase + pOffset);

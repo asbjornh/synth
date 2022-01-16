@@ -25,7 +25,7 @@ export const FMOscillator = (
     const modDetune = mod[osc.index].detune ?? 0;
     const freq2 = freq * (osc.ratio + modDetune);
 
-    const phaseDelta = (dt / (1 / freq2)) % 1;
+    const phaseDelta = (dt * freq2) % 1;
     phase += phaseDelta;
 
     return osc.gain * modGain * generator(phase);
