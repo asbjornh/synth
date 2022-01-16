@@ -58,7 +58,7 @@ export const Player = (opts: Options) => {
   let samplesGenerated = 0;
 
   const stream = new Readable({
-    highWaterMark: 4096,
+    highWaterMark: 1024 * 8,
     read: function (chunkSize) {
       const sampleSize = opts.bitDepth / 8;
       const blockAlign = sampleSize * opts.channels;

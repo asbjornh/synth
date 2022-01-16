@@ -10,7 +10,6 @@ import {
   ControlStrip,
 } from "../control-strip/control-strip";
 import { Knob } from "../knob/knob";
-import { oscTypeOptions } from "../oscillator/oscillator";
 import { Select } from "../select/select";
 import "./fm-osc.scss";
 
@@ -18,16 +17,22 @@ export const defaultFMOsc = (): FMOscOpts => ({
   id: String(Date.now()),
   gain: 1,
   ratio: 3,
-  target: "all",
+  target: "0",
   type: "sine",
 });
 
 const targets: Record<FMTarget, string> = {
-  all: "All",
   0: "Osc 1",
   1: "Osc 2",
   2: "Osc 3",
 };
+
+const types: Record<FMOscOpts["type"], string> = {
+  sine: "Sine",
+  noise: "White noise",
+};
+
+const typeOptions = entries(types).map(([value, label]) => ({ value, label }));
 
 const targetOptions = entries(targets).map(([value, label]) => ({
   value,
@@ -55,7 +60,7 @@ export const FMOsc: React.FC<{
         <Control>
           <div className="fm-osc__selects">
             <label>Wave</label>
-            <Select value={type} options={oscTypeOptions} onChange={setType} />
+            <Select value={type} options={typeOptions} onChange={setType} />
             <label>Target</label>
             <Select
               value={target}

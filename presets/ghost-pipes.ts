@@ -36,7 +36,14 @@ export const ghostPipes: Preset = {
   FMOscs: [
     {
       id: "ghost-fm-0",
-      target: "all",
+      target: "0",
+      type: "noise",
+      gain: 0.4,
+      ratio: 1,
+    },
+    {
+      id: "ghost-fm-1",
+      target: "1",
       type: "noise",
       gain: 0.4,
       ratio: 1,

@@ -5,15 +5,16 @@ import {
   OscOptions,
   OscType,
 } from "../interface/state";
+import { FMModulation, FMOscillator, FMOscillatorInstance } from "./fm";
 import { randoms } from "./random";
-import { isOdd, map, mapRange } from "./util";
+import { forEach, isOdd, map, mapRange } from "./util";
 
 type OscFn = (t: number, freq: number) => number;
 
-const sine: OscFn = (t, freq) => Math.sin(Math.PI * 2 * freq * t);
+export const sine: OscFn = (t, freq) => Math.sin(Math.PI * 2 * freq * t);
 const saw: OscFn = (t, freq) => 2 * ((t * freq) % 1) - 1;
 const triangle: OscFn = (t, freq) => 2 * (Math.abs(saw(t, freq)) - 0.5);
-const noise: OscFn = () => Math.random() * 2 - 1;
+export const noise: OscFn = () => Math.random() * 2 - 1;
 const pulse = (width: number) => (t: number, freq: number) =>
   (t * freq) % 1 < width ? -1 : 1;
 
@@ -66,7 +67,12 @@ export const defaultOsc = (type: OscType): Osc => {
     : { ...oscBase, type };
 };
 
-export const oscillator = (osc: Osc, index: number, initialPhase?: number) => {
+export const oscillator = (
+  osc: Osc,
+  index: number,
+  FMoscs: FMOscillatorInstance[],
+  initialPhase?: number
+) => {
   let { coarse, fine, octave, gain, phase: pOffset } = osc.options;
   const cents = coarse * 100 + fine;
 
@@ -75,17 +81,27 @@ export const oscillator = (osc: Osc, index: number, initialPhase?: number) => {
 
   let phase = initialPhase ?? 0;
 
-  const oscFn = (dt: number, freq: number) => {
-    const phaseDelta = (dt / (1 / freq)) % 1;
-    phase += phaseDelta;
+  const oscFn = (dt: number, freq: number, FMmod?: FMModulation): number => {
     const freq2 = freq * transpositionMultiplier;
-    const t = phase / freq + pOffset * (1 / freq2);
-    return gain * generator(t, freq2);
+
+    let FMdetune = 1;
+
+    forEach(FMoscs, (osc) => {
+      FMdetune += osc(dt, freq2, FMmod || {});
+    });
+
+    const freq3 = freq2 * FMdetune;
+    const t = phase / freq3 + pOffset * (1 / freq3);
+
+    const phaseDelta = (dt / (1 / freq3)) % 1;
+    phase += phaseDelta;
+
+    return gain * generator(t, freq3);
   };
 
-  oscFn.getOsc = () => osc;
-  oscFn.getOptions = () => osc.options;
   oscFn.getPhase = () => phase;
+  oscFn.config = osc;
+  oscFn.FMoscs = FMoscs;
   oscFn.index = index;
 
   return oscFn;
@@ -101,7 +117,11 @@ const unisonParamAmount = (unison: number, i: number) => {
   }
 };
 
-export const unison = (osc: Osc, index: number): OscillatorInstance[] => {
+export const unison = (
+  osc: Osc,
+  index: number,
+  FMoscs: (FMOsc & { index: number })[]
+): OscillatorInstance[] => {
   const { options: opts } = osc;
   return map(Array.from({ length: opts.unison }), (_, i) => {
     const n = unisonParamAmount(opts.unison, i);
@@ -117,7 +137,8 @@ export const unison = (osc: Osc, index: number): OscillatorInstance[] => {
         ...osc,
         options: { ...opts, phase, gain, balance, fine },
       },
-      index
+      index,
+      map(FMoscs, (osc) => FMOscillator(osc))
     );
   });
 };

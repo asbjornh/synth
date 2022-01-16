@@ -41,7 +41,7 @@ export const vibraphone: Preset = {
       id: "vibraphone-fm-0",
       gain: 0.8,
       ratio: 10,
-      target: "all",
+      target: "0",
       type: "sine",
     },
   ],

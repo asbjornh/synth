@@ -4,7 +4,6 @@
 
 - Draw a waveform
 - Rename "coarse" and "fine" to "semitones" and "cents"?
-- Refactor FM: one instance per oscillator (including unison)
 
 ## Playing
 

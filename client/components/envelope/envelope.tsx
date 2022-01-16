@@ -25,11 +25,11 @@ const targets: Record<EnvelopeTarget, string> = {
   amplitude: "Amplitude",
   cutoff: "Cutoff",
   pitch: "Pitch",
-  FM_0_amp: "FM 1 amplitude",
+  FM_0_amp: "FM 1 gain",
   FM_0_pitch: "FM 1 pitch",
-  FM_1_amp: "FM 2 amplitude",
+  FM_1_amp: "FM 2 gain",
   FM_1_pitch: "FM 2 pitch",
-  FM_2_amp: "FM 3 amplitude",
+  FM_2_amp: "FM 3 gain",
   FM_2_pitch: "FM 3 pitch",
 };
 

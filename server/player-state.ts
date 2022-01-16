@@ -2,11 +2,13 @@ import fs from "fs";
 import path from "path";
 
 import { filter, FilterInstance, getEQ } from "./filter";
-import { forEachO, map } from "./util";
+import { forEach, forEachO, fromEntries, map } from "./util";
 import {
   Distortion,
   EnvelopeTarget,
   Filter,
+  FMOsc,
+  FMTarget,
   LFOTarget,
   Note,
   NoteDescriptor,
@@ -15,7 +17,6 @@ import {
 } from "../interface/state";
 import { defaultOsc, oscillator, OscillatorInstance, unison } from "./osc";
 import { delay, DelayInstance } from "./delay";
-import { fromEntries } from "../client/util";
 import { envelope, EnvelopeInstance } from "./envelope";
 import { compressor, CompressorInstance } from "./compressor";
 import { getFileHeaders } from "./wav-headers";
@@ -24,7 +25,6 @@ import { FMOscillator, FMOscillatorInstance } from "./fm";
 
 export type NoteState = {
   envelopes: Record<EnvelopeTarget, EnvelopeInstance | undefined>;
-  FMOsc: FMOscillatorInstance[];
   LFOs: Record<LFOTarget, LFOInstance | undefined>;
   oscillators: OscillatorInstance[];
   /** One filter instance per channel */
@@ -117,6 +117,14 @@ export const mutatePlayerState = (
   };
 
   const f = next.filter;
+
+  const FMoscs: Record<number, (FMOsc & { index: number })[]> = {};
+  forEach(next.FMOscs, (osc, index) => {
+    const target = Number(osc.target);
+    if (!FMoscs[target]) FMoscs[target] = [];
+    FMoscs[target].push({ ...osc, index });
+  });
+
   forEachO(newState.notes, (cur) => {
     cur.filter = f
       ? map(cur.filter, (instance) =>
@@ -125,36 +133,44 @@ export const mutatePlayerState = (
       : [];
 
     const nextOscs = next.oscillators.flatMap((osc, index) =>
-      osc.options.unison === 1 ? [oscillator(osc, index)] : unison(osc, index)
+      osc.options.unison === 1
+        ? [
+            oscillator(
+              osc,
+              index,
+              map(FMoscs[index] || [], (osc) => FMOscillator(osc))
+            ),
+          ]
+        : unison(osc, index, FMoscs[index] || [])
     );
+
     cur.oscillators =
       cur.oscillators.length === nextOscs.length
-        ? map(nextOscs, (osc, index) =>
+        ? map(cur.oscillators, (osc, index) =>
             oscillator(
-              osc.getOsc(),
-              osc.index,
-              cur.oscillators[index].getPhase()
+              nextOscs[index].config,
+              nextOscs[index].index,
+              map(nextOscs[index].FMoscs, (FMosc, FMindex) =>
+                FMOscillator(FMosc.config, osc.FMoscs[FMindex].getPhase())
+              ),
+              osc.getPhase()
             )
           )
         : nextOscs;
 
     cur.envelopes = fromEntries(
-      next.envelopes.map<[EnvelopeTarget, EnvelopeInstance]>((env) => [
+      map(next.envelopes, (env): [EnvelopeTarget, EnvelopeInstance] => [
         env.target,
         envelope(env, cur.envelopes[env.target]?.getState()),
       ])
     );
 
-    cur.FMOsc = map(next.FMOscs, (osc, index) =>
-      FMOscillator(osc, cur.FMOsc[index]?.osc.getPhase())
-    );
-
     cur.LFOs = fromEntries(
-      next.LFOs.map<[LFOTarget, LFOInstance]>((LFO) => {
+      map(next.LFOs, (LFO): [LFOTarget, LFOInstance] => {
         const phase = LFO.sync ? undefined : t / (1 / LFO.freq);
         const osc =
           cur.LFOs[LFO.target]?.osc ||
-          oscillator(defaultOsc(LFO.osc), -1, phase);
+          oscillator(defaultOsc(LFO.osc), -1, [], phase);
 
         return [LFO.target, { osc, amount: LFO.amount, freq: LFO.freq }];
       })
@@ -181,28 +197,42 @@ export const mutateNotes = (
 
     if (!player.notes[note] || player.notes[note]?.released) {
       const envelopes = fromEntries(
-        state.envelopes.map<[EnvelopeTarget, EnvelopeInstance]>((env) => [
+        map(state.envelopes, (env): [EnvelopeTarget, EnvelopeInstance] => [
           env.target,
           envelope(env),
         ])
       );
 
       const LFOs = fromEntries(
-        state.LFOs.map<[LFOTarget, LFOInstance]>((LFO) => {
+        map(state.LFOs, (LFO): [LFOTarget, LFOInstance] => {
           const phase = LFO.sync ? undefined : t / (1 / LFO.freq);
-          const osc = oscillator(defaultOsc(LFO.osc), -1, phase);
+          const osc = oscillator(defaultOsc(LFO.osc), -1, [], phase);
 
           return [LFO.target, { osc, amount: LFO.amount, freq: LFO.freq }];
         })
       );
 
-      const oscillators = state.oscillators.flatMap((osc, index) =>
-        osc.options.unison === 1 ? [oscillator(osc, index)] : unison(osc, index)
-      );
+      const FMoscs: Record<number, (FMOsc & { index: number })[]> = {};
+      forEach(state.FMOscs, (osc, index) => {
+        const target = Number(osc.target);
+        if (!FMoscs[target]) FMoscs[target] = [];
+        FMoscs[target].push({ ...osc, index });
+      });
+
+      const oscillators = state.oscillators.flatMap((osc, index) => {
+        return osc.options.unison === 1
+          ? [
+              oscillator(
+                osc,
+                index,
+                map(FMoscs[index] || [], (osc) => FMOscillator(osc))
+              ),
+            ]
+          : unison(osc, index, FMoscs[index] || []);
+      });
 
       player.notes[note] = {
         envelopes,
-        FMOsc: map(state.FMOscs, (osc) => FMOscillator(osc)),
         LFOs,
         oscillators,
         filter: filterInit(opts, state.filter),

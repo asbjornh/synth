@@ -1,18 +1,10 @@
 import { FMOsc } from "../interface/state";
-import { defaultOsc, oscillator } from "./osc";
+import { noise, sine } from "./osc";
 import { forEach } from "./util";
 
 export type FMOscillatorInstance = ReturnType<typeof FMOscillator>;
 
-export const FMOscillator = (fmOsc: FMOsc, initialPhase?: number) => {
-  const { type, ...rest } = fmOsc;
-  return {
-    osc: oscillator(defaultOsc(fmOsc.type), -1, initialPhase),
-    ...rest,
-  };
-};
-
-type Modulation = Record<
+export type FMModulation = Record<
   number,
   {
     amplitude: number;
@@ -20,25 +12,27 @@ type Modulation = Record<
   }
 >;
 
-export const evalFM = (
-  oscs: FMOscillatorInstance[],
-  mod: Modulation,
-  freq: number,
-  dt: number
+export const FMOscillator = (
+  osc: FMOsc & { index: number },
+  initialPhase = 0
 ) => {
-  const out: Record<"all" | number, number> = {
-    all: 1,
-    0: 1,
-    1: 1,
-    2: 1,
+  let phase = initialPhase;
+
+  const generator = osc.type === "sine" ? sine : noise;
+
+  const oscFn = (dt: number, freq: number, mod: FMModulation): number => {
+    const modGain = mod[osc.index].amplitude ?? 1;
+    const modDetune = mod[osc.index].detune ?? 0;
+    const t = phase / freq;
+
+    const phaseDelta = (dt / (1 / freq)) % 1;
+    phase += phaseDelta;
+
+    return osc.gain * modGain * generator(t, freq * (osc.ratio + modDetune));
   };
 
-  forEach(oscs, (osc, index) => {
-    const amp = mod[index]?.amplitude ?? 1;
-    const detune = mod[index]?.detune ?? 0;
-    out[osc.target] +=
-      osc.gain * amp * osc.osc(dt, freq * (osc.ratio + detune));
-  });
+  oscFn.getPhase = () => phase;
+  oscFn.config = osc;
 
-  return out;
+  return oscFn;
 };

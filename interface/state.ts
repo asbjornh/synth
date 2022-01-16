@@ -63,13 +63,13 @@ export type Noise = Oscillator<"noise">;
 export type Osc = Saw | Square | Sine | Triangle | NesTriangle | Pulse | Noise;
 export type OscType = Osc["type"];
 
-export type FMTarget = "all" | "0" | "1" | "2";
+export type FMTarget = "0" | "1" | "2";
 export type FMOsc = {
   id: string;
   gain: number;
   ratio: number;
   target: FMTarget;
-  type: OscType;
+  type: "sine" | "noise";
 };
 
 export type Filter = {

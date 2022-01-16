@@ -31,7 +31,7 @@ export const skrollex: Preset = {
       id: "skrollex-fm-0",
       gain: 13.8,
       ratio: 0.5,
-      target: "all",
+      target: "0",
       type: "sine",
     },
   ],
