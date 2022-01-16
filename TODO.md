@@ -15,7 +15,6 @@
 
 ## MIDI
 
-- Connect velocity cutoff
 - Mod wheel
 - Pitch wheel
 - Knobs/sliders?

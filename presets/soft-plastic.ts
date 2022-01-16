@@ -4,6 +4,14 @@ import { defaultParams } from "./default-params";
 export const softPlastic: Preset = {
   ...defaultParams,
   displayName: "Soft plastic",
+  velocity: {
+    scale: 1.5,
+    offset: 0,
+    targets: {
+      amplitude: 0.4,
+      cutoff: 0.3,
+    },
+  },
   compressor: {
     attack: 0.01,
     ratio: 1000,
@@ -43,7 +51,7 @@ export const softPlastic: Preset = {
   },
   filter: {
     shape: "low-pass",
-    cutoff: 850,
+    cutoff: 150,
     Q: 1.5,
     bellGain: 1,
   },

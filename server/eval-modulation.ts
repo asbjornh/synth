@@ -41,7 +41,7 @@ export const evalModulation = (
   return {
     amplitude: envAmp * velo("amplitude") * LFOamp,
     balance: LFObalance,
-    cutoff: envCutoff + LFOcutoff,
+    cutoff: envCutoff + LFOcutoff + velo("cutoff") * 10,
     detune,
     done,
     FM: {
@@ -93,6 +93,7 @@ const getVelocity = (config: Velocity, velocity: number) => {
   const base = velocity * config.scale + config.offset;
   return (target: VelocityTarget) => {
     const amt = config.targets[target] ?? 0;
+    if (target === "cutoff") return base * amt;
     return 1 - amt + base * amt;
   };
 };
