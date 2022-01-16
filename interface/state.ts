@@ -159,6 +159,8 @@ export type VelocityTarget =
 export type Velocity = {
   scale: number;
   offset: number;
+  /** Static velocity of virtual keyboard */
+  virtual: number;
   targets: Partial<Record<VelocityTarget, number>>;
 };
 
@@ -196,6 +198,7 @@ export const initialState: UIState = {
   velocity: {
     scale: 1,
     offset: 0,
+    virtual: 1,
     targets: {
       amplitude: 1,
     },

@@ -129,6 +129,7 @@ export const electricPiano: Preset = {
   velocity: {
     scale: 1.2,
     offset: 0,
+    virtual: 0.5,
     targets: {
       FM_0_amplitude: 1,
       FM_1_amplitude: 1,

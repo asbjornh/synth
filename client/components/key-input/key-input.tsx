@@ -23,7 +23,12 @@ export const KeyInput: React.FC<{
   }, []);
 
   return devices.length === 0 ? (
-    <Keyboard notes={notes} onChange={onChange} />
+    <Keyboard
+      notes={notes}
+      onChange={onChange}
+      velocity={velocity.virtual}
+      onVelocityChange={(virtual) => onChangeVelocity({ ...velocity, virtual })}
+    />
   ) : (
     <Midi
       devices={devices}

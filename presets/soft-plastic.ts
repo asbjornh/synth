@@ -7,6 +7,7 @@ export const softPlastic: Preset = {
   velocity: {
     scale: 1.5,
     offset: 0,
+    virtual: 0.4,
     targets: {
       amplitude: 0.4,
       cutoff: 0.3,

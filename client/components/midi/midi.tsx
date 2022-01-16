@@ -35,8 +35,9 @@ export const Midi: React.FC<{
   };
 
   useEffect(
-    () => onChangeVelocity({ scale, offset, targets }),
-    [scale, offset, targets]
+    () =>
+      onChangeVelocity({ scale, offset, virtual: velocity.virtual, targets }),
+    [scale, offset, targets, velocity.virtual]
   );
 
   useEffect(() => {

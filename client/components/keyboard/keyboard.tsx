@@ -1,10 +1,16 @@
 import cn from "classnames";
-import React from "react";
+import React, { useState } from "react";
 import { Note, NoteDescriptor } from "../../../interface/state";
 import { useKeys } from "./use-keys";
 
 import "./keyboard.scss";
 import { Panel } from "../panel/panel";
+import {
+  Control,
+  ControlStack,
+  ControlStrip,
+} from "../control-strip/control-strip";
+import { Knob } from "../knob/knob";
 
 type Key = {
   black?: boolean;
@@ -58,32 +64,52 @@ const keys: Key[][] = [
 export const Keyboard: React.FC<{
   notes: NoteDescriptor[];
   onChange: (notes: NoteDescriptor[]) => void;
+  velocity: number;
+  onVelocityChange: (next: number) => void;
 }> = (props) => {
+  const [velocity, setVelocity] = useState(props.velocity);
+
   useKeys((codes) =>
     props.onChange(
       keys
         .flat()
         .filter(({ code }) => codes.includes(code))
-        .map(({ note }) => ({ note, velocity: 1 }))
+        .map(({ note }) => ({ note, velocity }))
     )
   );
 
   return (
-    <div className="keyboard">
-      <Panel verticalHeader title="Keyboard">
-        {keys.map((row, index) => (
-          <ul key={index} className="keyboard__keys">
-            {row.map((key) => (
-              <Key
-                key={key.code}
-                notes={props.notes.map(({ note }) => note)}
-                {...key}
-              />
+    <Panel verticalHeader title="Keyboard">
+      <ControlStrip>
+        <Control label="Keys">
+          <div className="keyboard">
+            {keys.map((row, index) => (
+              <ul key={index} className="keyboard__keys">
+                {row.map((key) => (
+                  <Key
+                    key={key.code}
+                    notes={props.notes.map(({ note }) => note)}
+                    {...key}
+                  />
+                ))}
+              </ul>
             ))}
-          </ul>
-        ))}
-      </Panel>
-    </div>
+          </div>
+        </Control>
+
+        <ControlStack>
+          <Control label="Velocity">
+            <Knob
+              min={0}
+              max={1}
+              step={0.01}
+              value={velocity}
+              onChange={setVelocity}
+            />
+          </Control>
+        </ControlStack>
+      </ControlStrip>
+    </Panel>
   );
 };
 
