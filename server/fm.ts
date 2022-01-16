@@ -23,12 +23,12 @@ export const FMOscillator = (
   const oscFn = (dt: number, freq: number, mod: FMModulation): number => {
     const modGain = mod[osc.index].amplitude ?? 1;
     const modDetune = mod[osc.index].detune ?? 0;
-    const t = phase / freq;
+    const freq2 = freq * (osc.ratio + modDetune);
 
-    const phaseDelta = (dt / (1 / freq)) % 1;
+    const phaseDelta = (dt / (1 / freq2)) % 1;
     phase += phaseDelta;
 
-    return osc.gain * modGain * generator(t, freq * (osc.ratio + modDetune));
+    return osc.gain * modGain * generator(phase);
   };
 
   oscFn.getPhase = () => phase;

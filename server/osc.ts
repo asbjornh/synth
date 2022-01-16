@@ -9,17 +9,16 @@ import { FMModulation, FMOscillator, FMOscillatorInstance } from "./fm";
 import { randoms } from "./random";
 import { forEach, isOdd, map, mapRange } from "./util";
 
-type OscFn = (t: number, freq: number) => number;
+type OscFn = (phase: number) => number;
 
-export const sine: OscFn = (t, freq) => Math.sin(Math.PI * 2 * freq * t);
-const saw: OscFn = (t, freq) => 2 * ((t * freq) % 1) - 1;
-const triangle: OscFn = (t, freq) => 2 * (Math.abs(saw(t, freq)) - 0.5);
+export const sine: OscFn = (phase) => Math.sin(Math.PI * 2 * phase);
+const saw: OscFn = (phase) => 2 * (phase % 1) - 1;
+const triangle: OscFn = (phase) => 2 * (Math.abs(saw(phase)) - 0.5);
 export const noise: OscFn = () => Math.random() * 2 - 1;
-const pulse = (width: number) => (t: number, freq: number) =>
-  (t * freq) % 1 < width ? -1 : 1;
+const pulse = (width: number) => (phase: number) => phase % 1 < width ? -1 : 1;
 
-const sampleFrom = (samples: number[]) => (t: number, freq: number) => {
-  const i = Math.floor(((t * freq) % 1) * samples.length);
+const sampleFrom = (samples: number[]) => (phase: number) => {
+  const i = Math.floor((phase % 1) * samples.length);
   const sample = i >= 0 ? samples[i] : samples[samples.length + i];
   if (sample === undefined) console.error("sampleFrom: undefined");
   return sample;
@@ -91,12 +90,11 @@ export const oscillator = (
     });
 
     const freq3 = freq2 * FMdetune;
-    const t = phase / freq3 + pOffset * (1 / freq3);
 
     const phaseDelta = (dt / (1 / freq3)) % 1;
     phase += phaseDelta;
 
-    return gain * generator(t, freq3);
+    return gain * generator(phase + pOffset);
   };
 
   oscFn.getPhase = () => phase;
